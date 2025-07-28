@@ -36,7 +36,7 @@
 
 /obj/effect/proc_holder/spell/invoked/bud
 	name = "Eoran Bloom"
-	desc = ""
+	desc = "Tries to grow an Eoran bud on the target tile or on the targets head, forcing their thoughts away from violence until removed."
 	clothes_req = FALSE
 	range = 7
 	overlay_state = "love"
@@ -74,6 +74,7 @@
 
 /obj/effect/proc_holder/spell/invoked/eoracurse
 	name = "Eora's Curse"
+	desc = "Makes the target both high and drunk."
 	overlay_state = "curse2"
 	releasedrain = 50
 	chargetime = 30
@@ -174,7 +175,7 @@
 			BP.add_wound(/datum/wound/bite/small)
 
 /datum/component/eora_bond/proc/on_heal(datum/source, healing_on_tick, healing_datum)
-	if( !isliving(parent) || source != parent || istype(healing_datum, /datum/status_effect/buff/healing/eora))
+	if( !isliving(parent) || source != parent || istype(healing_datum, /datum/status_effect/buff/healing/eora) || HAS_TRAIT(parent, TRAIT_PSYDONITE))
 		return
 
 	healing_on_tick = healing_on_tick * heal_share
@@ -251,13 +252,6 @@
 		to_chat(user, span_warning("The bond requires focused concentration!"))
 		revert_cast()
 		return FALSE
-
-	if(HAS_TRAIT(target, TRAIT_PSYDONITE))
-		target.visible_message(span_info("[target] stirs for a moment, the miracle dissipates."), span_notice("A dull warmth swells in your heart, only to fade as quickly as it arrived."))
-		playsound(target, 'sound/magic/PSY.ogg', 100, FALSE, -1)
-		user.playsound_local(user, 'sound/magic/PSY.ogg', 100, FALSE, -1)
-		return FALSE
-
 
 	var/consent = alert(target, "[user] offers a lifebond. Accept?", "Heartweave", "Yes", "No")
 	if(consent != "Yes" || QDELETED(target))
@@ -376,7 +370,7 @@
 /obj/effect/proc_holder/spell/invoked/pomegranate
 	name = "Amaranth Sanctuary"
 	invocation = "Eora, provide sanctuary for your beauty!"
-	desc = "Grow a cool tree."
+	desc = "Grow a pomegrenate tree that when tended to grows Aurils with variety of effects. Additionally heals beatiful people and HEAVILY debuffs both STR and PER for everyone in visible range."
 	sound = 'sound/magic/magnet.ogg'
 	req_items = list(/obj/item/clothing/neck/roguetown/psicross/eora)
 	devotion_cost = 500
@@ -865,10 +859,11 @@
 				/obj/item/reagent_containers/food/snacks/eoran_aril/auric = 4,
 				/obj/item/reagent_containers/food/snacks/eoran_aril/ashen = 1,
 				/obj/item/reagent_containers/food/snacks/eoran_aril/ochre = 5,
-				/obj/item/reagent_containers/lux/eoran_aril = 1
+				/obj/item/reagent_containers/lux/eoran_aril = 1, //Lux equivalent
+				/obj/item/reagent_containers/eoran_seed = 1 // Seed for more trees
 			)
 
-    // Generate 4 arils +1 per tier.
+	// Generate 4 arils +1 per tier.
 	for(var/i in 1 to 4 + (floor(fruit_tier / 2)))
 		var/aril_type = pickweight(possible_arils)
 		aril_types += aril_type
@@ -1000,7 +995,7 @@
 	desc = "An iridescent seed that shifts colors in the light."
 	icon_state = "opalescent"
 	effect_desc = "Transforms held gems into rubies."
-    
+	
 /obj/item/reagent_containers/food/snacks/eoran_aril/opalescent/apply_effects(mob/living/eater)
 	for(var/obj/item/roguegem/G in eater.held_items)
 		var/obj/item/roguegem/ruby/new_gem = new(eater.loc)
@@ -1139,6 +1134,41 @@
 		var/mob/living/carbon/human/H = eater
 		H.apply_status_effect(/datum/status_effect/pearlescent_aril)
 
+/obj/item/reagent_containers/eoran_seed
+	name = "Satin aril"
+	desc = "A silky soft seed from Eora's sacred tree. It can be used to propagate her gift in fertile soil."
+	icon = 'modular_azurepeak/icons/obj/items/eora_pom.dmi'
+	icon_state = "roseate"
+
+/obj/item/reagent_containers/eoran_seed/afterattack(atom/target, mob/user, proximity_flag, click_parameters)
+	if(!isturf(target) || !proximity_flag)
+		return ..()
+
+	var/turf/T = target
+
+	// Location checks
+	if(!isopenturf(T))
+		to_chat(user, span_warning("The seed needs open space to grow!"))
+		return
+	if(!(istype(T, /turf/open/floor/rogue/grass) || istype(T, /turf/open/floor/rogue/dirt)))
+		to_chat(user, span_warning("The seed must be planted on dirt or grass!"))
+		return
+
+	// Planting process
+	to_chat(user, span_notice("You begin to plant the seed in [T]. It pulses gently..."))
+	if(!do_after(user, 30 SECONDS, target))
+		to_chat(user, span_warning("Planting was interrupted!"))
+		return
+
+	// Re-check conditions after delay
+	if(!isopenturf(T) || !(istype(T, /turf/open/floor/rogue/grass) || istype(T, /turf/open/floor/rogue/dirt)))
+		to_chat(user, span_warning("The ground is no longer suitable!"))
+		return
+
+	// Create tree and consume seed
+	new /obj/structure/eoran_pomegranate_tree(T)
+	qdel(src)
+
 #undef SPROUT
 #undef GROWING
 #undef MATURING
@@ -1147,7 +1177,6 @@
 //Remove their ability to feel bad, restore a small amount of hunger / thirst if they're already starving.
 /obj/effect/proc_holder/spell/invoked/eora_blessing
 	name = "Eora's Blessing"
-	invocation = "Eora, may their sorrows wither."
 	desc = "Bestow a person with Eora's calm, if only for a little while."
 	sound = 'sound/magic/eora_bless.ogg'
 	devotion_cost = 80

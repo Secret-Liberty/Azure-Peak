@@ -1,6 +1,7 @@
 //t1, the bends
 /obj/effect/proc_holder/spell/invoked/abyssor_bends
 	name = "Depth Bends"
+	desc = "Drains the targets stamina, unless they worship Abyssor. Also makes them dizzy and blurs their screen."
 	overlay_state = "thebends"
 	releasedrain = 15
 	chargedrain = 0
@@ -37,6 +38,7 @@
 
 /obj/effect/proc_holder/spell/invoked/abyssor_undertow // t1 offbalance someone for 5 seconds if on land, on water, knock them down.
 	name = "Undertow"
+	desc = "Throws target down if they are on water, otherwise puts them off balance."
 	overlay_state = "thebends"
 	releasedrain = 15
 	chargedrain = 0
@@ -109,6 +111,7 @@
 //T0 The Fishing
 /obj/effect/proc_holder/spell/invoked/aquatic_compulsion
 	name = "Aquatic Compulsion"
+	desc = "Compel a fish to leap out from targeted water tile and towards you."
 	overlay_state = "aqua"
 	releasedrain = 15
 	chargedrain = 0
@@ -170,7 +173,12 @@
 			A = pickweight(mudfishloot)
 		if(A)
 			var/atom/movable/AF = new A(T)
-			AF.throw_at(get_turf(user), 5, 1, null)
+			if(istype(AF, /obj/item/reagent_containers/food/snacks/fish))
+				var/obj/item/reagent_containers/food/snacks/fish/F = AF
+				F.sinkable = FALSE
+				F.throw_at(get_turf(user), 5, 1, null)
+			else
+				AF.throw_at(get_turf(user), 5, 1, null)
 			record_featured_stat(FEATURED_STATS_FISHERS, user)
 			GLOB.azure_round_stats[STATS_FISH_CAUGHT]++
 			playsound(T, 'sound/foley/footsteps/FTWAT_1.ogg', 100)
@@ -185,6 +193,7 @@
 //T2, Abyssal Healing. Totally stole most of this from lesser heal.
 /obj/effect/proc_holder/spell/invoked/abyssheal
 	name = "Abyssal Healing"
+	desc = "Heals target over time, more if there is water around you."
 	overlay_state = "thebends"
 	releasedrain = 15
 	chargedrain = 0
@@ -244,6 +253,7 @@
 //t3, possible t4 if I put in land surf, summon mossback
 /obj/effect/proc_holder/spell/invoked/call_mossback
 	name = "Call Mossback"
+	desc = "Calls a Mossback that is friendly to you and that you can command."
 	overlay_state = "thebends"
 	range = 7
 	no_early_release = TRUE
@@ -278,6 +288,7 @@
 
 /obj/effect/proc_holder/spell/invoked/call_dreamfiend
 	name = "Summon Dreamfiend"
+	desc = "Summons a Dreamfiend to hound your target."
 	overlay_state = "dreamfiend"
 	range = 7
 	no_early_release = TRUE
@@ -359,6 +370,7 @@
 
 /obj/effect/proc_holder/spell/invoked/abyssal_infusion
 	name = "Abyssal Infusion"
+	desc = "Consumes an anglerfish to bless target with ability to call upon Abyssal Strength."
 	overlay_state = "abyssal_infusion"
 	range = 7
 	no_early_release = TRUE
@@ -415,6 +427,7 @@
 
 /obj/effect/proc_holder/spell/invoked/abyssal_strength
 	name = "Abyssal Strength"
+	desc = "Buffs all your stats besides fortune, and lowers your perception."
 	overlay_state = "abyssal_strength1"
 	range = 7
 	no_early_release = TRUE
