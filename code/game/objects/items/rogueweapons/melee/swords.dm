@@ -302,7 +302,7 @@
 	max_integrity = 200
 
 /obj/item/rogueweapon/sword/long/zizo
-	name = "darksteel longsword"
+	name = "avantyne longsword"
 	desc = "A wicked, unconventional, and otherwordly blade that was created by no swordsmith - a manifestation of hate for the state of this world that follows no design principles but spite and anger."
 	icon_state = "zizosword"
 	sheathe_icon = "zizosword"
@@ -949,7 +949,7 @@
 	to the siege that smashed the Mad Duke's keep to rubble, and burnt the Duke himself to cinders."
 	icon_state = "lordrap"
 	sheathe_icon = "lordrapier"
-	sellprice = 100
+	sellprice = 150
 	max_integrity = 300
 	max_blade_int = 300
 	wdefense = 7
