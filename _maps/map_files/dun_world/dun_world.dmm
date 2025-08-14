@@ -2593,7 +2593,6 @@
 /obj/item/storage/keyring/priest,
 /obj/item/roguekey/church,
 /obj/item/roguekey/church,
-/obj/item/roguekey/inquisition,
 /turf/open/floor/carpet/stellar,
 /area/rogue/indoors/town/church/chapel)
 "aQI" = (
@@ -4231,12 +4230,12 @@
 "brR" = (
 /obj/machinery/light/rogue/wallfire/candle/l,
 /obj/structure/closet/crate/chest,
-/obj/item/paper/confession,
-/obj/item/paper/confession,
-/obj/item/paper/confession,
 /obj/item/paper/inqslip/accusation,
 /obj/item/paper/inqslip/accusation,
 /obj/item/paper/inqslip/accusation,
+/obj/item/paper/inqslip/confession,
+/obj/item/paper/inqslip/confession,
+/obj/item/paper/inqslip/confession,
 /turf/open/floor/rogue/hexstone,
 /area/rogue/indoors/inq/office)
 "brS" = (
@@ -66247,9 +66246,12 @@
 /area/rogue/outdoors/town)
 "uvR" = (
 /obj/structure/closet/crate/chest/neu_iron,
-/obj/item/paper/confession,
-/obj/item/paper/confession,
-/obj/item/paper/confession,
+/obj/item/paper/inqslip/confession,
+/obj/item/paper/inqslip/confession,
+/obj/item/paper/inqslip/accusation,
+/obj/item/paper/inqslip/accusation,
+/obj/item/inqarticles/indexer,
+/obj/item/inqarticles/indexer,
 /turf/open/floor/rogue/herringbone,
 /area/rogue/indoors/inq/office)
 "uwb" = (
