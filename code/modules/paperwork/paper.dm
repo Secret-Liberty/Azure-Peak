@@ -485,6 +485,8 @@
 
 		add_fingerprint(user)
 		return ..()
+	else
+		return ..()	
 
 /obj/item/paper/fire_act(added, maxstacks)
 	..()

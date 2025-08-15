@@ -43,12 +43,18 @@ GLOBAL_VAR_INIT(mobids, 1)
 	qdel(hud_used)
 	for(var/cc in client_colours)
 		qdel(cc)
-	for(var/datum/intent in base_intents)
-		qdel(intent)
+	if(used_intent)
+		qdel(used_intent)
+	if(a_intent && a_intent.mastermob == src)
+		a_intent.mastermob = null
+	QDEL_LIST(possible_a_intents)
+	QDEL_LIST(possible_offhand_intents)
+	SStreasury.remove_person(src) // Call me overly cautious I dunno when they giving dogs bank account
 	if(skills && skills.current == src)
-		qdel(skills)
+		var/datum/skill_holder/my_skill = skills
+		my_skill.current = null
+		QDEL_NULL(skills)
 	client_colours = null
-	testing("EPICWIN!! [src] [type]")
 	ghostize(drawskip=TRUE)
 	..()
 	return QDEL_HINT_QUEUE

@@ -298,11 +298,24 @@ var/forgerites = list("Ritual of Blessed Reforgance")
 
 /obj/item/abyssal_marker/volatile
 	name = "volatile abyssal marker"
-	effect_desc = " Whispers fill your head. The crystal yearns to be used, it shall bring forth a beautiful dream. The first use shall mark, the second shall unleash. Seems fragile, like it would break when thrown..."
+	effect_desc = " Whispers fill your head. The crystal yearns to be used, it shall bring forth a beautiful dream. The first use shall mark, the second shall unleash. Seems fragile, like it might explode violently with energies when thrown..."
 	faith_locked = FALSE
 	icon_state = "abyssal_marker_volatile"
+	var/cooldown = 0
+	var/creation_time
+
+/obj/item/abyssal_marker/volatile/Initialize()
+	. = ..()
+	creation_time = world.time
+	var/area/A = get_area(src)
+	if(istype(A, /area/rogue/underworld/dream))
+		cooldown = 3 MINUTES
 
 /obj/item/abyssal_marker/volatile/throw_impact(atom/hit_atom, datum/thrownthing/throwingdatum)
+	if(cooldown > 0 && world.time < creation_time + cooldown)
+		visible_message(span_warning("[src] bounces off the floor. It doesn't seem ready yet."))
+		return ..()
+
 	var/turf/T = get_turf(hit_atom)
 	if(T)
 		marked_location = T
@@ -341,6 +354,12 @@ var/forgerites = list("Ritual of Blessed Reforgance")
 		playsound(src, 'sound/magic/lightning.ogg', 50, TRUE)
 		new rune_type(marked_location)
 		qdel(src)
+
+/obj/item/abyssal_marker/volatile/attack_self(mob/user)
+	if(cooldown > 0 && world.time < creation_time + cooldown)
+		to_chat(user, span_warning("The crystal is still unstable. It needs more time to attune to this realm. Try again later."))
+		return
+	return ..()
 
 /obj/structure/active_abyssor_rune
 	name = "awakened abyssal rune"
