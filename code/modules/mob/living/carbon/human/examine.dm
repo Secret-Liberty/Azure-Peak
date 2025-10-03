@@ -8,15 +8,21 @@
 			user.add_stress(/datum/stressevent/parastr)
 	if(HAS_TRAIT(user, TRAIT_JESTERPHOBIA) && job == "Jester")
 		user.add_stress(/datum/stressevent/jesterphobia)
-	if(HAS_TRAIT(src, TRAIT_BEAUTIFUL))
+	if(HAS_TRAIT(src, TRAIT_BEAUTIFUL) && user != src)//it doesn't really make sense that you can examine your own face
 		user.add_stress(/datum/stressevent/beautiful)
-		// Apply Xylix buff when examining someone with the beautiful trait
-		if(HAS_TRAIT(user, TRAIT_XYLIX) && !user.has_status_effect(/datum/status_effect/buff/xylix_joy))
-			user.apply_status_effect(/datum/status_effect/buff/xylix_joy)
-			to_chat(user, span_info("Their beauty brings a smile to my face, and fortune to my steps!"))
-	if(HAS_TRAIT(src, TRAIT_UNSEEMLY))
+	if(HAS_TRAIT(src, TRAIT_UNSEEMLY) && user != src)
 		if(!HAS_TRAIT(user, TRAIT_UNSEEMLY))
 			user.add_stress(/datum/stressevent/unseemly)
+	if(HAS_TRAIT(src, TRAIT_BEAUTIFUL_UNCANNY) && user != src)
+		if(prob(50) && !user.has_stress_event(/datum/stressevent/uncanny))
+			user.add_stress(/datum/stressevent/beautiful)
+		else 
+			if(!user.has_stress_event(/datum/stressevent/beautiful))
+				user.add_stress(/datum/stressevent/uncanny)
+	// Apply Xylix buff when examining someone with the beautiful trait
+	if(HAS_TRAIT(user, TRAIT_XYLIX) && !user.has_status_effect(/datum/status_effect/buff/xylix_joy) && user.has_stress_event(/datum/stressevent/beautiful))
+		user.apply_status_effect(/datum/status_effect/buff/xylix_joy)
+		to_chat(user, span_info("Their beauty brings a smile to my face, and fortune to my steps!"))
 
 /mob/living/carbon/human/examine(mob/user)
 	var/observer_privilege = isobserver(user)
@@ -52,14 +58,16 @@
 		"Unknown Man",
 		"Unknown Woman",
 	)
-	if(get_visible_name() in unknown_names)
+	if(get_face_name() != real_name)
 		obscure_name = TRUE
 
 	if(observer_privilege)
 		obscure_name = FALSE
 
-	if(obscure_name)
-		. = list(span_info("ø ------------ ø\nThis is <EM>Unknown</EM>."))
+	if(name in unknown_names)
+		. = list(span_info("ø ------------ ø\nThis is <EM>[name]</EM>."))
+	else if(obscure_name)
+		. = list(span_info("ø ------------ ø\nThis is an unknown <EM>[name]</EM>."))
 	else
 		on_examine_face(user)
 		var/used_name = name
@@ -95,6 +103,12 @@
 			else
 				. = list(span_info("ø ------------ ø\nThis is the <EM>[used_name]</EM>, the [race_name]."))
 
+		if(HAS_TRAIT(src, TRAIT_DNR) && src != user)
+			if(HAS_TRAIT(src, TRAIT_DEATHSIGHT))
+				. += span_danger("They extrude a pale aura. Their soul [user.stat == DEAD ? "was not" : "is not"] clean. This is it for them.")
+			else if(user.stat == DEAD)
+				. += span_danger("This was their only chance at lyfe.")
+
 		if(HAS_TRAIT(src, TRAIT_WITCH))
 			if(HAS_TRAIT(user, TRAIT_NOBLE) || HAS_TRAIT(user, TRAIT_INQUISITION) || HAS_TRAIT(user, TRAIT_WITCH))
 				. += span_warning("A witch! Their presence brings an unsettling aura.")
@@ -112,8 +126,8 @@
 			else
 				. += span_notice("A noble!")
 
-		if((HAS_TRAIT(src, TRAIT_OUTLANDER) && !HAS_TRAIT(user, TRAIT_OUTLANDER)) || (HAS_TRAIT(user, TRAIT_RACISMISBAD) && !(src.dna.species.name == "Elf" || src.dna.species.name == "Dark Elf" || src.dna.species.name == "Half Elf")))
-			. += span_phobia("A foreigner...")
+		if((HAS_TRAIT(user, TRAIT_RACISMISBAD) && !(src.dna.species.name == "Elf" || src.dna.species.name == "Dark Elf" || src.dna.species.name == "Half Elf")))
+			. += span_phobia("An invader...")
 
 		//For tennite schism god-event
 		if(length(GLOB.tennite_schisms))
@@ -181,9 +195,9 @@
 						. += span_nicegreen("[m1] privy to the dangers of all these strangers around us. [m1] just as afraid as I am.")
 					else
 						. += span_nicegreen("[m1] one of the good ones. [m1] just as afraid as I am.")
-			if(has_flaw(/datum/charflaw/masochist) && user.has_flaw(/datum/charflaw/addiction/sadist))
+			if(has_flaw(/datum/charflaw/addiction/masochist) && user.has_flaw(/datum/charflaw/addiction/sadist))
 				. += span_secradio("[m1] marked by scars inflicted for pleasure. A delectable target for my urges.")
-			if(has_flaw(/datum/charflaw/addiction/sadist) && user.has_flaw(/datum/charflaw/masochist))
+			if(has_flaw(/datum/charflaw/addiction/sadist) && user.has_flaw(/datum/charflaw/addiction/masochist))
 				. += span_secradio("[m1] looking with eyes filled with a desire to inflict pain. So exciting.")
 			if(HAS_TRAIT(user, TRAIT_EMPATH) && HAS_TRAIT(src, TRAIT_PERMAMUTE))
 				. += span_notice("[m1] lacks a voice. [m1] is a mute!")
@@ -604,6 +618,10 @@
 	for(var/missing_zone in get_missing_limbs())
 		if(missing_zone == BODY_ZONE_HEAD)
 			missing_head = TRUE
+			if (isdullahan(src))
+				var/datum/species/dullahan/user_species = dna.species
+				if(user_species.headless && user != src && !isdullahan(user))
+					user.add_stress(/datum/stressevent/headless)
 		missing_limbs += parse_zone(missing_zone)
 
 	if(length(missing_limbs))
@@ -644,9 +662,9 @@
 				msg += "[m1] looking parched."
 
 	//Fire/water stacks
-	if(fire_stacks + divine_fire_stacks > 0)
+	if(has_status_effect(/datum/status_effect/fire_handler))
 		msg += "[m1] covered in something flammable."
-	else if(fire_stacks < 0)
+	if(has_status_effect(/datum/status_effect/fire_handler/wet_stacks))
 		msg += "[m1] soaked."
 
 	//Status effects
@@ -811,6 +829,29 @@
 			if(!(mobility_flags & MOBILITY_STAND) && user != src && (user.zone_selected == BODY_ZONE_CHEST))
 				. += "<a href='?src=[REF(src)];check_hb=1'>Listen to Heartbeat</a>"
 
+	if(!HAS_TRAIT(src, TRAIT_DECEIVING_MEEKNESS) && user != src)
+		if(isliving(user))
+			var/mob/living/L = user
+			if(L.STAINT > 9 && L.STAPER > 9)
+				if(HAS_TRAIT(src, TRAIT_COMBAT_AWARE))
+					. += span_warning("<i>They look battle-aware.</i>")
+				if(HAS_TRAIT(user, TRAIT_COMBAT_AWARE))
+					var/userheld = user.get_active_held_item()
+					var/srcheld = get_active_held_item()
+					var/datum/skill/user_skill = /datum/skill/combat/unarmed	//default
+					var/datum/skill/src_skill = /datum/skill/combat/unarmed
+					if(userheld)
+						var/obj/item/I = userheld
+						if(I.associated_skill)
+							user_skill = I.associated_skill
+					if(srcheld)
+						var/obj/item/I = srcheld
+						if(I.associated_skill)
+							src_skill = I.associated_skill
+					var/skilldiff = user.get_skill_level(user_skill) - get_skill_level(src_skill)
+					. += "<font size = 3><i>[skilldiff_report(skilldiff)] in my wielded skill than they are in theirs.</i></font>"
+
+
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
 		if(get_dist(src, H) <= ((2 + clamp(floor(((H.STAPER - 10))),-1, 4)) + HAS_TRAIT(user, TRAIT_INTELLECTUAL)))
@@ -819,7 +860,6 @@
 	if((!obscure_name || client?.prefs.masked_examine) && (flavortext || headshot_link || ooc_notes))
 		. += "<a href='?src=[REF(src)];task=view_headshot;'>Examine closer</a>"
 
-	var/list/lines = build_cool_description(get_mob_descriptors(obscure_name, user), src)
 	if(lip_style)
 		switch(lip_color)
 			if("red")
@@ -830,6 +870,13 @@
 				. += "<span class='info' style='color: #00FF00'>[m1] wearing lime lipstick.</span>"
 			if("black")
 				. += "<span class='info' style='color: #313131ff'>[m1] wearing black lipstick.</span>"
+
+
+	var/list/lines
+	if((get_face_name() != real_name) && !observer_privilege)
+		lines = build_cool_description_unknown(get_mob_descriptors_unknown(obscure_name, user), src)
+	else
+		lines = build_cool_description(get_mob_descriptors(obscure_name, user), src)
 
 	for(var/line in lines)
 		. += span_info(line)

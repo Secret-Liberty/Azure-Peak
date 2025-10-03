@@ -22,6 +22,14 @@
 		active_item = FALSE
 		to_chat(user, span_notice("I feel mundane once more"))
 
+/datum/magic_item/superior/unbreaking
+	name = "unbreaking"
+	description = "It feels as strong as blacksteel"
+
+/datum/magic_item/superior/unbreaking/on_apply(var/obj/item/i)
+	.=..()
+	i.max_integrity += 100
+	i.obj_integrity += 100
 
 /datum/magic_item/superior/featherstep
 	name = "feather step"
@@ -91,7 +99,7 @@
 		if(user.get_skill_level(/datum/skill/misc/climbing)== 5)
 			masterclimber = TRUE
 			user.adjust_skillrank(/datum/skill/misc/climbing, 1, TRUE)
-		else 
+		else
 			user.adjust_skillrank(/datum/skill/misc/climbing, 2, TRUE)
 		to_chat(user, span_notice("I feel almost spiderlike!"))
 
@@ -116,7 +124,7 @@
 /datum/magic_item/superior/thievery/on_equip(var/obj/item/i, var/mob/living/user, slot)
 	. = ..()
 	if((user.get_skill_level(/datum/skill/misc/stealing)== 6) && (user.get_skill_level(/datum/skill/misc/lockpicking)== 6))
-		to_chat(user, span_notice("I'm too skilled to use this")) 
+		to_chat(user, span_notice("I'm too skilled to use this"))
 		return
 	if(slot == ITEM_SLOT_HANDS)
 		return
@@ -130,7 +138,7 @@
 		if (user.get_skill_level(/datum/skill/misc/stealing)== 5)
 			user.adjust_skillrank(/datum/skill/misc/stealing, 1, TRUE)
 			masterstealer = TRUE
-		else 
+		else
 			user.adjust_skillrank(/datum/skill/misc/stealing, 2, TRUE)
 
 		if (user.get_skill_level(/datum/skill/misc/lockpicking)== 6)

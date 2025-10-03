@@ -206,18 +206,18 @@
 	else if(slot == SLOT_RING)
 		active_item = TRUE
 		to_chat(user, span_notice("Here be dragons."))
-		user.change_stat("strength", 2)
-		user.change_stat("constitution", 2)
-		user.change_stat("endurance", 2)
+		user.change_stat(STATKEY_STR, 2)
+		user.change_stat(STATKEY_CON, 2)
+		user.change_stat(STATKEY_WIL, 2)
 	return
 
 /obj/item/clothing/ring/dragon_ring/dropped(mob/living/user)
 	..()
 	if(active_item)
 		to_chat(user, span_notice("Gone is thy hoard."))
-		user.change_stat("strength", -2)
-		user.change_stat("constitution", -2)
-		user.change_stat("endurance", -2)
+		user.change_stat(STATKEY_STR, -2)
+		user.change_stat(STATKEY_CON, -2)
+		user.change_stat(STATKEY_WIL, -2)
 		active_item = FALSE
 	return
 
@@ -231,10 +231,10 @@
 	name = "fate weaver"
 	desc = "An arcyne creation first theorized by malcontents with the resolution of Xylix's plays. It protects is wearer by tugging things gently toward less fatal potentials."
 	icon_state = "ring_s"
-	max_integrity = 75
+	max_integrity = 50
 	body_parts_covered = COVERAGE_FULL | COVERAGE_HEAD_NOSE | NECK | HANDS | FEET //field covers the whole body
-	armor = ARMOR_MASK_METAL_BAD //even protection against most damage types
-	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_BLUNT)
+	armor = ARMOR_FATEWEAVER //even protection against most damage types
+	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_STAB, BCLASS_PIERCE, BCLASS_PICK, BCLASS_BLUNT)
 	blade_dulling = DULLING_BASHCHOP
 	blocksound = PLATEHIT
 	break_sound = 'sound/foley/breaksound.ogg'

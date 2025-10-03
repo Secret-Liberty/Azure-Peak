@@ -41,6 +41,10 @@
 
 			var/new_wildshape_type = input(M, "Choose Your Animal Form!", "It's Morphing Time!", null) as null|anything in sortList(animal_list)
 
+			if(!new_wildshape_type)
+				revert_cast()
+				return FALSE
+
 			for(var/crecher in possible_shapes) //Second pass to fetch the mob type itself and send it on wildshape_transformation
 				var/mob/living/carbon/human/species/wildshape/B = crecher
 				if(new_wildshape_type == B.name)
@@ -73,4 +77,3 @@
 
 /mob/living/carbon/human/species/wildshape/update_inv_shoes() //Prevents weird blood overlays
 	remove_overlay(SHOES_LAYER)
-	remove_overlay(SHOESLEEVE_LAYER)

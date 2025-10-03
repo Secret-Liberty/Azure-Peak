@@ -40,6 +40,10 @@ GLOBAL_LIST_EMPTY(loadout_items)
 	name = "Tricorn Hat"
 	path = /obj/item/clothing/head/roguetown/helmet/tricorn
 
+/datum/loadout_item/nurseveil
+	name = "Nurse's Veil"
+	path = /obj/item/clothing/head/roguetown/veiled
+
 /datum/loadout_item/archercap
 	name = "Archer's cap"
 	path = /obj/item/clothing/head/roguetown/archercap
@@ -461,6 +465,14 @@ GLOBAL_LIST_EMPTY(loadout_items)
 	name = "Amulet of Eora"
 	path = /obj/item/clothing/neck/roguetown/psicross/eora
 
+/datum/loadout_item/psicross/undivided
+	name = "Amulet of Ten"
+	path = /obj/item/clothing/neck/roguetown/psicross/undivided
+
+/datum/loadout_item/psicross/zizo
+	name = "Decrepit Zcross"
+	path = /obj/item/clothing/neck/roguetown/zcross/aalloy
+
 /datum/loadout_item/wedding_band
 	name = "silver wedding band"
 	path = /obj/item/clothing/ring/band
@@ -531,3 +543,13 @@ GLOBAL_LIST_EMPTY(loadout_items)
 	name = "Donator Kit - Padded silky dress"
 	path = /obj/item/enchantingkit/zydras
 	ckeywhitelist = list("1ceres")
+
+/datum/loadout_item/donator_eiren
+	name = "Donator Kit - Regret"
+	path = /obj/item/enchantingkit/eiren
+	ckeywhitelist = list("eirenxiv")
+
+/datum/loadout_item/donator_waff
+	name = "Donator Kit - Weeper's Lathe"
+	path = /obj/item/enchantingkit/waff
+	ckeywhitelist = list("waffai")

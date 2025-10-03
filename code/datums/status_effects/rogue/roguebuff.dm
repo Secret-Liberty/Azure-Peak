@@ -5,7 +5,7 @@
 /datum/status_effect/buff/drunk
 	id = "drunk"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/drunk
-	effectedstats = list("intelligence" = -2, "endurance" = 1)
+	effectedstats = list(STATKEY_INT = -2, STATKEY_WIL = 1)
 	duration = 5 MINUTES
 
 /atom/movable/screen/alert/status_effect/buff/drunk
@@ -26,19 +26,19 @@
 /datum/status_effect/buff/murkwine
 	id = "murkwine"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/drunkmurk
-	effectedstats = list("intelligence" = 5)
+	effectedstats = list(STATKEY_INT = 5)
 	duration = 2 MINUTES
 
 /datum/status_effect/buff/nocshine
 	id = "nocshine"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/drunknoc
-	effectedstats = list("strength" = 1, "endurance" = 1)
+	effectedstats = list(STATKEY_STR = 1, STATKEY_WIL = 1)
 	duration = 2 MINUTES
 
 /datum/status_effect/buff/foodbuff
 	id = "foodbuff"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/foodbuff
-	effectedstats = list("constitution" = 1,"endurance" = 1)
+	effectedstats = list(STATKEY_CON = 1,STATKEY_WIL = 1)
 	duration = 15 MINUTES
 
 /atom/movable/screen/alert/status_effect/buff/foodbuff
@@ -49,7 +49,7 @@
 /datum/status_effect/buff/druqks
 	id = "druqks"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/druqks
-	effectedstats = list("intelligence" = 5,"speed" = 3,"fortune" = -5)
+	effectedstats = list(STATKEY_INT = 5,STATKEY_SPD = 3,STATKEY_LCK = -5)
 	duration = 2 MINUTES
 
 /datum/status_effect/buff/druqks/baotha
@@ -96,7 +96,7 @@
 /datum/status_effect/buff/ozium
 	id = "ozium"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/druqks
-	effectedstats = list("speed" = -5, "perception" = 2)
+	effectedstats = list(STATKEY_SPD = -5, STATKEY_PER = 2)
 	duration = 30 SECONDS
 
 /datum/status_effect/buff/ozium/on_apply()
@@ -112,7 +112,7 @@
 /datum/status_effect/buff/moondust
 	id = "moondust"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/druqks
-	effectedstats = list("speed" = 2, "endurance" = 2, "intelligence" = -2)
+	effectedstats = list(STATKEY_SPD = 2, STATKEY_WIL = 2, STATKEY_INT = -2)
 	duration = 30 SECONDS
 
 /datum/status_effect/buff/moondust/nextmove_modifier()
@@ -125,7 +125,7 @@
 /datum/status_effect/buff/moondust_purest
 	id = "purest moondust"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/druqks
-	effectedstats = list("speed" = 3, "endurance" = 3, "intelligence" = -2)
+	effectedstats = list(STATKEY_SPD = 3, STATKEY_WIL = 3, STATKEY_INT = -2)
 	duration = 40 SECONDS
 
 /datum/status_effect/buff/moondust_purest/nextmove_modifier()
@@ -138,7 +138,7 @@
 /datum/status_effect/buff/herozium
 	id = "herozium"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/druqks
-	effectedstats = list("speed" = -5, "endurance" = 4, "intelligence" = -3, "constitution" = 3)
+	effectedstats = list(STATKEY_SPD = -5, STATKEY_WIL = 4, STATKEY_INT = -3, STATKEY_CON = 3)
 	duration = 80 SECONDS
 	var/originalcmode = ""
 
@@ -163,7 +163,7 @@
 /datum/status_effect/buff/starsugar
 	id = "starsugar"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/druqks
-	effectedstats = list("speed" = 4, "endurance" = 4, "intelligence" = -3, "constitution" = -3)
+	effectedstats = list(STATKEY_SPD = 4, STATKEY_WIL = 4, STATKEY_INT = -3, STATKEY_CON = -3)
 	duration = 80 SECONDS
 	var/originalcmode = ""
 
@@ -191,7 +191,7 @@
 /datum/status_effect/buff/weed
 	id = "weed"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/weed
-	effectedstats = list("intelligence" = 2,"speed" = -2,"fortune" = 2)
+	effectedstats = list(STATKEY_INT = 2,STATKEY_SPD = -2,STATKEY_LCK = 2)
 	duration = 10 SECONDS
 
 /datum/status_effect/buff/weed/on_apply()
@@ -226,7 +226,7 @@
 /datum/status_effect/buff/vitae
 	id = "druqks"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/vitae
-	effectedstats = list("fortune" = 2)
+	effectedstats = list(STATKEY_LCK = 2)
 	duration = 1 MINUTES
 
 /datum/status_effect/buff/vitae/on_apply()
@@ -353,12 +353,12 @@
 /datum/status_effect/buff/wardenbuff
 	id = "wardenbuff"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/wardenbuff
-	effectedstats = list("speed" = 1, "perception" = 3) 
+	effectedstats = list(STATKEY_SPD = 1, STATKEY_PER = 3)
 
 /datum/status_effect/buff/barkeepbuff
 	id = "barkeepbuff"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/barkeepbuff
-	effectedstats = list("constitution" = 1,"endurance" = 1, "speed" = 1, "strength" = 3) 
+	effectedstats = list(STATKEY_CON = 1,STATKEY_WIL = 1, STATKEY_SPD = 1, STATKEY_STR = 3)
 
 /datum/status_effect/buff/barkeepbuff/process()
 
@@ -370,12 +370,12 @@
 /datum/status_effect/buff/guardbuffone
 	id = "guardbuffone"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/guardbuffone
-	effectedstats = list("constitution" = 1,"endurance" = 1, "speed" = 1, "perception" = 2) 
+	effectedstats = list(STATKEY_CON = 1,STATKEY_WIL = 1, STATKEY_SPD = 1, STATKEY_PER = 2)
 
 /datum/status_effect/buff/dungeoneerbuff
 	id = "dungeoneerbuff"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/dungeoneerbuff
-	effectedstats = list("constitution" = 1,"endurance" = 1, "strength" = 2)//This only works in 2 small areas on the entire map
+	effectedstats = list(STATKEY_CON = 1,STATKEY_WIL = 1, STATKEY_STR = 2)//This only works in 2 small areas on the entire map
 
 /datum/status_effect/buff/guardbuffone/process()
 
@@ -508,7 +508,7 @@
 
 #undef BLOODHEAL_DUR_SCALE_PER_LEVEL
 #undef BLOODHEAL_RESTORE_DEFAULT
-#undef BLOODHEAL_RESTORE_SCALE_PER_LEVEL 
+#undef BLOODHEAL_RESTORE_SCALE_PER_LEVEL
 #undef BLOODHEAL_DUR_DEFAULT
 // Bloodheal miracle effect end
 
@@ -584,7 +584,7 @@
 		owner.adjustOxyLoss(-healing_on_tick, 0)
 		owner.adjustToxLoss(-healing_on_tick, 0)
 		owner.adjustOrganLoss(ORGAN_SLOT_BRAIN, -healing_on_tick)
-		owner.adjustCloneLoss(-healing_on_tick, 0)		
+		owner.adjustCloneLoss(-healing_on_tick, 0)
 
 /datum/status_effect/buff/psyvived
 	id = "psyvived"
@@ -604,7 +604,7 @@
 
 /datum/status_effect/buff/psyvived/tick()
 	var/obj/effect/temp_visual/heal/H = new /obj/effect/temp_visual/psyheal_rogue(get_turf(owner))
-	H.color = "#aa1717"	
+	H.color = "#aa1717"
 
 /datum/status_effect/buff/rockmuncher
 	id = "rockmuncher"
@@ -671,7 +671,7 @@
 	id = "censer"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/censerbuff
 	duration = 15 MINUTES
-	effectedstats = list("endurance" = 1, "constitution" = 1)
+	effectedstats = list(STATKEY_WIL = 1, STATKEY_CON = 1)
 
 /datum/status_effect/buff/convergence //Increases all healing while it lasts.
 	id = "convergence"
@@ -746,7 +746,7 @@
 	alert_type = /atom/movable/screen/alert/status_effect/buff/guidinglight
 	duration = 30 MINUTES // Lasts for 30 minutes, roughly an ingame day. This should be the gold standard for rituals, unless its some particularly powerul effect or one-time effect(Flylord's triage)
 	status_type = STATUS_EFFECT_REFRESH
-	effectedstats = list("perception" = 2) // This is for basic stat effects, I would consider these a 'little topping' and not what you should rlly aim for for rituals. Ideally we have cool flavor boons, rather than combat stims.
+	effectedstats = list(STATKEY_PER = 2) // This is for basic stat effects, I would consider these a 'little topping' and not what you should rlly aim for for rituals. Ideally we have cool flavor boons, rather than combat stims.
 	examine_text = "SUBJECTPRONOUN walks with Her Light!"
 	var/list/mobs_affected
 	var/obj/effect/dummy/lighting_obj/moblight/mob_light_obj
@@ -775,7 +775,7 @@
 /datum/status_effect/buff/moonlightdance
 	id = "Moonsight"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/moonlightdance
-	effectedstats = list("intelligence" = 2)
+	effectedstats = list(STATKEY_INT = 2)
 	duration = 25 MINUTES
 
 /atom/movable/screen/alert/status_effect/buff/moonlightdance
@@ -962,11 +962,34 @@
 	to_chat(owner, span_warning("My mind is my own again, no longer awash with foggy peace!"))
 	REMOVE_TRAIT(owner, TRAIT_PACIFISM, id)
 
+//A lesser variant of Eoran blessing meant for peacecake consumption.
+/atom/movable/screen/alert/status_effect/buff/peacecake
+	name = "Lesser blessing of Eora"
+	desc = "I feel my heart lighten. All my worries ease away."
+	icon_state = "buff"
+
+/datum/status_effect/buff/peacecake
+	id = "peacecake"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/peacecake
+	duration = 5 MINUTES
+
+/datum/status_effect/buff/peacecake/on_apply()
+	. = ..()
+	to_chat(owner, span_green("Everything feels better."))
+	owner.add_stress(/datum/stressevent/pacified)
+	ADD_TRAIT(owner, TRAIT_PACIFISM, id)
+	playsound(owner, 'sound/misc/peacefulwake.ogg', 100, FALSE, -1)
+
+/datum/status_effect/buff/peacecake/on_remove()
+	. = ..()
+	to_chat(owner, span_warning("My mind is clear again, no longer clouded with foggy peace!"))
+	REMOVE_TRAIT(owner, TRAIT_PACIFISM, id)
+
 /datum/status_effect/buff/call_to_arms
 	id = "call_to_arms"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/call_to_arms
 	duration = 2.5 MINUTES
-	effectedstats = list("strength" = 1, "endurance" = 2, "constitution" = 1)
+	effectedstats = list(STATKEY_STR = 1, STATKEY_WIL = 2, STATKEY_CON = 1)
 
 /atom/movable/screen/alert/status_effect/buff/call_to_arms
 	name = "Call to Arms"
@@ -977,7 +1000,7 @@
 	id = "call_to_slaughter"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/call_to_slaughter
 	duration = 2.5 MINUTES
-	effectedstats = list("strength" = 1, "endurance" = 2, "constitution" = 1)
+	effectedstats = list(STATKEY_STR = 1, STATKEY_WIL = 2, STATKEY_CON = 1)
 
 /atom/movable/screen/alert/status_effect/buff/call_to_slaughter
 	name = "Call to Slaughter"
@@ -992,7 +1015,7 @@
 /datum/status_effect/buff/xylix_joy
 	id = "xylix_joy"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/xylix_joy
-	effectedstats = list("fortune" = 1)
+	effectedstats = list(STATKEY_LCK = 1)
 	duration = 5 MINUTES
 	status_type = STATUS_EFFECT_REFRESH
 
@@ -1008,7 +1031,7 @@
 	id = "vigorized"
 	alert_type = /atom/movable/screen/alert/status_effect/vigorized
 	duration = 10 MINUTES
-	effectedstats = list("speed" = 1, "intelligence" = 1)
+	effectedstats = list(STATKEY_SPD = 1, STATKEY_INT = 1)
 
 /atom/movable/screen/alert/status_effect/vigorized
 	name = "Vigorized"
@@ -1026,7 +1049,7 @@
 /datum/status_effect/buff/seelie_drugs
 	id = "seelie drugs"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/druqks
-	effectedstats = list("intelligence" = 2, "endurance" = 4, "speed" = -3)
+	effectedstats = list(STATKEY_INT = 2, STATKEY_WIL = 4, STATKEY_SPD = -3)
 	duration = 20 SECONDS
 
 
@@ -1087,13 +1110,13 @@
 		owner.add_filter(BLOODRAGE_FILTER, 2, list("type" = "outline", "color" = outline_color, "alpha" = 60, "size" = 2))
 	if(!HAS_TRAIT(owner, TRAIT_DODGEEXPERT))
 		if(owner.STASTR < STRENGTH_SOFTCAP)
-			effectedstats = list("strength" = (STRENGTH_SOFTCAP - owner.STASTR))
+			effectedstats = list(STATKEY_STR = (STRENGTH_SOFTCAP - owner.STASTR))
 			. = ..()
 			return TRUE
 	if(holyskill >= SKILL_LEVEL_APPRENTICE)
-		effectedstats = list("strength" = 2)
+		effectedstats = list(STATKEY_STR = 2)
 	else
-		effectedstats = list("strength" = 1)
+		effectedstats = list(STATKEY_STR = 1)
 	. = ..()
 	return TRUE
 
@@ -1109,7 +1132,7 @@
 /datum/status_effect/buff/psydonic_endurance
 	id = "psydonic_endurance"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/psydonic_endurance
-	effectedstats = list("constitution" = 1,"endurance" = 1) 
+	effectedstats = list(STATKEY_CON = 1,STATKEY_WIL = 1)
 
 /datum/status_effect/buff/psydonic_endurance/on_apply()
 	. = ..()
@@ -1130,7 +1153,7 @@
 /datum/status_effect/buff/sermon
 	id = "sermon"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/sermon
-	effectedstats = list("fortune" = 1, "constitution" = 1, "endurance" = 1, "intelligence" = 2)
+	effectedstats = list(STATKEY_LCK = 1, STATKEY_CON = 1, STATKEY_WIL = 1, STATKEY_INT = 2)
 	duration = 20 MINUTES
 
 /atom/movable/screen/alert/status_effect/buff/sermon
@@ -1141,7 +1164,7 @@
 /datum/status_effect/buff/griefflower
 	id = "griefflower"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/griefflower
-	effectedstats = list("constitution" = 1,"endurance" = 1) 
+	effectedstats = list(STATKEY_CON = 1,STATKEY_WIL = 1)
 
 /datum/status_effect/buff/griefflower/on_apply()
 	. = ..()
@@ -1168,7 +1191,7 @@
 	alert_type = /atom/movable/screen/alert/status_effect/buff/adrenaline_rush
 	duration = 18 SECONDS
 	examine_text = "SUBJECTPRONOUN is amped up!"
-	effectedstats = list("endurance" = 1)
+	effectedstats = list(STATKEY_WIL = 1)
 	var/blood_restore = 30
 
 /datum/status_effect/buff/adrenaline_rush/on_apply()
@@ -1183,3 +1206,182 @@
 /datum/status_effect/buff/adrenaline_rush/on_remove()
 	. = ..()
 	REMOVE_TRAIT(owner, TRAIT_ADRENALINE_RUSH, INNATE_TRAIT)
+
+/datum/status_effect/buff/magicknowledge
+	id = "intelligence"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/knowledge
+	effectedstats = list("intelligence" = 2)
+	duration = 10 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/knowledge
+	name = "runic cunning"
+	desc = "I am magically astute."
+	icon_state = "buff"
+
+/datum/status_effect/buff/magicstrength
+	id = "strength"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/strength
+	effectedstats = list("strength" = 3)
+	duration = 20 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/strength
+	name = "arcane reinforced strength"
+	desc = "I am magically strengthened."
+	icon_state = "buff"
+
+/datum/status_effect/buff/magicstrength/lesser
+	id = "lesser strength"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/strength/lesser
+	effectedstats = list("strength" = 1)
+	duration = 20 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/strength/lesser
+	name = "lesser arcane strength"
+	desc = "I am magically strengthened."
+	icon_state = "buff"
+
+
+/datum/status_effect/buff/magicspeed
+	id = "speed"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/speed
+	effectedstats = list("speed" = 3)
+	duration = 20 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/speed
+	name = "arcane swiftness"
+	desc = "I am magically swift."
+	icon_state = "buff"
+
+/datum/status_effect/buff/magicspeed/lesser
+	id = "lesser speed"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/speed/lesser
+	effectedstats = list("speed" = 1)
+	duration = 20 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/speed/lesser
+	name = "arcane swiftness"
+	desc = "I am magically swift."
+	icon_state = "buff"
+
+/datum/status_effect/buff/magicwillpower
+	id = "willpower"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/willpower
+	effectedstats = list("willpower" = 3)
+	duration = 20 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/willpower
+	name = "arcane willpower"
+	desc = "I am magically resilient."
+	icon_state = "buff"
+
+/datum/status_effect/buff/magicwillpower/lesser
+	id = "lesser willpower"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/willpower/lesser
+	effectedstats = list("willpower" = 1)
+	duration = 20 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/willpower/lesser
+	name = "lesser arcane willpower"
+	desc = "I am magically resilient."
+	icon_state = "buff"
+
+
+/datum/status_effect/buff/magicconstitution
+	id = "constitution"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/constitution
+	effectedstats = list("constitution" = 3)
+	duration = 20 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/constitution
+	name = "arcane constitution"
+	desc = "I feel reinforced by magick."
+	icon_state = "buff"
+
+/datum/status_effect/buff/magicconstitution/lesser
+	id = "lesser constitution"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/constitution/lesser
+	effectedstats = list("constitution" = 1)
+	duration = 20 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/constitution/lesser
+	name = "lesser arcane constitution"
+	desc = "I feel reinforced by magick."
+	icon_state = "buff"
+
+/datum/status_effect/buff/magicperception
+	id = "perception"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/perception
+	effectedstats = list("perception" = 3)
+	duration = 20 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/perception
+	name = "arcane perception"
+	desc = "I can see everything."
+	icon_state = "buff"
+
+/datum/status_effect/buff/magicperception/lesser
+	id = "lesser perception"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/perception/lesser
+	effectedstats = list("perception" = 1)
+	duration = 20 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/perception/lesser
+	name = "lesser arcane perception"
+	desc = "I can see somethings."
+	icon_state = "buff"
+
+/datum/status_effect/buff/nocblessing
+	id = "nocblessing"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/nocblessing
+	effectedstats = list("intelligence" = 1)
+	duration = 30 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/nocblessing
+	name = "Noc's blessing"
+	desc = "Gazing Noc helps me think."
+	icon_state = "buff"
+
+/datum/status_effect/buff/massage
+	id = "massage"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/massage
+	effectedstats = list(STATKEY_CON = 1)
+	duration = 30 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/massage
+	name = "Massage"
+	desc = "My muscles feel relaxed"
+	icon_state = "buff"
+
+/datum/status_effect/buff/goodmassage
+	id = "goodmassage"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/goodmassage
+	effectedstats = list(STATKEY_CON = 1, STATKEY_SPD = 1, STATKEY_STR = 1)
+	duration = 30 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/goodmassage
+	name = "Good Massage"
+	desc = "My muscles feel relaxed and better than before"
+	icon_state = "buff"
+
+/datum/status_effect/buff/greatmassage
+	id = "greatmassage"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/greatmassage
+	effectedstats = list(STATKEY_CON = 2, STATKEY_SPD = 1, STATKEY_STR = 1, STATKEY_LCK =1)
+	duration = 30 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/greatmassage
+	name = "Great Massage"
+	desc = "My body feels better than ever!"
+	icon_state = "buff"
+
+
+/datum/status_effect/buff/refocus
+	id = "refocus"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/refocus
+	effectedstats = list(STATKEY_INT = 2, STATKEY_WIL = -1)
+	duration = 15 MINUTES
+
+/atom/movable/screen/alert/status_effect/buff/refocus
+	name = "Refocus"
+	desc = "I've sacrificed some of my learning to help me learn something new"
+	icon_state = "buff"

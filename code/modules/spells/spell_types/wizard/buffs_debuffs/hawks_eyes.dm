@@ -51,7 +51,7 @@
 	var/outline_colour ="#ffff00" // Same color as perception potion
 	id = "hawkseyes"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/hawks_eyes
-	effectedstats = list("perception" = 5)
+	effectedstats = list(STATKEY_PER = 5)
 	duration = 1 MINUTES
 
 /datum/status_effect/buff/hawks_eyes/other
@@ -61,7 +61,7 @@
 	. = ..()
 	var/filter = owner.get_filter(HAWKSEYES_FILTER)
 	if (!filter)
-		owner.add_filter(HAWKSEYES_FILTER, 2, list("type" = "outline", "color" = outline_colour, "alpha" = 200, "size" = 1))
+		owner.add_filter(HAWKSEYES_FILTER, 2, list("type" = "outline", "color" = outline_colour, "alpha" = 25, "size" = 1))
 	to_chat(owner, span_warning("My vision sharpens, like that of a hawk."))
 
 

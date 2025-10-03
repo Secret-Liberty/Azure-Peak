@@ -85,11 +85,14 @@
 				full_price = held_items[O]["PRICE"]
 			if(budget >= full_price)
 				budget -= full_price
+				record_round_statistic(STATS_PURITY_VALUE_SPENT, full_price)
 				recent_payments += held_items[O]["PRICE"]
 				if(!(drugrade_flags & DRUGRADE_NOTAX))
 					SStreasury.give_money_treasury(tax_amt, "purity import tax")
 					record_featured_stat(FEATURED_STATS_TAX_PAYERS, human_mob, tax_amt)
-					GLOB.azure_round_stats[STATS_TAXES_COLLECTED] += tax_amt
+					record_round_statistic(STATS_TAXES_COLLECTED, tax_amt)
+				else
+					record_round_statistic(STATS_TAXES_EVADED, tax_amt)
 			else
 				say("Not enough!")
 				return
@@ -256,6 +259,8 @@
 	held_items[/obj/item/azure_lipstick/jade] = list("PRICE" = rand(33,50),"NAME" = "jade lipstick")
 	held_items[/obj/item/azure_lipstick/purple] = list("PRICE" = rand(33,50),"NAME" = "purple lipstick")
 	held_items[/obj/item/azure_lipstick/black] = list("PRICE" = rand(33,50),"NAME" = "black lipstick")
+	//azure peak addition - zigbox
+	held_items[/obj/item/quiver/zigs] = list("PRICE" = rand(5,10), "NAME" = "zigbox, empty")
 	// azure peak addition end
 /*	held_items[/obj/item/reagent_containers/glass/bottle/rogue/wine] = list("PRICE" = rand(35,77),"NAME" = "vino")
 	held_items[/obj/item/rogueweapon/huntingknife/idagger] = list("PRICE" = rand(20,33),"NAME" = "kinfe")

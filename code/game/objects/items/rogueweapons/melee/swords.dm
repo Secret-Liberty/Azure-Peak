@@ -12,10 +12,18 @@
 	damfactor = 1.1
 	item_d_type = "slash"
 
+/datum/intent/sword/cut/arming
+	damfactor = 1.2
+	clickcd = 10 // Versatile, this create 26 EDPS instead of 20. But still easily beaten by the Sabre
+
 /datum/intent/sword/cut/militia
 	penfactor = 30
 	damfactor = 1.2
 	chargetime = 0.2
+
+/datum/intent/sword/cut/short
+	clickcd = 9
+	damfactor = 1
 
 /datum/intent/sword/chop/militia
 	penfactor = 50
@@ -34,6 +42,19 @@
 	chargetime = 0
 	swingdelay = 0
 	item_d_type = "stab"
+
+/datum/intent/sword/thrust/short
+	clickcd = 8
+	damfactor = 1.1
+	penfactor = 30
+
+/datum/intent/sword/thrust/arming
+	clickcd = 10 // Less than rapier
+	penfactor = 35 // 22 + 35 = 57. Beats light leather slightly more than rapier per strike, but less strike
+
+/datum/intent/sword/thrust/long
+	penfactor = 30 // 2h Longsword already have 30 damage. This let it pierce light armor easily
+	// Their cut is actually pretty decent when 2handed and should be inferior to zwei.
 
 /datum/intent/sword/thrust/krieg
 	damfactor = 0.9
@@ -54,7 +75,7 @@
 /datum/intent/sword/peel
 	name = "armor peel"
 	icon_state = "inpeel"
-	attack_verb = list("peels", "tears")
+	attack_verb = list("<font color ='#e7e7e7'>peels</font>")
 	animname = "cut"
 	blade_class = BCLASS_PEEL
 	hitsound = list('sound/combat/hits/blunt/metalblunt (1).ogg', 'sound/combat/hits/blunt/metalblunt (2).ogg', 'sound/combat/hits/blunt/metalblunt (3).ogg')
@@ -68,6 +89,7 @@
 /datum/intent/sword/peel/big
 	name = "big sword armor peel"
 	reach = 2
+	peel_divisor = 5
 
 /datum/intent/sword/chop
 	name = "chop"
@@ -81,6 +103,12 @@
 	damfactor = 1.0
 	item_d_type = "slash"
 
+/datum/intent/sword/chop/short
+	damfactor = 0.9
+
+/datum/intent/sword/chop/long
+	reach = 2
+
 /datum/intent/sword/cut/falx
 	penfactor = 20
 
@@ -88,6 +116,7 @@
 	penfactor = 40
 
 /datum/intent/sword/cut/krieg
+	damfactor = 1.2
 	clickcd = 10
 
 /datum/intent/sword/thrust/krieg
@@ -104,12 +133,12 @@
 	slot_flags = ITEM_SLOT_HIP | ITEM_SLOT_BACK
 	force = 22
 	force_wielded = 25
-	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust, /datum/intent/sword/peel)
-	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust, /datum/intent/sword/strike, /datum/intent/sword/peel)
+	possible_item_intents = list(/datum/intent/sword/cut/arming, /datum/intent/sword/thrust/arming, /datum/intent/sword/peel)
+	gripped_intents = list(/datum/intent/sword/cut/arming, /datum/intent/sword/thrust/arming, /datum/intent/sword/strike, /datum/intent/sword/peel)
 	damage_deflection = 14
 	icon_state = "sword1"
 	sheathe_icon = "sword1"
-	icon = 'icons/roguetown/weapons/32.dmi'
+	icon = 'icons/roguetown/weapons/swords32.dmi'
 	lefthand_file = 'icons/mob/inhands/weapons/rogue_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/weapons/rogue_righthand.dmi'
 	parrysound = list(
@@ -216,8 +245,8 @@
 		 It has great cultural significance in the empires of Grenzelhoft and Etrusca, where legendary swordsmen have created and perfected many fighting techniques of todae."
 	force = 25
 	force_wielded = 30
-	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust, /datum/intent/sword/strike, /datum/intent/sword/peel)
-	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust, /datum/intent/sword/peel, /datum/intent/sword/chop)
+	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust/long, /datum/intent/sword/strike, /datum/intent/sword/peel)
+	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust/long, /datum/intent/sword/peel, /datum/intent/sword/chop)
 	alt_intents = list(/datum/intent/effect/daze, /datum/intent/sword/strike, /datum/intent/sword/bash)
 	icon_state = "longsword"
 	icon = 'icons/roguetown/weapons/64.dmi'
@@ -238,8 +267,120 @@
 	throwforce = 15
 	thrown_bclass = BCLASS_CUT
 	max_blade_int = 280
+	wdefense_wbonus = 4
 	dropshrink = 0.75
 	smeltresult = /obj/item/ingot/steel
+
+/obj/item/rogueweapon/sword/long/church
+	name = "see longsword"
+	desc = "The workhorse of the Holy See. Blades like this have drawn blood against the  old Infidels and the modern Inhumen heretics alike for centuries."
+	icon_state = "churchsword"
+
+/obj/item/rogueweapon/sword/long/undivided
+	name = "decablade"
+	desc = "With a drop of holy Eclipsum, doth the blade rise. Gilded, gleaming, radiant heat, warm my soul, immolate my enemies."
+	icon_state = "eclipsum"
+	sheathe_icon = "eclipsum"
+	force = 28
+	force_wielded = 33
+
+/obj/item/rogueweapon/sword/long/undivided/getonmobprop(tag)
+	. = ..()
+	if(tag)
+		switch(tag)
+			if("gen") return list(
+				"shrink" = 0.65,
+				"sx" = -14,
+				"sy" = -8,
+				"nx" = 15,
+				"ny" = -7,
+				"wx" = -10,
+				"wy" = -5,
+				"ex" = 7,
+				"ey" = -6,
+				"northabove" = 0,
+				"southabove" = 1,
+				"eastabove" = 1,
+				"westabove" = 0,
+				"nturn" = -13,
+				"sturn" = 110,
+				"wturn" = -60,
+				"eturn" = -30,
+				"nflip" = 1,
+				"sflip" = 1,
+				"wflip" = 8,
+				"eflip" = 1,
+				)
+			if("onback") return list(
+				"shrink" = 0.65,
+				"sx" = -1,
+				"sy" = 2,
+				"nx" = 0,
+				"ny" = 2,
+				"wx" = 2,
+				"wy" = 1,
+				"ex" = 0,
+				"ey" = 1,
+				"nturn" = 0,
+				"sturn" = 0,
+				"wturn" = 70,
+				"eturn" = 15,
+				"nflip" = 1,
+				"sflip" = 1,
+				"wflip" = 1,
+				"eflip" = 1,
+				"northabove" = 1,
+				"southabove" = 0,
+				"eastabove" = 0,
+				"westabove" = 0,
+				)
+			if("wielded") return list(
+				"shrink" = 0.6,
+				"sx" = 3,
+				"sy" = 5,
+				"nx" = -3,
+				"ny" = 5,
+				"wx" = -9,
+				"wy" = 4,
+				"ex" = 9,
+				"ey" = 1,
+				"northabove" = 0,
+				"southabove" = 1,
+				"eastabove" = 1,
+				"westabove" = 0,
+				"nturn" = 0,
+				"sturn" = 0,
+				"wturn" = 0,
+				"eturn" = 15,
+				"nflip" = 8,
+				"sflip" = 0,
+				"wflip" = 8,
+				"eflip" = 0,
+				)
+			if("onbelt") return list(
+				"shrink" = 0.4,
+				"sx" = -4,
+				"sy" = -6,
+				"nx" = 5,
+				"ny" = -6,
+				"wx" = 0,
+				"wy" = -6,
+				"ex" = -1,
+				"ey" = -6,
+				"nturn" = 100,
+				"sturn" = 156,
+				"wturn" = 90,
+				"eturn" = 180,
+				"nflip" = 0,
+				"sflip" = 0,
+				"wflip" = 0,
+				"eflip" = 0,
+				"northabove" = 0,
+				"southabove" = 1,
+				"eastabove" = 1,
+				"westabove" = 0,
+				)
+
 
 
 /obj/item/rogueweapon/sword/long/church
@@ -380,14 +521,6 @@
 	wdefense = 5		//+1
 	wbalance = WBALANCE_SWIFT
 
-/obj/item/rogueweapon/sword/long/malumflamm
-	name = "forgefiend flamberge"
-	desc = "This sword's creation took a riddle in its own making. A great sacrifice was made for a blade of perfect quality."
-	icon_state = "malumflamberge"
-	force = 28 // +3 force as a unique sword. Longsword isn't THAT good anyway
-	force_wielded = 33 // Also +3
-	max_integrity = 200
-
 /obj/item/rogueweapon/sword/long/zizo
 	name = "avantyne longsword"
 	desc = "A wicked, unconventional, and otherwordly blade that was created by no swordsmith - a manifestation of hate for the state of this world that follows no design principles but spite and anger."
@@ -398,13 +531,9 @@
 	equip_delay_self = 0
 	unequip_delay_self = 0
 
-/obj/item/rogueweapon/sword/long/zizo/pickup(mob/living/user)
-	if(!HAS_TRAIT(user, TRAIT_CABAL))
-		to_chat(user, "<font color='purple'>UNWORTHY HANDS TOUCHING THIS SWORD, CEASE OR BE PUNISHED!</font>")
-		user.adjust_fire_stacks(5)
-		user.IgniteMob()
-		user.Stun(40)
-	..()
+/obj/item/rogueweapon/sword/long/zizo/Initialize()
+	. = ..()
+	AddComponent(/datum/component/cursed_item, TRAIT_CABAL, "SWORD")
 
 /obj/item/rogueweapon/sword/long/heirloom
 	name = "old longsword"
@@ -566,11 +695,24 @@
 		\"Psydon will deliver those who were mindful of Him to their place of ultimate triumph. No evil will touch them, nor will they grieve.\""
 	icon_state = "psysword"
 	sheathe_icon = "psysword"
+	force = 20
+	force_wielded = 25
+	minstr = 9
+	wdefense = 6
 	dropshrink = 1
+	is_silver = TRUE
+	smeltresult = /obj/item/ingot/silver
 
 /obj/item/rogueweapon/sword/long/psysword/ComponentInitialize()
-	. = ..()							//+3 force, +100 blade int, +50 int, +1 def, make silver
-	add_psyblessed_component(is_preblessed = FALSE, bonus_force = 3, bonus_sharpness = 100, bonus_integrity = 50, bonus_wdef = 1, make_silver = TRUE)
+	AddComponent(\
+		/datum/component/silverbless,\
+		pre_blessed = BLESSING_NONE,\
+		silver_type = SILVER_PSYDONIAN,\
+		added_force = 0,\
+		added_blade_int = 100,\
+		added_int = 50,\
+		added_def = 2,\
+	)
 
 /obj/item/rogueweapon/sword/short
 	name = "steel shortsword"
@@ -585,6 +727,18 @@
 	w_class = WEIGHT_CLASS_NORMAL
 	grid_width = 32
 	grid_height = 96
+
+/obj/item/rogueweapon/sword/short/kazengun
+	name = "steel kodachi"
+	desc = "A razor-edged sword with a wavy pattern weld apparent on its blade."
+	possible_item_intents = list(
+		/datum/intent/sword/cut/short,
+		/datum/intent/sword/thrust/short,
+		/datum/intent/sword/peel,
+		/datum/intent/sword/chop/short,
+		)
+	icon_state = "eastshortsword"
+	sheathe_icon = "kodachi"
 
 /obj/item/rogueweapon/sword/short/iron
 	name = "iron shortsword"
@@ -663,29 +817,37 @@
 /obj/item/rogueweapon/sword/short/psy
 	name = "psydonian shortsword"
 	desc = "Otavan smiths worked with Grenzelhoftian artificers, and an esoteric blade was born: a blade with an unique design, dismissing a crossguard in favor of a hollow beak to hook and draw harm away from its user. Short in length, yet lethally light in weight."
-	force = 19
 	icon_state = "psyswordshort"
 	sheathe_icon = "psyswordshort"
+	force = 17
+	force_wielded = 20
+	minstr = 6
+	wdefense = 5
 	wbalance = WBALANCE_SWIFT
+	is_silver = TRUE
+	smeltresult = /obj/item/ingot/silver
 
 /obj/item/rogueweapon/sword/short/psy/ComponentInitialize()
-	. = ..()							//+3 force, +100 blade int, +50 int, +1 def, make silver
-	add_psyblessed_component(is_preblessed = FALSE, bonus_force = 3, bonus_sharpness = 100, bonus_integrity = 50, bonus_wdef = 1, make_silver = TRUE)
-
-/obj/item/rogueweapon/sword/short/psy/preblessed
+	AddComponent(\
+		/datum/component/silverbless,\
+		pre_blessed = BLESSING_NONE,\
+		silver_type = SILVER_PSYDONIAN,\
+		added_force = 0,\
+		added_blade_int = 100,\
+		added_int = 50,\
+		added_def = 2,\
+	)
 
 /obj/item/rogueweapon/sword/short/psy/preblessed/ComponentInitialize()
-	// PREBLESS IT +3 force, +100 blade int, +50 int, +1 def, make silver
-	add_psyblessed_component(is_preblessed = TRUE, bonus_force = 3, bonus_sharpness = 100, bonus_integrity = 50, bonus_wdef = 1, make_silver = TRUE)
-
-/datum/intent/sword/cut/short
-	clickcd = 9
-	damfactor = 1
-
-/datum/intent/sword/thrust/short
-	clickcd = 8
-	damfactor = 1.1
-	penfactor = 30
+	AddComponent(\
+		/datum/component/silverbless,\
+		pre_blessed = BLESSING_PSYDONIAN,\
+		silver_type = SILVER_PSYDONIAN,\
+		added_force = 0,\
+		added_blade_int = 100,\
+		added_int = 50,\
+		added_def = 2,\
+	)
 
 /obj/item/rogueweapon/sword/short/messer
 	name = "messer"
@@ -764,6 +926,15 @@
 	icon_state = "isaber"
 	sellprice = 10
 
+/obj/item/rogueweapon/sword/sabre/steppesman
+	name = "aavnic shashka"
+	desc = "A single-edged, single-handed, and guardless blade of northern Aavnic make with a brass pommel in the shape of a zad's head. The gentle curve of its blade puts it midway between a radically curved sabre and a straight sword, effective for both cutting and thrusting but lacking raw defense potential."
+	possible_item_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/thrust/sabre, /datum/intent/rend, /datum/intent/sword/chop)
+	wdefense = 5
+	minstr = 6
+	icon_state = "shashka"
+	sheathe_icon = "shashka"
+
 //Unique church sword - slightly better than regular sabre due to falx chop.
 /obj/item/rogueweapon/sword/sabre/nockhopesh
 	name = "moonlight khopesh"
@@ -798,10 +969,13 @@
 	item_state = "esaber"
 	lefthand_file = 'icons/mob/inhands/weapons/swords_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/weapons/swords_righthand.dmi'
-	force = 25	//Base is 22
+	force = 25
+	force_wielded = 25
+	minstr = 7
+	wdefense = 9
 	last_used = 0
-	is_silver = TRUE
-	smeltresult = /obj/item/ingot/silver
+	is_silver = FALSE
+	smeltresult = /obj/item/ingot/gold
 	smelt_bar_num = 2
 
 /obj/item/rogueweapon/sword/sabre/shamshir
@@ -964,10 +1138,23 @@
 	sheathe_icon = "psyrapier"
 	max_integrity = 300
 	max_blade_int = 300
-	wdefense = 7
+	force = 17
+	force_wielded = 20
+	minstr = 8
+	wdefense = 8
+	smeltresult = /obj/item/ingot/silver
+	is_silver = TRUE
 
-/obj/item/rogueweapon/sword/rapier/psy/relic/ComponentInitialize()		//Pre-blessed, +100 Blade int, +100 int, +2 def, make it silver
-	add_psyblessed_component(is_preblessed = TRUE, bonus_force = 3, bonus_sharpness = 100, bonus_integrity = 100, bonus_wdef = 2, make_silver = TRUE)
+/obj/item/rogueweapon/sword/rapier/psy/relic/ComponentInitialize()
+	AddComponent(\
+		/datum/component/silverbless,\
+		pre_blessed = BLESSING_PSYDONIAN,\
+		silver_type = SILVER_PSYDONIAN,\
+		added_force = 0,\
+		added_blade_int = 100,\
+		added_int = 100,\
+		added_def = 2,\
+	)
 
 /obj/item/rogueweapon/sword/rapier/lord
 	name = "sword of the Mad Duke"
@@ -984,7 +1171,7 @@
 /obj/item/rogueweapon/sword/rapier/eora
 	name = "\"Heartstring\""
 	desc = "A specialty-made bilbo hilt rapier made in service to Lady Eora. For the time when soft words can no longer be spoken, and hearts are to be pierced."
-	icon = 'icons/roguetown/weapons/32.dmi'
+	icon = 'icons/roguetown/weapons/swords32.dmi'
 	icon_state = "eorarapier"
 	sheathe_icon = "eorarapier"
 	grid_width = 32
@@ -1007,27 +1194,32 @@
 
 
 /obj/item/rogueweapon/sword/silver
-	force = 24
 	name = "silver sword"
 	desc = "A sword forged of pure silver, the guard fashioned into a cross - a weapon to ward off creechers of evil."
 	icon_state = "silversword"
 	sheathe_icon = "silversword"
+	force = 17
+	force_wielded = 20
+	minstr = 9
+	wdefense = 5
 	is_silver = TRUE
 	smeltresult = /obj/item/ingot/silver
 	smelt_bar_num = 2
 	max_blade_int = 230
 	max_integrity = 200
 
-/obj/item/rogueweapon/sword/long/blackflamb
-	name = "blacksteel flamberge"
-	desc = "An uncommon kind of sword with a characteristically undulating style of blade, made with an equally rare metal. The wave in the blade is considered to contribute a flame-like quality to its appearance, turning it into a menacing sight. \"Flaming swords\" are often the protagonists of Otavan epics and other knights' tales."
-	force = 20
-	force_wielded = 32
-	icon_state = "blackflamb"
-	smeltresult = /obj/item/ingot/blacksteel
-	max_integrity = 200
+/obj/item/rogueweapon/sword/silver/ComponentInitialize()
+	AddComponent(\
+		/datum/component/silverbless,\
+		pre_blessed = BLESSING_NONE,\
+		silver_type = SILVER_TENNITE,\
+		added_force = 0,\
+		added_blade_int = 50,\
+		added_int = 50,\
+		added_def = 2,\
+	)
 
-/obj/item/rogueweapon/sword/long/blackflamb/getonmobprop(tag)
+/obj/item/rogueweapon/greatsword/grenz/flamberge/blacksteel/getonmobprop(tag)
 	. = ..()
 	if(tag)
 		switch(tag)
@@ -1271,6 +1463,114 @@
 	smelt_bar_num = 2
 	max_integrity = 999
 
+/obj/item/rogueweapon/sword/long/holysee/ComponentInitialize()
+	AddComponent(\
+		/datum/component/silverbless,\
+		pre_blessed = BLESSING_NONE,\
+		silver_type = SILVER_TENNITE,\
+		added_force = 0,\
+		added_blade_int = 50,\
+		added_int = 50,\
+		added_def = 2,\
+	)
+
+/obj/item/rogueweapon/sword/long/holysee/getonmobprop(tag)
+	. = ..()
+	if(tag)
+		switch(tag)
+			if("gen") return list(
+				"shrink" = 0.65,
+				"sx" = -14,
+				"sy" = -8,
+				"nx" = 15,
+				"ny" = -7,
+				"wx" = -10,
+				"wy" = -5,
+				"ex" = 7,
+				"ey" = -6,
+				"northabove" = 0,
+				"southabove" = 1,
+				"eastabove" = 1,
+				"westabove" = 0,
+				"nturn" = -13,
+				"sturn" = 110,
+				"wturn" = -60,
+				"eturn" = -30,
+				"nflip" = 1,
+				"sflip" = 1,
+				"wflip" = 8,
+				"eflip" = 1,
+				)
+			if("onback") return list(
+				"shrink" = 0.65,
+				"sx" = -1,
+				"sy" = 2,
+				"nx" = 0,
+				"ny" = 2,
+				"wx" = 2,
+				"wy" = 1,
+				"ex" = 0,
+				"ey" = 1,
+				"nturn" = 0,
+				"sturn" = 0,
+				"wturn" = 70,
+				"eturn" = 15,
+				"nflip" = 1,
+				"sflip" = 1,
+				"wflip" = 1,
+				"eflip" = 1,
+				"northabove" = 1,
+				"southabove" = 0,
+				"eastabove" = 0,
+				"westabove" = 0,
+				)
+			if("wielded") return list(
+				"shrink" = 0.6,
+				"sx" = 3,
+				"sy" = 5,
+				"nx" = -3,
+				"ny" = 5,
+				"wx" = -9,
+				"wy" = 4,
+				"ex" = 9,
+				"ey" = 1,
+				"northabove" = 0,
+				"southabove" = 1,
+				"eastabove" = 1,
+				"westabove" = 0,
+				"nturn" = 0,
+				"sturn" = 0,
+				"wturn" = 0,
+				"eturn" = 15,
+				"nflip" = 8,
+				"sflip" = 0,
+				"wflip" = 8,
+				"eflip" = 0,
+				)
+			if("onbelt") return list(
+				"shrink" = 0.4,
+				"sx" = -4,
+				"sy" = -6,
+				"nx" = 5,
+				"ny" = -6,
+				"wx" = 0,
+				"wy" = -6,
+				"ex" = -1,
+				"ey" = -6,
+				"nturn" = 100,
+				"sturn" = 156,
+				"wturn" = 90,
+				"eturn" = 180,
+				"nflip" = 0,
+				"sflip" = 0,
+				"wflip" = 0,
+				"eflip" = 0,
+				"northabove" = 0,
+				"southabove" = 1,
+				"eastabove" = 1,
+				"westabove" = 0,
+				)
+
 /obj/item/rogueweapon/sword/long/kriegmesser
 	name = "kriegsmesser"
 	desc = "A large two-handed sword with a single-edged blade, a crossguard and a knife-like hilt. \
@@ -1470,3 +1770,63 @@
 		else
 			to_chat(user, span_warning("They aren't holding anything on that hand!"))
 			return
+
+/obj/item/rogueweapon/sword/long/shotel
+	name = "steel shotel"
+	icon_state = "shotel_steel"
+	icon = 'icons/roguetown/weapons/64.dmi'
+	desc = "A long curved blade of Ranesheni Design."
+	possible_item_intents = list(/datum/intent/sword/cut/zwei, /datum/intent/sword/chop/long) //Shotels get 2 tile reach.
+	gripped_intents = list(/datum/intent/sword/cut/zwei, /datum/intent/sword/chop/long)
+	swingsound = BLADEWOOSH_LARGE
+	parrysound = "largeblade"
+	pickup_sound = "brandish_blade"
+	bigboy = TRUE
+	wlength = WLENGTH_LONG
+	gripsprite = FALSE // OAUGHHHH!!! OAUGUUGHh!!!!1 aaaaAAAAAHH!!!
+	pixel_y = -16
+	pixel_x = -16
+	inhand_x_dimension = 64
+	inhand_y_dimension = 64
+	slot_flags = ITEM_SLOT_BACK|ITEM_SLOT_HIP
+	dropshrink = 0.8
+	max_integrity = 150 //Sword with two tile reach but very low integrity.
+	max_blade_int = 150
+
+/obj/item/rogueweapon/sword/long/shotel/getonmobprop(tag)
+	. = ..()
+	if(tag)
+		switch(tag)
+			if("gen")
+				return list("shrink" = 0.5,"sx" = -14,"sy" = -8,"nx" = 15,"ny" = -7,"wx" = -10,"wy" = -5,"ex" = 7,"ey" = -6,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = -13,"sturn" = 110,"wturn" = -60,"eturn" = -30,"nflip" = 1,"sflip" = 1,"wflip" = 8,"eflip" = 1)
+			if("altgrip")
+				return list("shrink" = 0.5,"sx" = -14,"sy" = -8,"nx" = 15,"ny" = -7,"wx" = -10,"wy" = -5,"ex" = 7,"ey" = -6,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = 167,"sturn" = 290,"wturn" = 120,"eturn" = 150,"nflip" = 1,"sflip" = 1,"wflip" = 8,"eflip" = 1)
+			if("onback")
+				return list("shrink" = 0.5,"sx" = -1,"sy" = 2,"nx" = 0,"ny" = 2,"wx" = 2,"wy" = 1,"ex" = 0,"ey" = 1,"nturn" = 0,"sturn" = 0,"wturn" = 70,"eturn" = 15,"nflip" = 1,"sflip" = 1,"wflip" = 1,"eflip" = 1,"northabove" = 1,"southabove" = 0,"eastabove" = 0,"westabove" = 0)
+			if("wielded")
+				return list("shrink" = 0.4,"sx" = 3,"sy" = 4,"nx" = -1,"ny" = 4,"wx" = -8,"wy" = 3,"ex" = 7,"ey" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 15,"nflip" = 8,"sflip" = 0,"wflip" = 8,"eflip" = 0)
+			if("onbelt")
+				return list("shrink" = 0.4,"sx" = -4,"sy" = -6,"nx" = 5,"ny" = -6,"wx" = 0,"wy" = -6,"ex" = -1,"ey" = -6,"nturn" = 100,"sturn" = 156,"wturn" = 90,"eturn" = 180,"nflip" = 0,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0)
+
+/obj/item/rogueweapon/sword/long/shotel/iron
+	name = "iron shotel"
+	icon_state = "shotel_iron"
+	swingsound = BLADEWOOSH_LARGE
+	max_integrity = 100
+	max_blade_int = 100
+	smeltresult = /obj/item/ingot/iron
+
+/obj/item/rogueweapon/sword/long/shotel/iron/getonmobprop(tag)
+	. = ..()
+	if(tag)
+		switch(tag)
+			if("gen")
+				return list("shrink" = 0.5,"sx" = -14,"sy" = -8,"nx" = 15,"ny" = -7,"wx" = -10,"wy" = -5,"ex" = 7,"ey" = -6,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = -13,"sturn" = 110,"wturn" = -60,"eturn" = -30,"nflip" = 1,"sflip" = 1,"wflip" = 8,"eflip" = 1)
+			if("altgrip")
+				return list("shrink" = 0.5,"sx" = -14,"sy" = -8,"nx" = 15,"ny" = -7,"wx" = -10,"wy" = -5,"ex" = 7,"ey" = -6,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = 167,"sturn" = 290,"wturn" = 120,"eturn" = 150,"nflip" = 1,"sflip" = 1,"wflip" = 8,"eflip" = 1)
+			if("onback")
+				return list("shrink" = 0.5,"sx" = -1,"sy" = 2,"nx" = 0,"ny" = 2,"wx" = 2,"wy" = 1,"ex" = 0,"ey" = 1,"nturn" = 0,"sturn" = 0,"wturn" = 70,"eturn" = 15,"nflip" = 1,"sflip" = 1,"wflip" = 1,"eflip" = 1,"northabove" = 1,"southabove" = 0,"eastabove" = 0,"westabove" = 0)
+			if("wielded")
+				return list("shrink" = 0.4,"sx" = 3,"sy" = 4,"nx" = -1,"ny" = 4,"wx" = -8,"wy" = 3,"ex" = 7,"ey" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 15,"nflip" = 8,"sflip" = 0,"wflip" = 8,"eflip" = 0)
+			if("onbelt")
+				return list("shrink" = 0.4,"sx" = -4,"sy" = -6,"nx" = 5,"ny" = -6,"wx" = 0,"wy" = -6,"ex" = -1,"ey" = -6,"nturn" = 100,"sturn" = 156,"wturn" = 90,"eturn" = 180,"nflip" = 0,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0)

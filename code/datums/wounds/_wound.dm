@@ -302,7 +302,7 @@ GLOBAL_LIST_INIT(primordial_wounds, init_primordial_wounds())
 	passive_healing = max(passive_healing, 1)
 	if(mob_overlay != old_overlay)
 		owner?.update_damage_overlays()
-	GLOB.azure_round_stats[STATS_WOUNDS_SEWED]++
+	record_round_statistic(STATS_WOUNDS_SEWED)
 	return TRUE
 
 /// Checks if this wound has a special infection (zombie or werewolf)
@@ -347,11 +347,14 @@ GLOBAL_LIST_INIT(primordial_wounds, init_primordial_wounds())
 
 /datum/wound/proc/update_name()
 	var/newname
+	var/oldname = name
 	if(length(severity_names))
 		for(var/sevname in severity_names)
 			if(severity_names[sevname] <= bleed_rate)
 				newname = sevname
 	name = "[newname  ? "[newname] " : ""][initial(name)]"	//[adjective] [name], aka, "gnarly slash" or "slash"
+	if(name != oldname)
+		owner.visible_message(span_red("The [oldname] on [owner]'s [lowertext(bodyzone2readablezone(bodypart_to_zone(bodypart_owner)))] gets worse!"))
 
 // Blank because it'll be overridden by wound code.
 /datum/wound/dynamic

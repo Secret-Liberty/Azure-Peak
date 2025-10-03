@@ -25,8 +25,8 @@
 /obj/item/clothing/suit/roguetown/armor/plate/iron
 	name = "iron half-plate"
 	desc = "A basic half-plate of iron, protective and moderately durable."
-	icon_state = "ironplate"
-	item_state = "ironplate"
+	icon_state = "ihalfplate"
+	item_state = "ihalfplate"
 	boobed = FALSE	//the armor just looks better with this, makes sense and is 8 sprites less
 	max_integrity = ARMOR_INT_CHEST_PLATE_IRON
 	smeltresult = /obj/item/ingot/iron
@@ -52,7 +52,7 @@
 	name = "fluted half-plate"
 	desc = "A sturdily made fluted half-plate armour-set, complete with pauldrons and shoulder-guards. \
 	Supposedly made to deflect blows."
-	icon_state = "flutedhalfplate"
+	icon_state = "ornatehalfplate"
 
 	equip_delay_self = 6 SECONDS
 	unequip_delay_self = 6 SECONDS
@@ -68,13 +68,9 @@
 	icon_state = "graggarplate"
 	armor = ARMOR_CUIRASS
 
-/obj/item/clothing/suit/roguetown/armor/plate/fluted/graggar/pickup(mob/living/user)
-	if(!HAS_TRAIT(user, TRAIT_HORDE))
-		to_chat(user, "<font color='red'>UNWORTHY HANDS TOUCHING THIS ARMOR, CEASE OR BE RENDED ASUNDER!</font>")
-		user.adjust_fire_stacks(5)
-		user.IgniteMob()
-		user.Stun(40)
-	..()
+/obj/item/clothing/suit/roguetown/armor/plate/fluted/graggar/Initialize()
+	. = ..()
+	AddComponent(/datum/component/cursed_item, TRAIT_HORDE, "ARMOR", "RENDERED ASUNDER")
 
 /obj/item/clothing/suit/roguetown/armor/plate/fluted/ornate
 	name = "psydonian half-plate"
@@ -109,7 +105,7 @@
 
 /obj/item/clothing/suit/roguetown/armor/plate/full/iron
 	name = "iron plate armor"
-	icon_state = "iplate"
+	icon_state = "ironplate"
 	desc = "Full iron plate armor. Slow to don and doff without the aid of a good squire."
 	smeltresult = /obj/item/ingot/iron
 	max_integrity = ARMOR_INT_CHEST_PLATE_IRON
@@ -117,7 +113,7 @@
 /obj/item/clothing/suit/roguetown/armor/plate/full/fluted
 	name = "fluted plate"
 	desc = "A sturdily made fluted full-plate. Supposedly made to deflect blows from blades and arrows."
-	icon_state = "flutedplate"
+	icon_state = "ornateplate"
 
 	max_integrity = ARMOR_INT_CHEST_PLATE_STEEL
 
@@ -345,7 +341,7 @@
 
 /obj/item/clothing/suit/roguetown/armor/plate/half/fluted
 	name = "fluted cuirass"
-	icon_state = "flutedcuirass"
+	icon_state = "ornatecuirass"
 	desc = "A sturdy steel cuirass with tassets. Supposedly protective, though maybe not against crossbow bolts."
 
 	body_parts_covered = CHEST | VITALS | LEGS 
@@ -397,10 +393,10 @@
 	smelt_bar_num = 2
 
 /obj/item/clothing/suit/roguetown/armor/plate/scale/steppe
-	name = "steel steppesman hatanga"
-	desc = "A set of steel-scaled hatanga armor hailing from the southern steppes."
+	name = "steel heavy lamellar"
+	desc = "A chestpiece of Aavnic make composed of easily-replaced small rectangular plates of layered steel laced together in rows with wire. Malleable and protective, perfect for cavalrymen."
 	icon_state = "hudesutu"
-	max_integrity = ARMOR_INT_CHEST_MEDIUM_HATANGA		//Gets +25 Integrity for a unique
+	max_integrity = ARMOR_INT_CHEST_MEDIUM_STEEL + 50
 
 /obj/item/clothing/suit/roguetown/armor/plate/scale/inqcoat
 	slot_flags = ITEM_SLOT_ARMOR

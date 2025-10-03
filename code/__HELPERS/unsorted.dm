@@ -238,10 +238,10 @@ Turf and target are separate in case you want to teleport some distance from a t
 			continue
 		if(M.client && M.client.holder && M.client.holder.fakekey) //stealthmins
 			continue
-		var/name = avoid_assoc_duplicate_keys(M.name, namecounts)
+		var/name = avoid_assoc_duplicate_keys(M.real_name, namecounts)
 
 		if(M.real_name && M.real_name != M.name)
-			name += " \[[M.real_name]\]"
+			name += " \[[M.name]\]"
 		if(M.stat == DEAD)
 			continue
 		pois[name] = M
@@ -251,7 +251,7 @@ Turf and target are separate in case you want to teleport some distance from a t
 			if(!A || !A.loc)
 				continue
 			pois[avoid_assoc_duplicate_keys(A.name, namecounts)] = A
-
+	pois = sort_list(pois)
 	return pois
 //Orders mobs by type then by name
 /proc/sortmobs()
@@ -1625,7 +1625,8 @@ GLOBAL_LIST_INIT(duplicate_forbidden_vars,list(
 	/area/rogue/outdoors/beach/forest, \
 	/area/rogue/outdoors/woods, \
 	/area/rogue/outdoors/bog, \
-	/area/rogue/outdoors/mountains \
+	/area/rogue/outdoors/mountains, \
+	/area/rogue/outdoors/rtfield \
 )
 
 /proc/is_valid_hunting_area(area/A)

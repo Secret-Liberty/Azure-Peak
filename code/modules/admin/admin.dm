@@ -5,6 +5,11 @@
 		if(check_rights_for(C, R_ADMIN))
 			to_chat(C, msg)
 
+/proc/spawn_message_admins(msg)
+	msg = "<span class=\"admin\"><span class=\"prefix\">ADMIN LOG:</span> <span class=\"message linkify\">[msg]</span></span>"
+	for(var/client/C in GLOB.admins)
+		if(check_rights_for(C, R_ADMIN) && (C.prefs.admin_chat_toggles & CHAT_ADMINSPAWN))
+			to_chat(C, msg)
 
 /proc/relay_msg_admins(msg)
 	msg = "<span class=\"admin\"><span class=\"prefix\">RELAY:</span> <span class=\"message linkify\">[msg]</span></span>"
@@ -89,6 +94,16 @@
 			var/mob/living/living = M
 			patron = initial(living.patron.name)
 		body += "<br><br>Current Patron: [patron]"
+
+		var/idstatus = "<br>ID Status: "
+		if(!M.ckey)
+			idstatus += "No key!"
+		else if(!M.check_agevet())
+			idstatus += "Unverified"
+		else
+			var/vetadmin = LAZYACCESS(GLOB.agevetted_list, M.ckey)
+			idstatus += "<b>Age Verified</b> by [vetadmin]"
+		body += idstatus
 
 		//Azure port. Incompatibility.
 		/*var/curse_string = ""
@@ -196,9 +211,9 @@
 		body += "<a class='skill-btn' href='?_src_=holder;[HrefToken()];add_stat=[REF(M)];stat=perception'>+</a> "
 		body += "<a class='skill-btn' href='?_src_=holder;[HrefToken()];lower_stat=[REF(M)];stat=perception'>-</a></li>"
 
-		body += "<li>Endurance: [living.STAEND] "
-		body += "<a class='skill-btn' href='?_src_=holder;[HrefToken()];add_stat=[REF(M)];stat=endurance'>+</a> "
-		body += "<a class='skill-btn' href='?_src_=holder;[HrefToken()];lower_stat=[REF(M)];stat=endurance'>-</a></li>"
+		body += "<li>Willpower: [living.STAWIL] "
+		body += "<a class='skill-btn' href='?_src_=holder;[HrefToken()];add_stat=[REF(M)];stat=willpower'>+</a> "
+		body += "<a class='skill-btn' href='?_src_=holder;[HrefToken()];lower_stat=[REF(M)];stat=willpower'>-</a></li>"
 
 		body += "<li>Constitution: [living.STACON] "
 		body += "<a class='skill-btn' href='?_src_=holder;[HrefToken()];add_stat=[REF(M)];stat=constitution'>+</a> "

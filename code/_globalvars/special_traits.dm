@@ -37,6 +37,8 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 	apply_charflaw_equipment(character, player)
 	apply_prefs_special(character, player)
 	apply_prefs_virtue(character, player)
+	if(player.prefs.dnr_pref)
+		apply_dnr_trait(character, player)
 	if(player.prefs.loadout)
 		character.mind.special_items[player.prefs.loadout::name] += player.prefs.loadout.path
 	if(player.prefs.loadout2)
@@ -44,7 +46,7 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 	if(player.prefs.loadout3)
 		character.mind.special_items[player.prefs.loadout3::name] += player.prefs.loadout3.path
 	var/datum/job/assigned_job = SSjob.GetJob(character.mind?.assigned_role)
-	if(assigned_job && length(assigned_job.stat_ceilings))
+	if(assigned_job)
 		assigned_job.clamp_stats(character)
 
 /proc/apply_prefs_virtue(mob/living/carbon/human/character, client/player)
@@ -86,6 +88,10 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 /proc/apply_charflaw_equipment(mob/living/carbon/human/character, client/player)
 	if(character.charflaw)
 		character.charflaw.apply_post_equipment(character)
+		record_featured_object_stat(FEATURED_STATS_VICES, character.charflaw.name)
+
+/proc/apply_dnr_trait(mob/living/carbon/human/character, client/player)
+	ADD_TRAIT(player.mob, TRAIT_DNR, TRAIT_GENERIC)
 
 /proc/apply_prefs_special(mob/living/carbon/human/character, client/player)
 	if(!player)

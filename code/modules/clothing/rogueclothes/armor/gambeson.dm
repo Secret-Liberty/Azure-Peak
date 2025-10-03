@@ -129,10 +129,10 @@
 	shiftable = FALSE
 
 /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/chargah
-	name = "steppesman chargah robe"
-	desc = "A light yet thick robe padded with fine silks and cloth, acting as a mix of traditional gambeson and imported silks of the east. Popular among Aavnr steppesmen."
+	name = "padded caftan"
+	desc = "A long overcoat commonly worn in Naledi, Kazengun, and Aavnr - but mostly associated with steppesmen. This specific kind rivals a gambeson in protection."
 	icon_state = "chargah"
-	color = "#864a4a"
+	color = "#ffffff"
 	boobed = TRUE
 	shiftable = FALSE
 
@@ -143,7 +143,7 @@
 	body_parts_covered = COVERAGE_ALL_BUT_LEGS
 	icon_state = "grenzelshirt"
 	sleeved = 'icons/roguetown/clothing/onmob/helpers/stonekeep_merc.dmi'
-	boobed = TRUE
+	boobed = FALSE // Temporary fix, set to FALSE because for some reason boobed and details don't want to work together, removing the ability to dye it or it's details for the onmob
 	detail_tag = "_detail"
 	detail_color = CLOTHING_WHITE
 	max_integrity = ARMOR_INT_CHEST_LIGHT_MEDIUM

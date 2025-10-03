@@ -1,13 +1,3 @@
-/mob/living/carbon/human
-	var/list/curses = list()
-	COOLDOWN_DECLARE(priest_announcement)
-	COOLDOWN_DECLARE(guildmaster_announcement) //This is not for priest but if you are looking for GUILDMASTER announcements it's here, more so convinence than anything.
-	COOLDOWN_DECLARE(priest_sermon)
-	COOLDOWN_DECLARE(priest_apostasy)
-	COOLDOWN_DECLARE(priest_excommunicate)
-	COOLDOWN_DECLARE(priest_curse)
-	COOLDOWN_DECLARE(priest_change_miracles)
-
 /mob/living/carbon/human/proc/handle_curses()
 	for(var/curse in curses)
 		var/datum/curse/C = curse
@@ -231,7 +221,7 @@
 //PESTRA//
 /datum/curse/pestra/on_gain(mob/living/carbon/human/owner, curse_resist = FALSE)
 	. = ..()
-	owner.STAEND -= (10 * (1 - curse_resist))
+	owner.STAWIL -= (10 * (1 - curse_resist))
 	if(curse_resist && prob(50))
 		return
 	ADD_TRAIT(owner, TRAIT_NORUN, TRAIT_GENERIC)
@@ -239,7 +229,7 @@
 
 /datum/curse/pestra/on_loss(mob/living/carbon/human/owner, curse_resist = FALSE)
 	. = ..()
-	owner.STAEND += (10 * (1 - curse_resist))
+	owner.STAWIL += (10 * (1 - curse_resist))
 	REMOVE_TRAIT(owner, TRAIT_NORUN, TRAIT_GENERIC)
 	REMOVE_TRAIT(owner, TRAIT_MISSING_NOSE, TRAIT_GENERIC)
 

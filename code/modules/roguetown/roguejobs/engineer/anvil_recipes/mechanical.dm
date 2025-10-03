@@ -67,6 +67,14 @@
 	createditem_num = 2
 	craftdiff = 1
 
+/datum/anvil_recipe/engineering/bronze/wrench
+	name = "Engineering Wrench (+1 cog)"
+	req_bar = /obj/item/ingot/bronze
+	created_item = /obj/item/contraption/linker
+	additional_items = list(/obj/item/roguegear)
+	createditem_num = 1
+	craftdiff = 0
+
 /datum/anvil_recipe/engineering/bronze/cog
 	name = "Cog (x2)"
 	req_bar = /obj/item/ingot/bronze
@@ -112,7 +120,7 @@
 /datum/anvil_recipe/engineering/bronze/smokebomb
 	name = "Smoke Bomb (x3) (+Cog, +Ash)"
 	req_bar = /obj/item/ingot/bronze
-	created_item = /obj/item/smokebomb
+	created_item = /obj/item/bomb/smoke
 	additional_items = list(/obj/item/roguegear, /obj/item/ash)
 	createditem_num = 3
 	craftdiff = 3
@@ -129,6 +137,13 @@
 	req_bar = /obj/item/ingot/bronze
 	created_item = /obj/item/storage/hip/headhook/bronze
 	additional_items = list(/obj/item/natural/fibers, /obj/item/natural/fibers)
+	craftdiff = 3
+
+/datum/anvil_recipe/engineering/bronze/orestore
+	name = "Mechanized Ore Bag, Bronze (+1 sac, +1 cog)"
+	req_bar = /obj/item/ingot/bronze
+	created_item = /obj/item/storage/hip/orestore/bronze
+	additional_items = list(/obj/item/roguegear, /obj/item/storage/roguebag)
 	craftdiff = 3
 
 // ------------ PROSTHETICS ----------------

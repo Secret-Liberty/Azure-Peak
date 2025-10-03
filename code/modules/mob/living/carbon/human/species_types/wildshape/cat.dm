@@ -19,7 +19,7 @@
 
 		src.STASTR = 2
 		src.STACON = 2
-		src.STAEND = 7
+		src.STAWIL = 7
 		src.STAPER = 14
 		src.STASPD = 18 //May be overtuned with dodge expert, but this thing is so fragile
 		src.STALUC = 12 //Xylyx's critters
@@ -115,7 +115,7 @@
 	item_state = null
 	lefthand_file = null
 	righthand_file = null
-	icon = 'icons/roguetown/weapons/32.dmi'
+	icon = 'icons/roguetown/weapons/unarmed32.dmi'
 	max_blade_int = 200
 	max_integrity = 200
 	force = 8 //Pitiful, literally less than a wooden stick or a thrown toy

@@ -17,6 +17,32 @@
 	experimental_onhip = FALSE
 	var/overarmor = TRUE
 
+/obj/item/clothing/mask/rogue/AltRightClick(mob/user)
+	if(!istype(loc, /mob/living/carbon))
+		return
+	var/mob/living/carbon/H = user
+	if(icon_state == "[initial(icon_state)]_snout")
+		icon_state = initial(icon_state)
+		flags_inv &= ~HIDESNOUT
+		H.update_inv_wear_mask()
+		update_icon()
+		return
+
+	var/icon/J = new('icons/roguetown/clothing/onmob/masks.dmi')
+	var/list/istates = J.IconStates()
+	for(var/icon_s in istates)
+		if(findtext(icon_s, "[icon_state]_snout"))
+			icon_state += "_snout"
+			flags_inv &= HIDESNOUT
+			H.update_inv_wear_mask()
+			update_icon()
+			return
+
+/obj/item/clothing/mask/rogue/examine()
+	. = ..()
+
+	. += "[span_notice("Alt+RMB while on face to swap sprites between snout and standard variant, if it exists.")]"
+
 /obj/item/clothing/mask/rogue/spectacles
 	name = "spectacles"
 	icon_state = "glasses"
@@ -92,6 +118,36 @@
 	resistance_flags = FIRE_PROOF
 	body_parts_covered = EYES
 	anvilrepair = /datum/skill/craft/armorsmithing
+	var/active_item = FALSE
+
+/obj/item/clothing/mask/rogue/spectacles/golden/equipped(mob/user, slot)
+	..()
+	if(active_item)
+		return
+	else if(slot == SLOT_WEAR_MASK || slot == SLOT_HEAD)
+		if (user.get_skill_level(/datum/skill/craft/engineering) >= 2)
+			ADD_TRAIT(user, TRAIT_ENGINEERING_GOGGLES, "[type]")
+			user.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/engineeranalyze)
+			to_chat(user, span_notice("Time to build"))
+			active_item = TRUE
+			return
+		else 
+			to_chat(user, span_notice("I can't understand these words and numbers before my eyes"))
+			return
+	else
+		return
+
+				
+		
+		
+
+/obj/item/clothing/mask/rogue/spectacles/golden/dropped(mob/user, slot)
+	..()
+	if(active_item)
+		active_item = FALSE
+		REMOVE_TRAIT(user, TRAIT_ENGINEERING_GOGGLES, "[type]")
+		user.mind.RemoveSpell(new /obj/effect/proc_holder/spell/invoked/engineeranalyze)
+		to_chat(user, span_notice("Time to stop working"))
 
 /obj/item/clothing/mask/rogue/spectacles/Initialize()
 	..()
@@ -283,24 +339,6 @@
 	armor = ARMOR_MASK_METAL_BAD
 	smeltresult = /obj/item/ingot/copper
 
-/obj/item/clothing/mask/rogue/facemask/hound
-	name = "hound mask"
-	icon_state = "imask_hound"
-	max_integrity = 100
-	blocksound = PLATEHIT
-	break_sound = 'sound/foley/breaksound.ogg'
-	drop_sound = 'sound/foley/dropsound/armor_drop.ogg'
-	resistance_flags = FIRE_PROOF
-	armor = ARMOR_MASK_METAL
-	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_CHOP, BCLASS_BLUNT)
-	flags_inv = HIDEFACE|HIDESNOUT
-	body_parts_covered = FACE
-	block2add = FOV_BEHIND
-	slot_flags = ITEM_SLOT_MASK|ITEM_SLOT_HIP
-	experimental_onhip = TRUE
-	anvilrepair = /datum/skill/craft/armorsmithing
-	smeltresult = /obj/item/ingot/iron
-
 /obj/item/clothing/mask/rogue/facemask/psydonmask
 	name = "psydonian mask"
 	desc = "A silver mask, forever locked in a rigor of uncontestable joy. The Order of Saint Xylix can't decide on whether it's meant to represent Psydon's 'mirthfulness,' 'theatricality,' or the unpredictable melding of both."
@@ -382,6 +420,13 @@
 	desc = "A steel mask, made for those who have snouts, protecting the eyes, nose and muzzle while obscuring the face."
 	icon_state = "smask_hound"
 
+/obj/item/clothing/mask/rogue/facemask/steel/steppesman
+	name = "steppesman war mask"
+	desc = "A steel mask shaped like the face of a rather charismatic fellow! Pronounced cheeks, a nose, and a large mustache. Well, people outside of Aavnr don't think you'd look charismatic at all wearing this."
+	max_integrity = 250
+	icon_state = "steppemask"
+	layer = HEAD_LAYER
+
 /obj/item/clothing/mask/rogue/facemask/goldmask
 	name = "Gold Mask"
 	icon_state = "goldmask"
@@ -389,11 +434,20 @@
 	sellprice = 100
 	smeltresult = /obj/item/ingot/gold
 
+/obj/item/clothing/mask/rogue/facemask/yoruku_oni
+	name = "oni mask"
+	desc = "A wood mask carved in the visage of demons said to stalk the mountains of Kazengun."
+	icon_state = "oni"
+
+/obj/item/clothing/mask/rogue/facemask/yoruku_kitsune
+	name = "kitsune mask"
+	desc = "A wood mask carved in the visage of the fox spirits said to ply their tricks in the forests of Kazengun."
+	icon_state = "kitsune"
+
 /obj/item/clothing/mask/rogue/shepherd
 	name = "halfmask"
 	icon_state = "shepherd"
 	flags_inv = HIDEFACE|HIDEFACIALHAIR|HIDESNOUT
-	body_parts_covered = NECK|MOUTH
 	slot_flags = ITEM_SLOT_MASK|ITEM_SLOT_HIP
 	adjustable = CAN_CADJUST
 	toggle_icon_state = TRUE
@@ -440,7 +494,6 @@
 	name = "rag mask"
 	icon_state = "ragmask"
 	flags_inv = HIDEFACE|HIDEFACIALHAIR|HIDESNOUT
-	body_parts_covered = NECK|MOUTH
 	slot_flags = ITEM_SLOT_MASK|ITEM_SLOT_HIP
 	adjustable = CAN_CADJUST
 	toggle_icon_state = TRUE
@@ -460,14 +513,31 @@
 	desc = "Runes and wards, meant for daemons; the gold has somehow rusted in unnatural, impossible agony. The most prominent of these etchings is in the shape of the Naledian psycross. Armored to protect the wearer's face."
 	max_integrity = 100
 	armor = ARMOR_MASK_METAL
+	flags_inv = HIDEFACE|HIDESNOUT
 	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_CHOP, BCLASS_BLUNT)
 	sellprice = 0
+
+/obj/item/clothing/mask/rogue/lordmask/naledi/equipped(mob/user, slot)
+	. = ..()
+	if(ishuman(user))
+		var/mob/living/carbon/human/H = user
+		if(H.merctype == 14)	//Naledi
+			H.remove_status_effect(/datum/status_effect/debuff/lost_naledi_mask)
+			H.remove_stress(/datum/stressevent/naledimasklost)
+
+/obj/item/clothing/mask/rogue/lordmask/naledi/dropped(mob/user)
+	. = ..()
+	if(ishuman(user))
+		var/mob/living/carbon/human/H = user
+		if(H.merctype == 14)	//Naledi
+			if(!istiefling(user)) //Funny exception
+				H.apply_status_effect(/datum/status_effect/debuff/lost_naledi_mask)
+				H.add_stress(/datum/stressevent/naledimasklost)
 
 /obj/item/clothing/mask/rogue/exoticsilkmask
 	name = "exotic silk mask"
 	icon_state = "exoticsilkmask"
 	flags_inv = HIDEFACE|HIDEFACIALHAIR
-	body_parts_covered = NECK|MOUTH
 	slot_flags = ITEM_SLOT_MASK|ITEM_SLOT_HIP
 	sewrepair = TRUE
 	adjustable = CAN_CADJUST

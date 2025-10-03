@@ -80,6 +80,11 @@
 	item_type = /obj/structure/closet/crate/chest/inqcrate/supplies/chains
 	marquescost = 6
 
+/datum/inqports/supplies/blessedbolts
+	name = "1 Quiver of Holy Water Bolts"
+	item_type = /obj/item/quiver/holybolts
+	marquescost = 2
+
 /obj/structure/closet/crate/chest/inqcrate/supplies/chains/Initialize()
 	. = ..()
 	new /obj/item/rope/chain(src)
@@ -138,10 +143,10 @@
 
 /obj/structure/closet/crate/chest/inqcrate/supplies/smokes/Initialize()
 	. = ..()
-	new /obj/item/smokebomb(src)
-	new /obj/item/smokebomb(src)
-	new /obj/item/smokebomb(src)
-	new /obj/item/smokebomb(src)
+	new /obj/item/bomb/smoke(src)
+	new /obj/item/bomb/smoke(src)
+	new /obj/item/bomb/smoke(src)
+	new /obj/item/bomb/smoke(src)
 
 /datum/inqports/supplies/psybuns
 	name = "The Otavan Bakery Special"

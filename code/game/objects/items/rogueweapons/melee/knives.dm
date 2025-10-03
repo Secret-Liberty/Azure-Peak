@@ -33,7 +33,7 @@
 	icon_state = "inpick"
 	attack_verb = list("stabs", "impales")
 	hitsound = list('sound/combat/hits/bladed/genstab (1).ogg', 'sound/combat/hits/bladed/genstab (2).ogg', 'sound/combat/hits/bladed/genstab (3).ogg')
-	penfactor = 75
+	penfactor = 80
 	clickcd = 14
 	swingdelay = 12
 	damfactor = 1.1
@@ -81,7 +81,7 @@
 	desc = "A hunter's prized possession. Keep it sharp, and it might last you through the wild."
 	icon_state = "huntingknife"
 	sheathe_icon = "huntingknife"
-	icon = 'icons/roguetown/weapons/32.dmi'
+	icon = 'icons/roguetown/weapons/daggers32.dmi'
 	item_state = "bone_dagger"
 	lefthand_file = 'icons/mob/inhands/weapons/swords_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/weapons/swords_righthand.dmi'
@@ -178,7 +178,7 @@
 	desc = "Chop, chop, chop!"
 	possible_item_intents = list(/datum/intent/dagger/cut, /datum/intent/dagger/chop/cleaver)
 	icon_state = "cleaver"
-	icon = 'icons/roguetown/weapons/32.dmi'
+	icon = 'icons/roguetown/weapons/daggers32.dmi'
 	parrysound = list('sound/combat/parry/bladed/bladedmedium (1).ogg','sound/combat/parry/bladed/bladedmedium (2).ogg','sound/combat/parry/bladed/bladedmedium (3).ogg')
 	swingsound = list('sound/combat/wooshes/bladed/wooshmed (1).ogg','sound/combat/wooshes/bladed/wooshmed (2).ogg','sound/combat/wooshes/bladed/wooshmed (3).ogg')
 	throwforce = 15
@@ -222,7 +222,7 @@
 	desc = "Keep it in the kitchen!"
 	possible_item_intents = list(/datum/intent/dagger/cut, /datum/intent/dagger/chop/cleaver, /datum/intent/dagger/thrust)
 	icon_state = "chefsknife"
-	icon = 'icons/roguetown/weapons/32.dmi'
+	icon = 'icons/roguetown/weapons/daggers32.dmi'
 	parrysound = list('sound/combat/parry/bladed/bladedmedium (1).ogg','sound/combat/parry/bladed/bladedmedium (2).ogg','sound/combat/parry/bladed/bladedmedium (3).ogg')
 	swingsound = list('sound/combat/wooshes/bladed/wooshmed (1).ogg','sound/combat/wooshes/bladed/wooshmed (2).ogg','sound/combat/wooshes/bladed/wooshmed (3).ogg')
 	throwforce = 15
@@ -239,7 +239,7 @@
 	possible_item_intents = list(/datum/intent/dagger/cut, /datum/intent/dagger/chop/cleaver, /datum/intent/dagger/sucker_punch,)
 	icon_state = "combatknife"
 	sheathe_icon = "combatknife"
-	icon = 'icons/roguetown/weapons/32.dmi'
+	icon = 'icons/roguetown/weapons/daggers32.dmi'
 	parrysound = list('sound/combat/parry/bladed/bladedmedium (1).ogg','sound/combat/parry/bladed/bladedmedium (2).ogg','sound/combat/parry/bladed/bladedmedium (3).ogg')
 	swingsound = list('sound/combat/wooshes/bladed/wooshmed (1).ogg','sound/combat/wooshes/bladed/wooshmed (2).ogg','sound/combat/wooshes/bladed/wooshmed (3).ogg')
 	throwforce = 16
@@ -358,16 +358,30 @@
 	desc = "A steel dagger imported from the Kazengunese archipelago. A sturdy blade bears a subtle curve, set into a decorated circular crossguard. A waxed \
 	wrapping of twisted cordage provides a secure grip."
 	icon_state = "eastdagger"
+	sheathe_icon = "tanto"
 
 /obj/item/rogueweapon/huntingknife/idagger/silver
 	name = "silver dagger"
 	desc = "This silver dagger can be the banishment of vampires and werewolves."
 	icon_state = "sildagger"
 	sheathe_icon = "sildagger"
+	force = 15
+	wdefense = 6
 	sellprice = 50
 	smeltresult = /obj/item/ingot/silver
 	last_used = 0
 	is_silver = TRUE
+
+/obj/item/rogueweapon/huntingknife/idagger/silver/ComponentInitialize()
+	AddComponent(\
+		/datum/component/silverbless,\
+		pre_blessed = BLESSING_NONE,\
+		silver_type = SILVER_TENNITE,\
+		added_force = 0,\
+		added_blade_int = 50,\
+		added_int = 50,\
+		added_def = 2,\
+	)
 
 /obj/item/rogueweapon/huntingknife/idagger/silver/psydagger
 	name = "psydonian dagger"
@@ -377,60 +391,16 @@
 	sellprice = 70
 
 /obj/item/rogueweapon/huntingknife/idagger/silver/psydagger/ComponentInitialize()
-	. = ..()				//It's preblessed with silver only. Mostly redundant, but safely prevents double-blessing.
-	add_psyblessed_component(is_preblessed = TRUE, bonus_force = 0, bonus_sharpness = 0, bonus_integrity = 0, bonus_wdef = 0, make_silver = TRUE)
+	AddComponent(\
+		/datum/component/silverbless,\
+		pre_blessed = BLESSING_PSYDONIAN,\
+		silver_type = SILVER_PSYDONIAN,\
+		added_force = 0,\
+		added_blade_int = 0,\
+		added_int = 100,\
+		added_def = 2,\
+	)
 	sellprice += 200
-
-/obj/item/rogueweapon/huntingknife/idagger/silver/pickup(mob/user)
-	. = ..()
-	var/mob/living/carbon/human/H = user
-	var/datum/antagonist/vampirelord/V_lord = H.mind.has_antag_datum(/datum/antagonist/vampirelord/)
-	var/datum/antagonist/werewolf/W = H.mind.has_antag_datum(/datum/antagonist/werewolf/)
-	if(ishuman(H))
-		if(H.mind.has_antag_datum(/datum/antagonist/vampirelord/lesser))
-			to_chat(H, span_userdanger("I can't pick up the silver, it is my BANE!"))
-			H.Knockdown(10)
-			H.Paralyze(10)
-			H.adjustFireLoss(25)
-			H.fire_act(1,10)
-		if(V_lord)
-			if(V_lord.vamplevel < 4 && !H.mind.has_antag_datum(/datum/antagonist/vampirelord/lesser))
-				to_chat(H, span_userdanger("I can't pick up the silver, it is my BANE!"))
-				H.Knockdown(10)
-				H.adjustFireLoss(25)
-		if(W && W.transformed == TRUE)
-			to_chat(H, span_userdanger("I can't pick up the silver, it is my BANE!"))
-			H.Knockdown(10)
-			H.Paralyze(10)
-			H.adjustFireLoss(25)
-			H.fire_act(1,10)
-
-
-/obj/item/rogueweapon/huntingknife/idagger/silver/mob_can_equip(mob/living/M, mob/living/equipper, slot, disable_warning = FALSE, bypass_equip_delay_self = FALSE)
-	. = ..()
-	if(ishuman(M) && M.mind)
-		var/mob/living/carbon/human/H = M
-		var/datum/antagonist/vampirelord/V_lord = H.mind.has_antag_datum(/datum/antagonist/vampirelord/)
-		var/datum/antagonist/werewolf/W = H.mind.has_antag_datum(/datum/antagonist/werewolf/)
-		if(H.mind.has_antag_datum(/datum/antagonist/vampirelord/lesser))
-			to_chat(H, span_userdanger("I can't equip the silver, it is my BANE!"))
-			H.Knockdown(10)
-			H.Paralyze(10)
-			H.adjustFireLoss(25)
-			H.fire_act(1,10)
-		if(V_lord)
-			if(V_lord.vamplevel < 4 && !H.mind.has_antag_datum(/datum/antagonist/vampirelord/lesser))
-				to_chat(H, span_userdanger("I can't equip the silver, it is my BANE!"))
-				H.Knockdown(5)
-				H.Paralyze(5)
-				H.adjustFireLoss(25)
-				H.fire_act(1,5)
-		if(W && W.transformed == TRUE)
-			to_chat(H, span_userdanger("I can't equip the silver, it is my BANE!"))
-			H.Knockdown(10)
-			H.Paralyze(10)
-			H.adjustFireLoss(25)
-			H.fire_act(1,10)
 
 /obj/item/weapon/knife/dagger/silver/arcyne
 	name = "glowing purple silver dagger"
@@ -526,12 +496,12 @@
 	icon_state = "elfdagger"
 	item_state = "elfdag"
 	last_used = 0
-	is_silver = TRUE
+	is_silver = FALSE
 
 /obj/item/rogueweapon/huntingknife/idagger/silver/elvish/drow
 	name = "dark elvish dagger"
 	desc = "A vicious wave-bladed dagger from the Underdark."
-	force = 25
+	force = 18
 	last_used = 0
 	is_silver = TRUE
 
@@ -634,21 +604,34 @@
 	name = "psydonian tossblade"
 	desc = "An unconventional method of delivering silver to a heretic; but one PSYDON smiles at, all the same. Doubles as an actual knife in a pinch, though obviously not as well."
 	item_state = "bone_dagger"
-	force = 12
-	throwforce = 28
+	force = 10
+	throwforce = 20
 	armor_penetration = 50
 	max_integrity = 150
 	wdefense = 3
 	icon_state = "throw_knifep"
 	embedding = list("embedded_pain_multiplier" = 4, "embed_chance" = 50, "embedded_fall_chance" = 0)
 	is_silver = TRUE
+	smeltresult = /obj/item/ingot/silver
 	sellprice = 6
+
+/obj/item/rogueweapon/huntingknife/throwingknife/psydon/ComponentInitialize()
+	AddComponent(\
+		/datum/component/silverbless,\
+		pre_blessed = BLESSING_NONE,\
+		silver_type = SILVER_PSYDONIAN,\
+		added_force = 0,\
+		added_blade_int = 0,\
+		added_int = 100,\
+		added_def = 3,\
+	)
 
 /obj/item/rogueweapon/huntingknife/scissors
 	possible_item_intents = list(/datum/intent/snip, /datum/intent/dagger/thrust, /datum/intent/dagger/cut)
 	max_integrity = 100
 	name = "iron scissors"
 	desc = "Scissors made of iron that may be used to salvage usable materials from clothing."
+	icon = 'icons/roguetown/weapons/misc32.dmi'
 	icon_state = "iscissors"
 	inv_storage_delay = null
 
@@ -867,7 +850,7 @@
 		var/obj/item/item = O
 		if(item.sewrepair && item.salvage_result) // We can only salvage objects which can be sewn!
 			var/salvage_time = 70
-			salvage_time = (70 - ((user.get_skill_level(/datum/skill/misc/sewing)) * 10))
+			salvage_time = (70 - ((user.get_skill_level(/datum/skill/craft/sewing)) * 10))
 			if(!do_after(user, salvage_time, target = user))
 				return
 			
@@ -876,12 +859,12 @@
 			if(istype(item, /obj/item/storage))
 				var/obj/item/storage/bag = item
 				bag.emptyStorage()
-			var/skill_level = user.get_skill_level(/datum/skill/misc/sewing)
+			var/skill_level = user.get_skill_level(/datum/skill/craft/sewing)
 			if(prob(50 - (skill_level * 10))) // We are dumb and we failed!
 				to_chat(user, span_info("I ruined some of the materials due to my lack of skill..."))
 				playsound(item, 'sound/foley/cloth_rip.ogg', 50, TRUE)
 				qdel(item)
-				user.mind.add_sleep_experience(/datum/skill/misc/sewing, (user.STAINT)) //Getting exp for failing
+				user.mind.add_sleep_experience(/datum/skill/craft/sewing, (user.STAINT)) //Getting exp for failing
 				return //We are returning early if the skill check fails!
 			item.salvage_amount -= item.torn_sleeve_number
 			for(var/i = 1; i <= item.salvage_amount; i++) // We are spawning salvage result for the salvage amount minus the torn sleves!
@@ -890,5 +873,5 @@
 			user.visible_message(span_notice("[user] salvages [item] into usable materials."))
 			playsound(item, 'sound/items/flint.ogg', 100, TRUE)
 			qdel(item)
-			user.mind.add_sleep_experience(/datum/skill/misc/sewing, (user.STAINT))
+			user.mind.add_sleep_experience(/datum/skill/craft/sewing, (user.STAINT))
 	return ..()

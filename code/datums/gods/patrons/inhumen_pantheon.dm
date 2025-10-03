@@ -28,9 +28,10 @@
 					/obj/effect/proc_holder/spell/invoked/lesser_heal 					= CLERIC_T1,
 					/obj/effect/proc_holder/spell/invoked/blood_heal					= CLERIC_T1,
 					/obj/effect/proc_holder/spell/invoked/projectile/profane/miracle 	= CLERIC_T1,
-					/obj/effect/proc_holder/spell/invoked/raise_lesser_undead/miracle 	= CLERIC_T2,
+					/obj/effect/proc_holder/spell/invoked/raise_undead_formation/miracle= CLERIC_T2,
+					/obj/effect/proc_holder/spell/invoked/raise_undead_guard/miracle	= CLERIC_T2,
+					/obj/effect/proc_holder/spell/invoked/tame_undead/miracle			= CLERIC_T3,
 					/obj/effect/proc_holder/spell/invoked/rituos/miracle 				= CLERIC_T3,
-					/obj/effect/proc_holder/spell/invoked/wound_heal					= CLERIC_T3,
 	)
 	confess_lines = list(
 		"PRAISE ZIZO!",
@@ -52,7 +53,6 @@
 					/obj/effect/proc_holder/spell/self/call_to_slaughter 				= CLERIC_T1,
 					/obj/effect/proc_holder/spell/invoked/projectile/blood_net 			= CLERIC_T2,
 					/obj/effect/proc_holder/spell/invoked/revel_in_slaughter 			= CLERIC_T3,
-					/obj/effect/proc_holder/spell/invoked/wound_heal					= CLERIC_T3,
 	)
 	confess_lines = list(
 		"GRAGGAR IS THE BEAST I WORSHIP!",
@@ -76,7 +76,6 @@
 					/obj/effect/proc_holder/spell/invoked/blood_heal					= CLERIC_T1,
 					/obj/effect/proc_holder/spell/invoked/equalize						= CLERIC_T2,
 					/obj/effect/proc_holder/spell/invoked/churnwealthy					= CLERIC_T3,
-					/obj/effect/proc_holder/spell/invoked/wound_heal					= CLERIC_T3,
 	)
 	confess_lines = list(
 		"MATTHIOS STEALS FROM THE WORTHLESS!",
@@ -102,7 +101,6 @@
 					/obj/effect/proc_holder/spell/invoked/joyride						= CLERIC_T2,
 					/obj/effect/proc_holder/spell/invoked/lasthigh						= CLERIC_T3,
 					/obj/effect/proc_holder/spell/invoked/painkiller					= CLERIC_T3,
-					/obj/effect/proc_holder/spell/invoked/wound_heal					= CLERIC_T3,
 	)
 	confess_lines = list(
 		"BAOTHA DEMANDS PLEASURE!",

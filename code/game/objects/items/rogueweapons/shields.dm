@@ -10,7 +10,7 @@
 	name = ""
 	desc = ""
 	icon_state = ""
-	icon = 'icons/roguetown/weapons/32.dmi'
+	icon = 'icons/roguetown/weapons/shields32.dmi'
 	slot_flags = ITEM_SLOT_BACK
 	flags_1 = null
 	force = 10
@@ -246,23 +246,32 @@
 	name = "Covenant"
 	desc = "A Psydonian endures. A Psydonian preserves themselves. A Psydonian preserves His flock."
 	icon_state = "psyshield"
-	force = 20
-	throwforce = 10
+	force = 15
+	throwforce = 5
 	throw_speed = 1
 	throw_range = 3
 	possible_item_intents = list(SHIELD_BASH_METAL, SHIELD_BLOCK, SHIELD_SMASH_METAL)
 	wlength = WLENGTH_NORMAL
 	resistance_flags = null
 	flags_1 = CONDUCT_1
-	wdefense = 11
+	wdefense = 14
 	coverage = 50
 	attacked_sound = list('sound/combat/parry/shield/metalshield (1).ogg','sound/combat/parry/shield/metalshield (2).ogg','sound/combat/parry/shield/metalshield (3).ogg')
 	parrysound = list('sound/combat/parry/shield/metalshield (1).ogg','sound/combat/parry/shield/metalshield (2).ogg','sound/combat/parry/shield/metalshield (3).ogg')
 	max_integrity = 350
+	is_silver = TRUE
+	smeltresult = /obj/item/ingot/silver
 
 /obj/item/rogueweapon/shield/tower/metal/psy/ComponentInitialize()
-	. = ..()
-	add_psyblessed_component(is_preblessed = TRUE, bonus_force = 0, bonus_sharpness = 0, bonus_integrity = 100, bonus_wdef = 1, make_silver = TRUE)
+	AddComponent(\
+		/datum/component/silverbless,\
+		pre_blessed = BLESSING_PSYDONIAN,\
+		silver_type = SILVER_PSYDONIAN,\
+		added_force = -3,\
+		added_blade_int = 0,\
+		added_int = 100,\
+		added_def = 1,\
+	)
 
 /obj/item/rogueweapon/shield/tower/metal/alloy
 	name = "decrepit shield"
@@ -404,6 +413,12 @@
 				return list("shrink" = 0.6,"sx" = 1,"sy" = 4,"nx" = 1,"ny" = 2,"wx" = 3,"wy" = 3,"ex" = 0,"ey" = 2,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 0,"nflip" = 8,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 1,"southabove" = 0,"eastabove" = 0,"westabove" = 0)
 
 #undef SHIELD_BANG_COOLDOWN
+
+/obj/item/rogueweapon/shield/iron/steppesman
+	name = "steppesman shield"
+	desc = "A banded iron shield decorated with traditional Aavnic colours, often seen in the hands of the Steppesmen."
+	icon_state = "ironsh_steppeman"
+	max_integrity = 250 //+30
 
 /*/obj/item/rogueweapon/shield/buckler/freelancer
 	name = "fencer's wrap"

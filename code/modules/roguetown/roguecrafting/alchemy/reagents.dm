@@ -157,7 +157,7 @@
 	However it meant that putting it in an alchemical vial was a trap as it sipped 9 units instead of 5 units that is the required minimum.
 	And removed any excessive potion inside the body. This has been changed to apply a 3 seconds buff to the mob, but have much lower
 	metabolization rate, so that the duration of the buff depends on how long you last. 
-	Roughly tested. At Metabolization Rate 1. 9 units sip (1/3 of a vial) last 20 seconds.
+	Roughly tested. At Metabolization Rate 1. 10 units sip (1/3 of a vial) last 20 seconds.
 	To make this somewhat equal to the old system, base metabolization rate is 0.1 - making it last 200 seconds - 600 seconds if you sip an entire vial.
 	This is 2x on weaker potions (Intelligence, Fortune). However, overdose threshold is now 30 units so you can only drink one vial at once.
 	And potion stacking is not possible without neutralizing itself.
@@ -166,7 +166,7 @@
 	description = ""
 	reagent_state = LIQUID
 	metabolization_rate = REAGENTS_METABOLISM * 0.1
-	overdose_threshold = 30
+	overdose_threshold = 33
 
 /datum/reagent/buff/overdose_process(mob/living/carbon/M)
 	. = ..()
@@ -182,7 +182,7 @@
 	..()
 
 /datum/reagent/buff/strength
-	name = "Strength"
+	name = STATKEY_STR
 	color = "#ff9000"
 	taste_description = "old meat"
 
@@ -191,7 +191,7 @@
 	return ..()
 
 /datum/reagent/buff/perception
-	name = "Perception"
+	name = STATKEY_PER
 	color = "#ffff00"
 	taste_description = "cat piss"
 	metabolization_rate = REAGENTS_METABOLISM * 0.05
@@ -201,7 +201,7 @@
 	return ..()
 
 /datum/reagent/buff/intelligence
-	name = "Intelligence"
+	name = STATKEY_INT
 	color = "#438127"
 	taste_description = "bog water"
 	metabolization_rate = REAGENTS_METABOLISM * 0.05
@@ -211,7 +211,7 @@
 	return ..()
 
 /datum/reagent/buff/constitution
-	name = "Constitution"
+	name = STATKEY_CON
 	color = "#130604"
 	taste_description = "bile"
 
@@ -220,7 +220,7 @@
 	return ..()
 
 /datum/reagent/buff/endurance
-	name = "Endurance"
+	name = STATKEY_WIL
 	color = "#ffff00"
 	taste_description = "oversweetened milk"
 
@@ -229,7 +229,7 @@
 	return ..()
 
 /datum/reagent/buff/speed
-	name = "Speed"
+	name = STATKEY_SPD
 	color = "#ffff00"
 	taste_description = "raw egg yolk"
 
@@ -238,7 +238,7 @@
 	return ..()
 
 /datum/reagent/buff/fortune
-	name = "Fortune"
+	name = STATKEY_LCK
 	color = "#ffff00"
 	taste_description = "sour lemons"
 	metabolization_rate = REAGENTS_METABOLISM * 0.05
@@ -420,7 +420,7 @@ If you want to expand on poisons theres tons of fun effects TG chemistry has tha
 		M.add_nausea(9)
 		M.adjustFireLoss(2, 0)
 		M.adjust_fire_stacks(1)
-		M.IgniteMob()
+		M.ignite_mob()
 	return ..()
 //I'm stapling our infection reagents on the bottom, because IDEK where else to put them.
 

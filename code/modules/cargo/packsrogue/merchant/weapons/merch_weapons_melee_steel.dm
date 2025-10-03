@@ -78,6 +78,13 @@
 					/obj/item/rogueweapon/flail/sflail,
 				)
 
+/datum/supply_pack/rogue/steel_weapons/flail
+	name = "Warhammer"
+	cost = 40 // 1 Steel Ingot
+	contains = list(
+					/obj/item/rogueweapon/mace/warhammer/steel,
+				)
+
 /datum/supply_pack/rogue/steel_weapons/longsword
 	name = "Longsword"
 	cost = 70 // 2 Steel Ingot
@@ -119,6 +126,13 @@
 	contains = list(
 					/obj/item/rogueweapon/greatsword/grenz,
 				)
+
+/datum/supply_pack/rogue/steel_weapons/flamberge
+	name = "Steel Flamberge"
+	cost = 105
+	contains = list(
+		/obj/item/rogueweapon/greatsword/grenz/flamberge
+	)
 
 /datum/supply_pack/rogue/steel_weapons/estoc
 	name = "Estoc"

@@ -84,7 +84,7 @@ GLOBAL_LIST_INIT(stone_personalities, list(
 	"Daredevil",
 	"Barbarics",
 	"Fanciness",
-	"Relaxing",	
+	"Relaxing",
 	"Greed",
 	"Evil",
 	"Good",
@@ -120,7 +120,7 @@ GLOBAL_LIST_INIT(stone_personality_descs, list(
 	"One must wonder: Where did this stone come from?",
 	"If all stones were like this, then they would be some pretty great stones.",
 	"I wish my personality was like this stone's...",
-	"I could sure do a whole lot with this stone.", 
+	"I could sure do a whole lot with this stone.",
 	"I love stones!",
 ))
 
@@ -184,7 +184,6 @@ GLOBAL_LIST_INIT(stone_personality_descs, list(
 /obj/item/natural/whetstone/Initialize()
 	. = ..()
 	var/static/list/slapcraft_recipe_list = list(
-		/datum/crafting_recipe/roguetown/survival/reinforcedshaft,
 		/datum/crafting_recipe/roguetown/survival/peasantry/thresher/whetstone,
 		/datum/crafting_recipe/roguetown/survival/peasantry/shovel/whetstone,
 		/datum/crafting_recipe/roguetown/survival/peasantry/hoe/whetstone,
@@ -211,7 +210,7 @@ GLOBAL_LIST_INIT(stone_personality_descs, list(
 	var/stone_title = "stone" // Our stones title
 	var/stone_desc = "[desc]" // Total Bonus desc the stone will be getting
 
-	icon_state = "stone[rand(1,5)]" 
+	icon_state = "stone[rand(1,5)]"
 
 	var/bonus_force = 0 // Total bonus force the rock will be getting
 	var/list/given_intent_list = list(/datum/intent/hit) // By default you get this at least
@@ -250,7 +249,7 @@ GLOBAL_LIST_INIT(stone_personality_descs, list(
 			desc_jumbler += pick(GLOB.stone_sharpness_descs)
 
 	if(name_jumbler.len) // Both name jumbler and desc jumbler should be symmetrical in insertions conceptually anyways.
-		for(var/i in 1 to name_jumbler.len) //Theres only two right now 
+		for(var/i in 1 to name_jumbler.len) //Theres only two right now
 			if(!name_jumbler.len) // If list somehow empty get the hell out! Now~!
 				break
 			//Remove so theres no repeats
@@ -273,7 +272,7 @@ GLOBAL_LIST_INIT(stone_personality_descs, list(
 			stone_title = "[stone_title] of [pick(GLOB.stone_personalities)]"
 			stone_desc += " [pick(GLOB.stone_personality_descs)]"
 			personality_modifier += rand(1,5) // Personality gives a stone some more power too
-			
+
 	if (personality_modifier)
 		bonus_force += personality_modifier
 		magic_power += personality_modifier
@@ -299,7 +298,7 @@ GLOBAL_LIST_INIT(stone_personality_descs, list(
 			var/cock = pick(extra_intent_list) // We pick one
 			given_intent_list += cock // Add it to the list
 			extra_intent_list -= cock // Remove it from the prev list
-	
+
 	//Now that we have built the history and lore of this stone, we apply it to the main vars.
 	name = stone_title
 	desc = stone_desc
@@ -351,11 +350,13 @@ GLOBAL_LIST_INIT(stone_personality_descs, list(
 		return ..()
 
 /obj/item/natural/rock
-	name = "rock"
+	name = "boulder"
 	desc = "A rock protudes from the ground."
 	icon_state = "stonebig1"
 	dropshrink = 0
 	throwforce = 25
+	grid_width = 96
+	grid_height = 96
 	throw_range = 2
 	force = 20
 	obj_flags = CAN_BE_HIT
@@ -381,7 +382,7 @@ GLOBAL_LIST_INIT(stone_personality_descs, list(
 /obj/item/natural/rock/Crossed(mob/living/L)
 	if(istype(L) && !L.throwing)
 		if(L.m_intent == MOVE_INTENT_RUN)
-			L.visible_message(span_warning("[L] trips over the rock!"),span_warning("I trip over the rock!"))
+			L.visible_message(span_warning("[L] trips over the boulder!"),span_warning("I trip over the boulder!"))
 			L.Knockdown(10)
 			L.consider_ambush(always = TRUE)
 	..()
@@ -403,7 +404,7 @@ GLOBAL_LIST_INIT(stone_personality_descs, list(
 			var/obj/item/S = new /obj/item/natural/stone(src.loc)
 			S.pixel_x = rand(25,-25)
 			S.pixel_y = rand(25,-25)
-		GLOB.azure_round_stats[STATS_ROCKS_MINED]++
+		record_round_statistic(STATS_ROCKS_MINED)
 	qdel(src)
 
 /obj/item/natural/rock/take_damage(damage_amount, damage_type = BRUTE, damage_flag = 0, sound_effect = 1, attack_dir)
@@ -421,7 +422,7 @@ GLOBAL_LIST_INIT(stone_personality_descs, list(
 	var/skill_level = user.get_skill_level(/datum/skill/craft/masonry)
 	var/work_time = (120 - (skill_level * 15))
 	if(istype(W, /obj/item/natural/stone))
-		user.visible_message(span_info("[user] strikes the stone against the rock."))
+		user.visible_message(span_info("[user] strikes the stone against the boulder."))
 		playsound(src.loc, 'sound/items/stonestone.ogg', 100)
 		if(prob(35))
 			var/datum/effect_system/spark_spread/S = new()
@@ -431,7 +432,7 @@ GLOBAL_LIST_INIT(stone_personality_descs, list(
 		return
 	if(istype(W, /obj/item/natural/rock))
 		playsound(src.loc, pick('sound/items/stonestone.ogg'), 100)
-		user.visible_message(span_info("[user] strikes the rocks together."))
+		user.visible_message(span_info("[user] strikes the boulders together."))
 		if(prob(10))
 			var/datum/effect_system/spark_spread/S = new()
 			var/turf/front = get_turf(src)
@@ -440,7 +441,7 @@ GLOBAL_LIST_INIT(stone_personality_descs, list(
 		return
 	if( user.used_intent.type == /datum/intent/chisel )
 		playsound(src.loc, pick('sound/combat/hits/onrock/onrock (1).ogg', 'sound/combat/hits/onrock/onrock (2).ogg', 'sound/combat/hits/onrock/onrock (3).ogg', 'sound/combat/hits/onrock/onrock (4).ogg'), 100)
-		user.visible_message("<span class='info'>[user] chisels the rock into blocks.</span>")
+		user.visible_message("<span class='info'>[user] chisels the boulder into blocks.</span>")
 		if(do_after(user, work_time))
 			new /obj/item/natural/stoneblock(get_turf(src.loc))
 			new /obj/item/natural/stoneblock(get_turf(src.loc))
@@ -474,7 +475,7 @@ GLOBAL_LIST_INIT(stone_personality_descs, list(
 	mineralType = /obj/item/rogueore/coal
 
 /obj/item/natural/rock/elementalmote
-	mineralType = /obj/item/magic/elementalmote
+	mineralType = /obj/item/magic/elemental/mote
 
 /obj/item/natural/rock/cinnabar
 	mineralType = /obj/item/rogueore/cinnabar

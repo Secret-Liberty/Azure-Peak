@@ -211,9 +211,6 @@
 /obj/item/lockpickring/one
 	picks = list(/obj/item/lockpick)
 
-/obj/item/storage/keyring/butcher	// Just incase, butcher can at least see to getting farmers incase there are none given he sucks at farming.
-	keys = list(/obj/item/roguekey/farm, /obj/item/roguekey/butcher)
-
 /obj/item/storage/keyring/sheriff
 	keys = list(/obj/item/roguekey/sheriff, /obj/item/roguekey/dungeon, /obj/item/roguekey/garrison, /obj/item/roguekey/walls, /obj/item/roguekey/manor, /obj/item/roguekey/graveyard, /obj/item/roguekey/armory, /obj/item/roguekey/sergeant, /obj/item/roguekey/knight)
 
@@ -237,9 +234,6 @@
 
 /obj/item/storage/keyring/guardknight
 	keys = list(/obj/item/roguekey/dungeon, /obj/item/roguekey/garrison, /obj/item/roguekey/walls, /obj/item/roguekey/manor, /obj/item/roguekey/armory, /obj/item/roguekey/knight)
-
-/obj/item/storage/keyring/velder
-	keys = list(/obj/item/roguekey/velder, /obj/item/roguekey/farm, /obj/item/roguekey/butcher)
 
 /obj/item/storage/keyring/vtavern
 	keys = list(/obj/item/roguekey/tavern/village, /obj/item/roguekey/roomvi/village, /obj/item/roguekey/roomv/village, /obj/item/roguekey/roomiv/village, /obj/item/roguekey/roomiii/village, /obj/item/roguekey/roomii/village, /obj/item/roguekey/roomi/village)
@@ -312,3 +306,6 @@
 
 /obj/item/storage/keyring/tailor
 	keys = list(/obj/item/roguekey/crafterguild, /obj/item/roguekey/tailor)
+
+/obj/item/storage/keyring/vampire
+	keys = list(/obj/item/roguekey/vampire, /obj/item/roguekey/vampire/guest, /obj/item/roguekey/vampire/maid)

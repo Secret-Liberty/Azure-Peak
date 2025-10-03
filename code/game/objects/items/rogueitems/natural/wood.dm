@@ -62,8 +62,16 @@
 		if(skill_level > 0) // If skill level is 1 or higher, we get more minimum wood!
 			minimum = 2
 		lumber_amount = rand(minimum, max(round(skill_level), minimum))
+		var/sound_played = FALSE
 		for(var/i = 0; i < lumber_amount; i++)
 			new lumber(get_turf(src))
+				// Scaling is less steep than tanning as lumberjacking is easier to level and get
+			if(prob(skill_level + user.goodluck(2)))
+				new /obj/item/natural/cured/essence(get_turf(user))
+				if(!sound_played)
+					sound_played = TRUE
+					to_chat(user, span_warning("Dendor weeps..."))
+					playsound(src,pick('sound/items/gem.ogg'), 100, FALSE)
 		if(!skill_level)
 			to_chat(user, span_info("Due to inexperience, I ruin some of the timber..."))
 		user.mind.add_sleep_experience(/datum/skill/labor/lumberjacking, (user.STAINT*0.5))
@@ -126,7 +134,6 @@
 		/datum/crafting_recipe/roguetown/survival/prosthetic/woodrightleg,
 		/datum/crafting_recipe/roguetown/survival/tarot_deck,
 		/datum/crafting_recipe/roguetown/survival/heatershield,
-		/datum/crafting_recipe/roguetown/survival/woodshaft,
 		/datum/crafting_recipe/roguetown/survival/peasantry/thresher/whetstone,
 		/datum/crafting_recipe/roguetown/survival/peasantry/shovel/whetstone,
 		/datum/crafting_recipe/roguetown/survival/peasantry/hoe/whetstone,
@@ -388,6 +395,7 @@
 	max_integrity = 20
 	firefuel = 5 MINUTES
 	w_class = WEIGHT_CLASS_BULKY
+	sellprice = 4
 	bundletype = /obj/item/natural/bundle/plank
 	smeltresult = /obj/item/ash
 	

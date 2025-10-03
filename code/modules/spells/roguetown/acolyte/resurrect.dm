@@ -59,28 +59,14 @@
 			to_chat(user, span_warning("I need a holy [initial(temp_structure.name)] near [target]."))
 			revert_cast()
 			return FALSE
-		if(!target.mind)
-			to_chat(user, "This one is inert.")
-			revert_cast()
-			return FALSE
-		if(HAS_TRAIT(target, TRAIT_NECRAS_VOW))
-			to_chat(user, "This one has pledged themselves whole to Necra. They are Hers.")
-			revert_cast()
-			return FALSE
-		if(!target.mind.active)
-			to_chat(user, "Necra is not done with [target], yet.")
-			revert_cast()
-			return FALSE
-		if(target == user)
-			to_chat(user, "By focusing divine energies on myself, I can summise I have every component I need where I'm standing.")
-			revert_cast()
-			return FALSE
-		if(target.stat < DEAD)
-			to_chat(user, span_warning("Nothing happens."))
+		if(!target.check_revive(user))
 			revert_cast()
 			return FALSE
 		if(target.mob_biotypes & MOB_UNDEAD && harms_undead) //positive energy harms the undead
-			target.visible_message(span_danger("[target] is unmade by divine magic!"), span_userdanger("I'm unmade by divine magic!"))
+			target.visible_message(
+				span_danger("[target] is unmade by divine magic!"), 
+				span_userdanger("I'm unmade by divine magic!")
+			)
 			target.gib()
 			return TRUE
 		if(alert(target, "They are calling for you. Are you ready?", "Revival", "I need to wake up", "Don't let me go") != "I need to wake up")
@@ -193,11 +179,11 @@
 	dreamfiend_type = pickweight(dreamfiend_types)
 
 	effectedstats = list(
-		"strength" = 1,
-		"intelligence" = -5,
-		"fortune" = -5,
-		"speed" = -2,
-		"perception" = -5
+		STATKEY_STR = 1,
+		STATKEY_INT = -5,
+		STATKEY_LCK = -5,
+		STATKEY_SPD = -2,
+		STATKEY_PER = -5
 	)
 
 	// Add summoning spell to the victim
@@ -230,8 +216,8 @@
 	desc = "Summon the dreamfiend haunting you to confront it directly"
 	overlay_state = "terrors"
 	chargetime = 0
-	invocations = list("Face me daemon!")
-	invocation_type = "shout"
+	invocations = list(span_danger("begins to smell of saltwater. You can hear waves crashing nearby..."))
+	invocation_type = "emote"
 	sound = 'modular_azurepeak/sound/mobs/abyssal/abyssal_teleport.ogg'
 	/// Type of dreamfiend to summon
 	var/dreamfiend_type
@@ -307,7 +293,7 @@
 
 /datum/status_effect/debuff/metabolic_acceleration/on_creation(mob/living/new_owner)
 	effectedstats = list(
-		"constitution" = -5
+		STATKEY_CON = -5
 	)
 
 	return ..()
@@ -408,8 +394,8 @@
 
 /datum/status_effect/debuff/malum_revival/on_creation(mob/living/new_owner)
 	effectedstats = list(
-		"endurance" = -5,
-		"strength" = -2
+		STATKEY_WIL = -5,
+		STATKEY_STR = -2
 	)
 	return ..()
 
@@ -425,8 +411,8 @@
 
 /datum/status_effect/debuff/ravox_revival/on_creation(mob/living/new_owner)
 	effectedstats = list(
-		"strength" = -5,
-		"speed" = -2
+		STATKEY_STR = -5,
+		STATKEY_SPD = -2
 	)
 	return ..()
 
@@ -442,8 +428,8 @@
 
 /datum/status_effect/debuff/dendor_revival/on_creation(mob/living/new_owner)
 	effectedstats = list(
-		"speed" = -5,
-		"constitution" = -2
+		STATKEY_SPD = -5,
+		STATKEY_CON = -2
 	)
 	return ..()
 
@@ -465,7 +451,7 @@
 	)
 
 /datum/status_effect/debuff/noc_revival/on_creation(mob/living/new_owner)
-	effectedstats = list("intelligence" = -5)
+	effectedstats = list(STATKEY_INT = -5)
 	return ..()
 
 /datum/status_effect/debuff/noc_revival/tick()
@@ -515,7 +501,7 @@
 
 /obj/effect/proc_holder/spell/invoked/resurrect/malum
 	name = "Diligent Revival"
-	desc = "Revive the target at a cost, cast on yourself to check.<br>Targets endurance and strenght will be sapped for a time."
+	desc = "Revive the target at a cost, cast on yourself to check.<br>Targets willpower and strength will be sapped for a time."
 	required_items = list(
 		/obj/item/ingot/iron = 3
 	)
@@ -524,7 +510,7 @@
 
 /obj/effect/proc_holder/spell/invoked/resurrect/ravox
 	name = "Just Revival"
-	desc = "Revive the target at a cost, cast on yourself to check.<br>Targets strenght and speed will be sapped for a time."
+	desc = "Revive the target at a cost, cast on yourself to check.<br>Targets strength and speed will be sapped for a time."
 	// The items here are somewhat hard to pick as it still has to be something a ravox acolyte would reasonably obtain.
 	// Bones insinuate that mayhaps, they went out there to delete some skeletons for justice?
 	required_items = list(

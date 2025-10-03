@@ -168,7 +168,7 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 	icon_state = "arrow"
 
 /obj/effect/landmark/start/physician
-	name = "Court Physician"
+	name = "Head Physician"
 	icon_state = "arrow"
 
 /obj/effect/landmark/start/guardsman
@@ -211,8 +211,8 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 	name = "Towner"
 	icon_state = "arrow"
 
-/obj/effect/landmark/start/woodsman
-	name = "Town Elder"
+/obj/effect/landmark/start/crier
+	name = "Town Crier"
 	icon_state = "arrow"
 
 /obj/effect/landmark/start/priest
@@ -306,10 +306,6 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 
 /obj/effect/landmark/start/farmer
 	name = "Soilson"
-	icon_state = "arrow"
-
-/obj/effect/landmark/start/beastmonger
-	name = "Butcher"
 	icon_state = "arrow"
 
 /obj/effect/landmark/start/cook
