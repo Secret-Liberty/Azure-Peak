@@ -23,7 +23,6 @@
 	var/mob/living/carbon/H = user
 	if(icon_state == "[initial(icon_state)]_snout")
 		icon_state = initial(icon_state)
-		flags_inv &= ~HIDESNOUT
 		H.update_inv_wear_mask()
 		update_icon()
 		return
@@ -33,7 +32,6 @@
 	for(var/icon_s in istates)
 		if(findtext(icon_s, "[icon_state]_snout"))
 			icon_state += "_snout"
-			flags_inv &= HIDESNOUT
 			H.update_inv_wear_mask()
 			update_icon()
 			return
@@ -215,7 +213,7 @@
 	sewrepair = TRUE
 
 /obj/item/clothing/mask/rogue/sack/psy
-	name = "psydonian sack mask"
+	name = "psydonic sack mask"
 	desc = "An ordinary brown sack. This one has eyeholes cut into it, bearing a crude chalk drawing of Psydon's cross upon its visage. Unsettling for most."
 	icon_state = "sackmask_psy"
 
@@ -323,6 +321,11 @@
 	anvilrepair = /datum/skill/craft/armorsmithing
 	smeltresult = /obj/item/ingot/iron
 
+/obj/item/clothing/mask/rogue/facemask/shadowfacemask
+	name = "anthraxi war mask"
+	desc = "A metal mask resembling a spider's face. Such a visage haunts many an older dark elf's nitemares - while the younger generation simply scoffs at such relics."
+	icon_state = "shadowfacemask"
+
 /obj/item/clothing/mask/rogue/facemask/aalloy
 	name = "decrepit mask"
 	desc = "Frayed bronze, molded into an unblinking visage. Only the statues, buried within the innards of Mount Decapitation, share its wrinkled lip and sneer of cold command."
@@ -340,7 +343,7 @@
 	smeltresult = /obj/item/ingot/copper
 
 /obj/item/clothing/mask/rogue/facemask/psydonmask
-	name = "psydonian mask"
+	name = "psydonic mask"
 	desc = "A silver mask, forever locked in a rigor of uncontestable joy. The Order of Saint Xylix can't decide on whether it's meant to represent Psydon's 'mirthfulness,' 'theatricality,' or the unpredictable melding of both."
 	icon_state = "psydonmask"
 	item_state = "psydonmask"
@@ -415,17 +418,17 @@
 	icon_state = "ancientmask"
 	smeltresult = /obj/item/ingot/aaslag
 
-/obj/item/clothing/mask/rogue/facemask/steel/hound
-	name = "steel hound mask"
-	desc = "A steel mask, made for those who have snouts, protecting the eyes, nose and muzzle while obscuring the face."
-	icon_state = "smask_hound"
-
 /obj/item/clothing/mask/rogue/facemask/steel/steppesman
 	name = "steppesman war mask"
 	desc = "A steel mask shaped like the face of a rather charismatic fellow! Pronounced cheeks, a nose, and a large mustache. Well, people outside of Aavnr don't think you'd look charismatic at all wearing this."
 	max_integrity = 250
 	icon_state = "steppemask"
 	layer = HEAD_LAYER
+
+/obj/item/clothing/mask/rogue/facemask/steel/steppesman/anthro
+	name = "steppesman beast mask"
+	desc = "A steel mask shaped like the face of a rather charismatic beastman! Pronounced cheeks, a nose, and small spikes for whiskers. Well, people outside of Aavnr don't think you'd look charismatic at all wearing this."
+	icon_state = "steppemask_snout"
 
 /obj/item/clothing/mask/rogue/facemask/goldmask
 	name = "Gold Mask"
@@ -461,6 +464,9 @@
 	name = "purple halfmask"
 	icon_state = "shadowmask"
 	desc = "For when one wants to conceal their face while performing dastardly deeds in the name of the crown."
+
+/obj/item/clothing/mask/rogue/shepherd/shadowmask/delf
+	desc = "Tiny drops of white dye mark its front, not unlike teeth. A smile that leers from shadow."
 
 /obj/item/clothing/mask/rogue/physician
 	name = "plague mask"
@@ -506,6 +512,9 @@
 /obj/item/clothing/mask/rogue/ragmask/red //predyed mask for NPCs
 	color = CLOTHING_RED
 
+/obj/item/clothing/mask/rogue/ragmask/black
+	color = CLOTHING_BLACK
+
 /obj/item/clothing/mask/rogue/lordmask/naledi
 	name = "war scholar's mask"
 	item_state = "naledimask"
@@ -534,6 +543,17 @@
 				H.apply_status_effect(/datum/status_effect/debuff/lost_naledi_mask)
 				H.add_stress(/datum/stressevent/naledimasklost)
 
+/obj/item/clothing/mask/rogue/lordmask/naledi/sojourner
+	name = "sojourner's mask"
+	item_state = "naledimask"
+	icon_state = "naledimask"
+	desc = "A golden mask, gnarled by the sustained agonies of djinnic corruption; yet as long as its Naledian hexes endure, so too will its wearer. Hand-fitted shingles flank the sides to repel incoming strikes. </br>'..Clad with the stereotype of abruptly disappearing without any forewarning, the typical Sojourner is in constant pursuit of diversifying their erudition. One might arrive to learn the local witch's recipe of sanctifying atropa extract and spend yils in the community trying to master it, while another might work alongside the region's Orthodoxic chapter to slay a lycker lord in exchange for his archive, only to vanish the very next day..'"
+	max_integrity = 150
+	armor = ARMOR_MASK_METAL
+	flags_inv = HIDEFACE|HIDESNOUT
+	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_CHOP, BCLASS_BLUNT)
+	sellprice = 0
+
 /obj/item/clothing/mask/rogue/exoticsilkmask
 	name = "exotic silk mask"
 	icon_state = "exoticsilkmask"
@@ -557,14 +577,9 @@
 	mob_overlay_icon = 'icons/mob/clothing/eyes.dmi'
 	icon = 'icons/obj/clothing/glasses.dmi'
 
-/obj/item/clothing/mask/rogue/blindfold/equipped(mob/living/carbon/human/user, slot)
-	. = ..()
-	if(slot == ITEM_SLOT_MASK)
-		user.become_blind("blindfold_[REF(src)]")
-
-/obj/item/clothing/mask/rogue/blindfold/dropped(mob/living/carbon/human/user)
-	..()
-	user.cure_blind("blindfold_[REF(src)]")
+/obj/item/clothing/mask/rogue/blindfold/fake
+	desc = "A strip of cloth tied around the eyes. It's too transparent to block vision."
+	tint = 0
 
 /obj/item/clothing/mask/rogue/duelmask
 	name = "duelist's mask"

@@ -37,6 +37,14 @@
 	icon_state = "shadowgloves"
 	allowed_race = NON_DWARVEN_RACE_TYPES
 
+/obj/item/clothing/gloves/roguetown/fingerless/shadowgloves/elflock
+	name = "fingerless gloves"
+	desc = "Cloth gloves to absorb palm sweat while leaving the fingers free for fine manipulation."
+	icon_state = "shadowgloves"
+	armor = ARMOR_GLOVES_CHAIN
+	max_integrity = ARMOR_INT_SIDE_HARDLEATHER
+	allowed_race = NON_DWARVEN_RACE_TYPES
+
 /obj/item/clothing/gloves/roguetown/fingerless_leather
 	name = "fingerless leather gloves"
 	desc = "A pair of protective gloves favored by lockshimmers, laborers, and smokers for maintaining \
@@ -73,14 +81,16 @@
 
 /obj/item/clothing/gloves/roguetown/otavan/inqgloves
 	name = "inquisitorial leather gloves"
-	desc = "Masterfully crafted leather gloves, psycross included."
+	desc = "Masterworked leather gloves, reinforced with a light weave of maille. Hanging from the left glove's cuff is a small rosary necklace; a warm reminder that even the Inquisitors are beholden to His authority."
 	icon_state = "inqgloves"
 	item_state = "inqgloves"
 	salvage_result = /obj/item/natural/hide/cured
 
 /obj/item/clothing/gloves/roguetown/otavan/psygloves
-	name = "psydonian leather gloves"
-	desc = "Made with Otava's Finest leather, these gloves are fashioned to last."
+	name = "psydonic leather gloves"
+	desc = "Thick leather mittens, stitched and cuffed to guard His children's palms from perforation."
+	armor = ARMOR_GLOVES_LEATHER_GOOD
+	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_BLUNT, BCLASS_TWIST) //Equivalent to Heavy Leather Gloves. Deinherits the durability and exclusive critprot of Otavan gloves.
 	icon_state = "psydongloves"
 	item_state = "psydongloves"
 	salvage_result = /obj/item/natural/hide/cured	
