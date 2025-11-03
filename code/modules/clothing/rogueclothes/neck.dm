@@ -223,7 +223,7 @@
 	name = "bevor"
 	desc = "A series of steel plates designed to protect the neck."
 	icon_state = "bevor"
-	armor = ARMOR_BEVOR
+	armor = ARMOR_PLATE
 	anvilrepair = /datum/skill/craft/armorsmithing
 	smeltresult = /obj/item/ingot/steel
 
@@ -232,7 +232,12 @@
 	slot_flags = ITEM_SLOT_NECK
 	body_parts_covered = NECK|MOUTH|NOSE
 	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_TWIST)
+	adjustable = CAN_CADJUST
+	toggle_icon_state = TRUE
 	blocksound = PLATEHIT
+
+/obj/item/clothing/neck/roguetown/bevor/ComponentInitialize()
+	AddComponent(/datum/component/adjustable_clothing, NECK, null, null, 'sound/items/visor.ogg', null, (UPD_HEAD|UPD_MASK|UPD_NECK)) // adjustable falling buffe for the bevor
 
 /obj/item/clothing/neck/roguetown/bevor/iron
 	name = "iron bevor"
@@ -246,7 +251,7 @@
 	name = "gorget"
 	desc = "A series of iron plates designed to protect the neck."
 	icon_state = "gorget"
-	armor = ARMOR_GORGET
+	armor = ARMOR_PLATE
 	smeltresult = /obj/item/ingot/iron
 	anvilrepair = /datum/skill/craft/armorsmithing
 	max_integrity = ARMOR_INT_SIDE_IRON
@@ -270,13 +275,13 @@
 	name = "neck protector"
 	icon_state = "copperneck"
 	desc = "An antique and simple protection for the neck, used more as an accessory by the common folk. But poor protection is still better than nothing."
-	armor = ARMOR_NECK_BAD
+	armor = ARMOR_PLATE_BAD
 	smeltresult = /obj/item/ingot/copper
 
 /obj/item/clothing/neck/roguetown/fencerguard
 	name = "fencing guard"
 	icon_state = "fencercollar"
-	armor = ARMOR_BEVOR
+	armor = ARMOR_PLATE
 	smeltresult = /obj/item/ingot/steel
 	anvilrepair = /datum/skill/craft/armorsmithing
 	max_integrity = ARMOR_INT_SIDE_STEEL
@@ -314,10 +319,10 @@
 		if(get_detail_color())
 			pic.color = get_detail_color()
 		add_overlay(pic)
-		
+
 /obj/item/clothing/neck/roguetown/fencerguard/Initialize()
-	. = ..()		
-	update_icon()		
+	. = ..()
+	update_icon()
 
 /obj/item/clothing/neck/roguetown/gorget/forlorncollar
 	name = "forlorn collar"
@@ -329,6 +334,11 @@
 	smeltresult = /obj/item/ingot/steel
 	max_integrity = ARMOR_INT_SIDE_STEEL
 	icon_state = "sgorget"
+
+/obj/item/clothing/neck/roguetown/gorget/steel/kazengun
+	name = "kazengunite gorget"
+	desc = "A series of interlocking rings of metal set around the throat. Used by the kouken of Kazengun for precisely the same reason as the knights of Psydonia."
+	icon_state = "kazengunneckguard"
 
 /obj/item/clothing/neck/roguetown/gorget/paalloy
 	name = "ancient gorget"
@@ -744,7 +754,7 @@
 		user.change_stat(STATKEY_STR, 3)
 		user.change_stat(STATKEY_CON, -3)
 		user.change_stat(STATKEY_WIL, 3)
-		ADD_TRAIT(user, TRAIT_SCHIZO_AMBIENCE, TRAIT_GENERIC) //Imitates the fact that you are, in fact, going bonkers.
+		ADD_TRAIT(user, TRAIT_PSYCHOSIS, TRAIT_GENERIC) //Imitates the fact that you are, in fact, going bonkers.
 		ADD_TRAIT(user, TRAIT_NOCSHADES, TRAIT_GENERIC) //Roughly ~30% reduced vision with a sharp red overlay. Provides night vision in the visible tiles.
 		ADD_TRAIT(user, TRAIT_DNR, TRAIT_GENERIC) //If you die while the necklace's on, that's it. Technically saveable if someone knows to remove the necklace, before attempting resurrection.
 		ADD_TRAIT(user, TRAIT_STRONGKICK, TRAIT_GENERIC)
@@ -758,7 +768,7 @@
 		user.change_stat(STATKEY_STR, -3)
 		user.change_stat(STATKEY_CON, 3)
 		user.change_stat(STATKEY_WIL, -3)
-		REMOVE_TRAIT(user, TRAIT_SCHIZO_AMBIENCE, TRAIT_GENERIC)
+		REMOVE_TRAIT(user, TRAIT_PSYCHOSIS, TRAIT_GENERIC)
 		REMOVE_TRAIT(user, TRAIT_NOCSHADES, TRAIT_GENERIC)
 		REMOVE_TRAIT(user, TRAIT_DNR, TRAIT_GENERIC)
 		REMOVE_TRAIT(user, TRAIT_STRONGKICK, TRAIT_GENERIC)
