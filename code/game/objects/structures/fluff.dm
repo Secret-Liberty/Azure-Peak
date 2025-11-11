@@ -479,11 +479,11 @@
 /obj/structure/bars/grille/redstone_triggered()
 	if(obj_broken)
 		return
-	testing("togge")
+
 	togg = !togg
 	playsound(src, 'sound/foley/trap_arm.ogg', 100)
 	if(togg)
-		testing("togge1")
+
 		icon_state = "floorgrilleopen"
 		obj_flags = CAN_BE_HIT
 		var/turf/T = loc
@@ -491,7 +491,7 @@
 			for(var/mob/living/M in loc)
 				T.Entered(M)
 	else
-		testing("togge2")
+
 		icon_state = "floorgrille"
 		obj_flags = CAN_BE_HIT | BLOCK_Z_OUT_DOWN | BLOCK_Z_IN_UP
 
@@ -579,17 +579,8 @@
 	..()
 
 /obj/structure/fluff/clock/attack_right(mob/user)
-	if(user.mind && isliving(user))
-		if(user.mind.special_items && user.mind.special_items.len)
-			var/item = input(user, "What will I take?", "STASH") as null|anything in user.mind.special_items
-			if(item)
-				if(user.Adjacent(src))
-					if(user.mind.special_items[item])
-						var/path2item = user.mind.special_items[item]
-						user.mind.special_items -= item
-						var/obj/item/I = new path2item(user.loc)
-						user.put_in_hands(I)
-			return
+	handle_special_items_retrieval(user, src)
+	return
 
 /obj/structure/fluff/clock/examine(mob/user)
 	. = ..()
@@ -688,10 +679,6 @@
 		if(7)
 			day = "Sun's dae."
 	. += "Oh no, it's [station_time_timestamp("hh:mm")] on a [day]"
-//		testing("mode is [SSshuttle.emergency.mode] should be [SHUTTLE_DOCKED]")
-//		if(SSshuttle.emergency.mode == SHUTTLE_DOCKED)
-//			if(SSshuttle.emergency.timeLeft() < 30 MINUTES)
-//				. += span_warning("The last boat will leave in [round(SSshuttle.emergency.timeLeft()/600)] minutes.")
 
 /obj/structure/fluff/wallclock/Initialize()
 	soundloop = new(src, FALSE)
@@ -851,18 +838,7 @@
 	. = ..()
 
 /obj/structure/fluff/statue/attack_right(mob/user)
-	if(user.mind && isliving(user))
-		if(user.mind.special_items && user.mind.special_items.len)
-			var/item = input(user, "What will I take?", "STASH") as null|anything in user.mind.special_items
-			if(item)
-				if(user.Adjacent(src))
-					if(user.mind.special_items[item])
-						var/path2item = user.mind.special_items[item]
-						user.mind.special_items -= item
-						var/obj/item/I = new path2item(user.loc)
-						user.put_in_hands(I)
-			return
-
+	handle_special_items_retrieval(user, src)
 
 /obj/structure/fluff/statue/CanPass(atom/movable/mover, turf/target)
 	if(get_dir(loc, mover) == dir)
@@ -1236,7 +1212,7 @@
 						var/mob/living/carbon/human/thebride
 						//Did anyone get cold feet on the wedding?
 						for(var/mob/M in viewers(src, 7))
-							testing("check [M]")
+
 							if(thegroom && thebride)
 								break
 							if(!ishuman(M))
@@ -1270,12 +1246,12 @@
 											if(thebride)
 												continue
 											thebride = C
-									testing("foundbiter [C.real_name]")
+
 									name_placement++
 
 						//WE FOUND THEM LETS GET THIS SHOW ON THE ROAD!
 						if(!thegroom || !thebride)
-							testing("fail22")
+
 							return
 						//Alright now for the boring surname formatting.
 						var/surname2use
