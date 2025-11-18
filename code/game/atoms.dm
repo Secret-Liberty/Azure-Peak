@@ -358,7 +358,8 @@
  * Default behaviour is to send the COMSIG_ATOM_BULLET_ACT and then call on_hit() on the projectile
  */
 /atom/proc/bullet_act(obj/projectile/P, def_zone)
-	SEND_SIGNAL(src, COMSIG_ATOM_BULLET_ACT, P, def_zone)
+	if(SEND_SIGNAL(src, COMSIG_ATOM_BULLET_ACT, P, def_zone) & COMPONENT_ATOM_BLOCK_BULLET)
+		return
 	. = P.on_hit(src, 0, def_zone)
 
 ///Return true if we're inside the passed in atom
@@ -432,6 +433,9 @@
 				. += span_danger("It's empty.")
 
 	SEND_SIGNAL(src, COMSIG_PARENT_EXAMINE, user, .)
+
+/atom/proc/get_mechanics_examine(mob/user)
+	return list()
 
 //taking in the vanderline update on apperance, name and desc processes
 /atom/proc/vand_update_appearance(updates = ALL)

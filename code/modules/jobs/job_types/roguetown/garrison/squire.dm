@@ -95,6 +95,8 @@
 		/obj/item/clothing/neck/roguetown/chaincoif,
 		/obj/item/reagent_containers/glass/bottle/rogue/healthpot,
 	)
+	if(H.mind)
+		SStreasury.give_money_account(ECONOMIC_WORKING_CLASS, H, "Savings.")
 
 /datum/advclass/squire/footman
 	name = "Footman Squire"
@@ -148,6 +150,8 @@
 				r_hand = /obj/item/rogueweapon/sword/iron
 			if("Cudgel")
 				beltr = /obj/item/rogueweapon/mace/cudgel
+	if(H.mind)
+		SStreasury.give_money_account(ECONOMIC_WORKING_CLASS, H, "Savings.")
 
 /datum/advclass/squire/skirmisher
 	name = "Irregular Squire"
@@ -195,3 +199,5 @@
 		/obj/item/rogueweapon/scabbard/sheath,
 		/obj/item/reagent_containers/glass/bottle/rogue/healthpot
 		)
+	if(H.mind)
+		SStreasury.give_money_account(ECONOMIC_WORKING_CLASS, H, "Savings.")

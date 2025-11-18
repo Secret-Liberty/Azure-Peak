@@ -144,6 +144,14 @@
 	sewrepair = TRUE
 	component_type = /datum/component/storage/concrete/roguetown/satchel
 
+
+/obj/item/storage/backpack/rogue/satchel/cloth
+	name = "cloth knapsack"
+	desc = "A rudimentary cloth sack strapped to the back for storing small amounts of items."
+	icon_state = "clothbackpack"
+	item_state = "clothbackpack"
+	component_type = /datum/component/storage/concrete/roguetown/satchel/cloth
+
 /obj/item/storage/backpack/rogue/satchel/heartfelt
 	populate_contents = list(
 		/obj/item/natural/feather,
@@ -217,7 +225,7 @@
 	name = "Cooling backpack"
 	desc = "A leather backpack with complex pipework coursing through it. It hums and vibrates constantly."
 	icon_state = "artibackpack"
-	item_state = "artibackpack" 
+	item_state = "artibackpack"
 	icon = 'icons/roguetown/clothing/storage.dmi'
 	w_class = WEIGHT_CLASS_BULKY
 	slot_flags = ITEM_SLOT_BACK_L
