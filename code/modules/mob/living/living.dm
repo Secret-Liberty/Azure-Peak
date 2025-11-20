@@ -636,8 +636,6 @@
 				if(I.grabbed == pulling)
 					dropItemToGround(I, silent = FALSE)
 	reset_offsets("pulledby")
-	reset_pull_offsets(src)
-
 	. = ..()
 
 	update_pull_movespeed()
