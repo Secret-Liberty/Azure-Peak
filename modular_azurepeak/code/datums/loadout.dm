@@ -538,6 +538,10 @@ GLOBAL_LIST_EMPTY(loadout_items)
 	name = "Amulet of Abyssor"
 	path = /obj/item/clothing/neck/roguetown/psicross/abyssor
 
+/datum/loadout_item/psicross/xylix
+	name = "Amulet of Xylix"
+	path = /obj/item/clothing/neck/roguetown/psicross/xylix
+
 /datum/loadout_item/psicross/dendor
 	name = "Amulet of Dendor"
 	path = /obj/item/clothing/neck/roguetown/psicross/dendor
@@ -573,6 +577,14 @@ GLOBAL_LIST_EMPTY(loadout_items)
 /datum/loadout_item/zcross_iron
 	name = "Iron Zcross"
 	path = /obj/item/clothing/neck/roguetown/psicross/inhumen/iron
+
+/datum/loadout_item/psicross/matthios
+	name = "Amulet of Matthios"
+	path = /obj/item/clothing/neck/roguetown/psicross/inhumen/matthios
+
+/datum/loadout_item/psicross/graggar
+	name = "Amulet of Graggar"
+	path = /obj/item/clothing/neck/roguetown/psicross/inhumen/graggar
 
 /datum/loadout_item/wedding_band
 	name = "silver wedding band"
