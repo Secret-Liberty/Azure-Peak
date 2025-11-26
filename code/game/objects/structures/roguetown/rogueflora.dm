@@ -790,3 +790,5 @@
 /obj/structure/flora/roguetree/pine/dead/Initialize()
 	. = ..()
 	icon_state = "dead[rand(1, 3)]"
+
+#undef SEARCHTIME
