@@ -856,7 +856,7 @@
 /datum/status_effect/debuff/feintcd
 	id = "feintcd"
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/feintcd
-	duration = 15 SECONDS
+	duration = 30 SECONDS
 
 /datum/status_effect/debuff/feintcd/on_creation(mob/living/new_owner, new_dur)
 	if(new_dur)
