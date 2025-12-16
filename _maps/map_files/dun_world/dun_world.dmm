@@ -70477,6 +70477,10 @@
 /obj/item/rogueweapon/woodstaff,
 /obj/item/rogueweapon/woodstaff,
 /obj/item/rogueweapon/woodstaff,
+/obj/item/rogueweapon/woodstaff/polearm,
+/obj/item/rogueweapon/woodstaff/polearm,
+/obj/item/rogueweapon/woodstaff/polearm,
+/obj/item/rogueweapon/woodstaff/polearm,
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/indoors/town/manor)
 "rxK" = (

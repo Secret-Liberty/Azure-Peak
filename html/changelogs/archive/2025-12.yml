@@ -220,3 +220,57 @@
   - rscadd: Remapped the Warden's Outpost north of the town.
   - bugfix: Pillories can now be locked by any member of the garrison, church, or
       inquisition.
+2025-12-14:
+  Hollyhock:
+  - rscadd: Gave sextons cool amulets
+  SayonaraEcho:
+  - bugfix: Church bell is now working across Z-level as intented.
+  - sound: Sound church bell is now global and everyone hear it.
+  - balance: Increases martyr sword's durability as like Ichor Fang or Ascendant weapon
+      and cannot be smelted.
+  - code_imp: Deleted duplicated Ichor Fang's code.
+  hubertjones:
+  - balance: shovels can be worn on the belt
+  - balance: necran acolytes spawn with silver shovels
+  - bugfix: skeletons that spawn with hip items have belts
+2025-12-15:
+  BurpleBineapple:
+  - rscdel: Removed unused "Enduring" weapons from code.
+  - balance: Psydon Heretics spawn with Psydonic silver weapons.
+  - balance: Rite of Silver-Blessing now only blesses silver weapons.
+  FreeStylaLT:
+  - balance: Wrestling ClickCDs were made static and longer across the board
+  Lamasmaster:
+  - rscdel: Duped See longswords
+  SpadesNeil:
+  - image: Modified sling bullet sprite to be centered correctly.
+  - image: Added sprite for "silver bullet" that is currently unused.
+2025-12-16:
+  JustSomeGal:
+  - bugfix: You can now actually make the Inquisition's armors with the Inquisition's
+      silver, rather than needing a Malum acolyte to bless silver ingots
+  Ketrai:
+  - balance: Crimson arils heal more on average, and are less deadly now
+  Lamasmaster:
+  - balance: Bonus explosion damage on bombs/fireball against players
+  - rscadd: Dried fish filet recipe
+  - bugfix: Drying recipes not being under COOKING
+  - rscadd: Padded Arming Cap
+  - balance: Arming Cap
+  - rscadd: Battlemaster trait (not for the class but Ravoxian cleric classes)
+  SirSwagmeyer:
+  - rscadd: Three new classes for Gronnites to use!
+  - rscadd: New Shortsword
+  - bugfix: fixed grammar mistakes and clarity issues with gronnite item descriptions
+  SpadesNeil:
+  - bugfix: Meathooks can no longer be constructed out of sticks. Now require small
+      logs.
+  - bugfix: Meat hook in crafting recipes is now one word to match the actual object
+      name.
+  - bugfix: Bag recipe is now appropriately called "sack" in crafting.
+  dopamiin0:
+  - bugfix: most staves now correctly use the staff skill instead of the polearms
+      skill
+  - balance: many staff wielders now have actual staff skill
+  - rscadd: the shillelagh, craftable wooden staff that still uses polearms. mostly
+      for training with

@@ -26,8 +26,7 @@
 	var/cooldown = 0
 
 	var/emote_environment = -1
-	var/list/prevent_crits
-
+	var/prevent_crits = PREVENT_CRITS_MOST
 	var/clothing_flags = NONE
 
 	salvage_result = /obj/item/natural/cloth
@@ -560,23 +559,13 @@ BLIND     // can't see anything
 	str += "[colorgrade_rating("🗡️ STAB ", armor.stab, elaborate = TRUE)] | "
 	str += "[colorgrade_rating("🏹 PIERCE ", armor.piercing, elaborate = TRUE)] "
 
-	if(showcrits && prevent_crits)
-		str += "<br>———————————————<br>"
-		str += "<font color = '#afaeae'><text-align: center>STOPS CRITS: <br>"
-		var/linebreak_count = 0
-		var/index = 0
-		for(var/flag in prevent_crits)
-			index++
-			if(flag == BCLASS_PICK)	//BCLASS_PICK is named "stab", and "stabbing" is its own damage class. Prevents confusion.
-				flag = "pick"
-			str += ("[capitalize(flag)] ")
-			linebreak_count++
-			if(linebreak_count >= 3)
-				str += "<br>"
-				linebreak_count = 0
-			else if(index != length(prevent_crits))
-				str += " | "
-		str += "</font>"
+	if(showcrits)
+		if(!prevent_crits)
+			str += "<text-align: center>"
+			str += "<b><font color = '#aa2121'>CRIT SUSCEPTIBLE!</font></b>"
+		else if(prevent_crits == PREVENT_CRITS_ALL)
+			str += "<text-align: center>"
+			str += "<b><font color = '#6890a7'>PICK RESISTANT</font></b>"
 
 	//This makes it appear darker than the rest of examine text. Draws the cursor to it like to a Wetsquires.rt link.
 	examine_text = "<font color = '#808080'>[examine_text]</font>"
