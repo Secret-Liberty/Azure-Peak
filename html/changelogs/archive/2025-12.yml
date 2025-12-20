@@ -307,3 +307,59 @@
   dopamiin0:
   - bugfix: wither now goes where it's aimed instead of stopping a tile short
   - bugfix: many spells no longer inexplicably stop working when the lights are out
+2025-12-18:
+  FreeStylaLT:
+  - bugfix: Goblins now have a physical descriptor.
+  - bugfix: Fixed Immobilize not being applied correctly on some jumps.
+  Lamasmaster:
+  - balance: Merchantry mercenary weapon shop.
+  Randall:
+  - bugfix: Fixed the dreamwalker summon weapon rite showing the wrong skill name
+  Ryan180602:
+  - bugfix: allowed_patrons is usable for adv_class now.
+  - sound: adds prbt emote.
+  - balance: Removes focus target from Sgts/KCs.
+  SirSwagmeyer:
+  - balance: rebalanced maul wdef
+  dopamiin0:
+  - bugfix: snap freeze and bladeburst now correctly function at range again. sorry
+  - bugfix: wither no longer misses anyone sharing a tile with a target
+2025-12-19:
+  Geevies:
+  - bugfix: You can now shoot arrows up and down stairs.
+  - rscadd: Throwing anything into a river will now cause it to process and shift
+      downstream.
+  - bugfix: Rivers now stop processing when there's nothing in them.
+  - bugfix: NPCs no longer try to swim upstream.
+  - qol: Honorary titles are now checked before joining, avoiding duplicates.
+  - bugfix: Bundles now spawn at the correct 2x1 grid size.
+  - qol: Left clicking a scabbard on the ground or in storage will now pick the entire
+      thing up.
+  - qol: Right clicking a scabbard will now always draw from it, as it works now.
+  - bugfix: Nets now drop to the floor after their timer runs out.
+  Lamasmaster:
+  - rscadd: Tunic in cloak slot
+  SayonaraEcho:
+  - rscadd: Handcart moving animation
+  TheNeoGamer42:
+  - qol: Footman squires now start with apprentice shield skill. In-line with Errant
+      Squire, and no more bonking a dummy for a few minutes.
+  kano-dot:
+  - bugfix: fixed half-elves not being able to pick wood elf ears.
+2025-12-20:
+  FreeStylaLT:
+  - rscadd: New ears for Aaasimar / Elves / Dark Elves / Tieflings
+  - refactor: XP drops now round to the nearest 0.1 decimal.
+  - image: Targeting Gargoyle shows Left and Right now.
+  HeroWithYay:
+  - bugfix: Psydonian Barbarians no longer get mini-pain crits.
+  PatapoIIIa:
+  - bugfix: Legendary (Rank 6) skills are no longer incorrectly reduced to lower ranks
+      when applying a Virtue with the softcap flag.
+  - code_imp: Refactored the entire skill application logic in `handle_skills` to
+      use sequential hardcap/softcap checks, ensuring no negative skill adjustments.
+  Stutternov:
+  - bugfix: fixed badly named helmet state.
+  ToasterStrudes:
+  - rscadd: Added new Venard sounds!
+  - rscadd: Added friendly Venard sounds to Mimi the Guild Pet.
