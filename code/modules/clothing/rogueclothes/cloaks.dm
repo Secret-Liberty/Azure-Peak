@@ -81,12 +81,12 @@
 			return
 		design = "_[design]"
 		symbol_chosen = TRUE
-	var/colorone = input(user, "Select a primary color.","Tabard Design") as null|anything in CLOTHING_COLOR_NAMES
+	var/colorone = input(user, "Select a primary color.","Tabard Design") as null|anything in COLOR_MAP
 	if(!colorone)
 		return
 	var/colortwo
 	if(design != "None")
-		colortwo = input(user, "Select a primary color.","Tabard Design") as null|anything in CLOTHING_COLOR_NAMES
+		colortwo = input(user, "Select a secondary color.","Tabard Design") as null|anything in COLOR_MAP
 		if(!colortwo)
 			return
 	if(world.time > (the_time + 30 SECONDS))
@@ -103,9 +103,9 @@
 		if("Diamonds")
 			detail_tag = "_dim"
 	boobed_detail = !symbol_chosen
-	color = clothing_color2hex(colorone)
+	color = COLOR_MAP[colorone]
 	if(colortwo)
-		detail_color = clothing_color2hex(colortwo)
+		detail_color = COLOR_MAP[colortwo]
 	update_icon()
 	if(ismob(loc))
 		var/mob/L = loc
@@ -548,8 +548,8 @@
 /obj/item/clothing/cloak/tabard/stabard/mercenary/Initialize()
 	. = ..()
 	detail_tag = pick("_quad", "_spl", "_box", "_dim")
-	color = clothing_color2hex(pick(CLOTHING_COLOR_NAMES))
-	detail_color = clothing_color2hex(pick(CLOTHING_COLOR_NAMES))
+	color = pick(CLOTHING_COLOR_MAP)
+	detail_color = pick(CLOTHING_COLOR_MAP)
 	update_icon()
 	if(ismob(loc))
 		var/mob/L = loc
@@ -1066,6 +1066,18 @@
 	inhand_mod = TRUE
 	salvage_result = /obj/item/natural/fibers
 	salvage_amount = 2
+
+/obj/item/clothing/cloak/wickercloak/ComponentInitialize()
+	. = ..()
+	AddComponent(/datum/component/storage/concrete/roguetown/cloak)
+
+/obj/item/clothing/cloak/wickercloak/dropped(mob/living/carbon/human/user)
+	..()
+	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
+	if(STR)
+		var/list/things = STR.contents()
+		for(var/obj/item/I in things)
+			STR.remove_from_storage(I, get_turf(src))
 
 /obj/item/clothing/cloak/tribal
 	name = "tribal pelt"

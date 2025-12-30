@@ -49,10 +49,8 @@
 
 	if((target_zone != user_zone) || ((target_zone == BODY_ZONE_CHEST) || (user_zone == BODY_ZONE_CHEST))) //Our zones do not match OR either of us is targeting chest.
 		var/guaranteed_fail = TRUE
-		switch(target_zone)
-			if(BODY_ZONE_PRECISE_L_EYE, BODY_ZONE_PRECISE_R_EYE)
-				if(user_zone == BODY_ZONE_PRECISE_L_EYE || user_zone == BODY_ZONE_PRECISE_R_EYE)
-					guaranteed_fail = FALSE
+		if(check_face_subzone(target_zone) && check_face_subzone(user_zone))	//We simplify the myriad of face targeting zones
+			guaranteed_fail = FALSE
 		if(guaranteed_fail)
 			to_chat(HU, span_danger("It didn't work! [HT.p_their(TRUE)] footing returned!"))
 			to_chat(HT, span_notice("I fooled [HU.p_them()]! I've regained my footing!"))
