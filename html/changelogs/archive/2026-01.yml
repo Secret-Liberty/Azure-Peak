@@ -303,3 +303,53 @@
       cabbits foot.
   mumblemancer:
   - bugfix: made masked examines not be stuck 2gether
+2026-01-08:
+  BurpleBineapple:
+  - rscadd: Bad omens now trigger bad omen events.
+  - rscadd: Bad omen events can now be force triggered at any time using the launch_omen_event()
+      proc.
+  FreeStylaLT:
+  - balance: Baits now require LOS.
+  Geevies:
+  - rscadd: Flavour Text music no longer stops playing when you close the window.
+  JustSomeGalSS13:
+  - rscadd: Mindlink now plays a sound for the recipient
+  Ketrai:
+  - rscadd: Stockpiles can now have random scarcity
+  - balance: Some stockpile goods are scarce now
+  Ryan180602:
+  - rscadd: Chance for sakura weather on Eora.
+  - bugfix: fix forever leaves.
+  SillyMoff:
+  - rscadd: 3 subclasses for withces
+  - balance: transforms now take 3 second
+  SpadesNeil:
+  - bugfix: Changes iron bullets for firearms to actually use the 2x multiplier on
+      simple mobs that it was supposed to have from the start. 2.5x was in error from
+      old code I forgot to change.
+2026-01-09:
+  ADONAI:
+  - bugfix: actually fixes examine text im so sorry
+  Antoonij:
+  - rscadd: firewalker and fire cascade spells
+  Geevies:
+  - rscadd: The HUD face reacts faster, and will react to injury.
+  - rscadd: Xylixians can now disguise their amulet as any other psycross amulet by
+      shift-right-clicking it.
+  - rscadd: Mounted Knights can now pick the Froggemund helmet.
+  - bugfix: Fixed knights' loadout referring to the klappvisier helmet as the Etruscan
+      helmet.
+  Lamasmaster:
+  - refactor: Jobs
+  - rscdel: Knight garrison armoury key
+  SillyMoff:
+  - bugfix: icons for spells and arcyne bolt is back
+  WatermelonsEverywhere:
+  - rscadd: Adds a unique sound effect to Mending
+  bearrrrrrrr:
+  - bugfix: churn wealth dmg properly applied at max level, now kills and delimbs
+      over 1k moni
+  hazelrat:
+  - rscadd: The city walls can now be fully navigated by anyone with a wall key.
+  - bugfix: Arrow quivers no longer appear full if emptied by clicking them directly
+      with a bow.
