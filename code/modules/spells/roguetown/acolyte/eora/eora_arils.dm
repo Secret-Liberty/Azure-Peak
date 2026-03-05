@@ -157,6 +157,7 @@
 	icon_state = "cerulean"
 	effect_desc = "Excellent fishing bait that attracts treasure."
 	baitpenalty = 5
+	baitresilience = 4
 	isbait = TRUE
 	fishingMods=list(
 		"commonFishingMod" = 0.2,
@@ -295,6 +296,7 @@
 
 		ADD_TRAIT(target, TRAIT_IWASREVIVED, "ochre_aril")
 		target.apply_status_effect(/datum/status_effect/debuff/metabolic_acceleration)
+		target.mind.remove_antag_datum(/datum/antagonist/zombie)
 		return TRUE
 	else
 		target.visible_message(span_warning("The magic falters, and nothing happens."))

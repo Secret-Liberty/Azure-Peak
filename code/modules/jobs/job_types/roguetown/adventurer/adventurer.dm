@@ -49,9 +49,13 @@ GLOBAL_VAR_INIT(adventurer_hugbox_duration_still, 3 MINUTES)
 		/datum/advclass/rogue/thief,
 		/datum/advclass/rogue/bard,
 		/datum/advclass/rogue/swashbuckler,
+		/datum/advclass/mystic,
+		/datum/advclass/mystic/resilientsoul,
+		/datum/advclass/mystic/holyblade,
+		/datum/advclass/mystic/theurgist,
 		/datum/advclass/mage,
-		/datum/advclass/mage/spellblade,
 		/datum/advclass/mage/spellsinger,
+		/datum/advclass/mage/spellblade,
 		/datum/advclass/ranger,
 		/datum/advclass/ranger/wayfarer,
 		/datum/advclass/ranger/bombadier,
@@ -63,7 +67,10 @@ GLOBAL_VAR_INIT(adventurer_hugbox_duration_still, 3 MINUTES)
 		/datum/advclass/foreigner/yoruku,
 		/datum/advclass/foreigner/repentant,
 		/datum/advclass/foreigner/refugee,
-		/datum/advclass/foreigner/slaver
+		/datum/advclass/foreigner/slaver,
+		/datum/advclass/foreigner/shepherd,
+		/datum/advclass/foreigner/fencerguy,
+		/datum/advclass/foreigner/bronzeclad
 	)
 
 /mob/living/carbon/human/proc/adv_hugboxing_start()

@@ -20,7 +20,6 @@
 	var/action_icon_state = "spell_default"
 	var/action_background_icon_state = "bg_spell"
 	var/base_action = /datum/action/spell_action
-	var/mmb = TRUE
 	var/releasedrain = 0
 	var/chargedrain = 0
 	var/chargetime = 0
@@ -34,7 +33,7 @@
 	var/obj/inhand_requirement = null
 	var/overlay_state = null
 	var/overlay_alpha = 255
-	var/ignore_los = TRUE
+	var/ignore_los = FALSE
 	var/glow_intensity = 0 // How much does the user glow when using the ability
 	var/glow_color = null // The color of the glow
 	var/hide_charge_effect = FALSE // If true, will not show the spell's icon when charging 
@@ -44,6 +43,8 @@
 
 	/// This "spell" (miracle) is excluded from Priest's round-start selection.
 	var/priest_excluded = FALSE
+
+	var/skipcharge = FALSE
 
 /obj/effect/proc_holder/Initialize()
 	. = ..()
@@ -85,11 +86,17 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 /obj/effect/proc_holder/Destroy()
 	if (action)
 		qdel(action)
+	if(mob_charge_effect)
+		QDEL_NULL(mob_charge_effect)
 	if(ranged_ability_user)
 		remove_ranged_ability()
 	return ..()
 
 /obj/effect/proc_holder/proc/InterceptClickOn(mob/living/caller, params, atom/A)
+	var/list/modifiers = params2list(params)
+	if(!modifiers["middle"])
+		return TRUE
+
 	if(caller.ranged_ability != src || ranged_ability_user != caller) //I'm not actually sure how these would trigger, but, uh, safety, I guess?
 		to_chat(caller, span_info("<b>[caller.ranged_ability.name]</b> has been disabled."))
 		caller.ranged_ability.remove_ranged_ability()
@@ -112,11 +119,10 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 			return
 	user.ranged_ability = src
 	ranged_ability_user = user
-	if(!mmb)
-		user.click_intercept = src
-		user.update_mouse_pointer()
-	else
-		user.mmb_intent_change(QINTENT_SPELL)
+	user.click_intercept = src
+	user.update_mouse_pointer()
+	user.mmb_intent_change(QINTENT_SPELL)
+
 	if(msg)
 		to_chat(ranged_ability_user, msg)
 	update_icon()
@@ -125,11 +131,11 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	if(!ranged_ability_user || !ranged_ability_user.client || (ranged_ability_user.ranged_ability && ranged_ability_user.ranged_ability != src)) //To avoid removing the wrong ability
 		return
 	ranged_ability_user.ranged_ability = null
-	if(!mmb)
-		ranged_ability_user.click_intercept = null
-		ranged_ability_user.update_mouse_pointer()
-	else
-		ranged_ability_user.mmb_intent_change(null)
+
+	ranged_ability_user.click_intercept = null
+	ranged_ability_user.update_mouse_pointer()
+	ranged_ability_user.mmb_intent_change(null)
+
 	if(msg)
 		to_chat(ranged_ability_user, msg)
 	ranged_ability_user = null
@@ -154,7 +160,8 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 
 	var/recharge_time = 50 //recharge time in deciseconds if charge_type = "recharge" or starting charges if charge_type = "charges"
 	var/charge_counter = 0 //can only cast spells if it equals recharge, ++ each decisecond if charge_type = "recharge" or -- each cast if charge_type = "charges"
-	var/still_recharging_msg = span_notice("The spell is still recharging.")
+	var/last_process_time = 0 //tracks world.time of last process() call for delta-time cooldown
+	var/still_recharging_msg = span_info("The spell is still recharging.")
 
 	var/cast_without_targets = FALSE
 
@@ -170,7 +177,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	var/list/invocations = list() //what is uttered when the wizard casts the spell
 	var/invocation_emote_self = null
 	var/invocation_type = "none" //can be none, whisper, emote and shout
-	var/range = 7 //the range of the spell; outer radius for aoe spells
+	var/range = 7 	// the range of the spell; outer radius for aoe spells. set to 0 for self.
 	var/message = "" //whatever it says to the guy affected by it
 	var/selection_type = "view" //can be "range" or "view"
 	var/cooldown_min = 0 //This defines what spell quickened four times has as a cooldown. Make sure to set this for every spell
@@ -178,6 +185,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	var/gesture_required = FALSE // Can it be cast while cuffed? Rule of thumb: Offensive spells + Mobility cannot be cast
 	var/spell_tier = 1 // Tier of the spell, used to determine whether you can learn it based on your spell. Starts at 1.
 	var/refundable = FALSE // If true, the spell can be refunded. This is modified at the point it is added to the user's mind by learnspell.
+	var/learned_from_pool // If set, the spell was learned from a pool-based system and should refund to this pool name.
 	var/zizo_spell = FALSE // If this spell is fucked up & evil and can only be learned by heretics.
 
 	var/overlay = 0
@@ -199,7 +207,6 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	var/miracle = FALSE
 	var/devotion_cost = 0
 	var/ignore_cockblock = FALSE //whether or not to ignore TRAIT_SPELLCOCKBLOCK
-
 	action_icon_state = "spell0"
 	action_icon = 'icons/mob/actions/roguespells.dmi'
 	action_background_icon_state = ""
@@ -207,52 +214,104 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 
 /obj/effect/proc_holder/spell/get_chargetime()
 	if(ranged_ability_user && chargetime)
-		var/newtime = chargetime
-		//skill block
-		newtime = newtime - (chargetime * (ranged_ability_user.get_skill_level(associated_skill) * CHARGE_REDUCTION_PER_SKILL))
-		//spellbook cast time reduction
-		var/obj/item/book/spellbook/sbook = ranged_ability_user.is_holding_item_of_type(/obj/item/book/spellbook)
-		if(sbook && sbook?.open)
-			newtime = newtime - (chargetime * (sbook.get_castred()))
-		//staff cast time reduction
-		var/obj/item/rogueweapon/woodstaff/staff = ranged_ability_user.is_holding_item_of_type(/obj/item/rogueweapon/woodstaff/)
-		if(staff)
-			newtime = newtime - (chargetime * (staff.cast_time_reduction))
-		if(newtime > 0)
-			return newtime
-		else
-			return 0.1
+		return calculate_chargetime(ranged_ability_user)
 	return chargetime
 
 /obj/effect/proc_holder/spell/get_fatigue_drain()
 	if(ranged_ability_user && releasedrain)
-		var/newdrain = releasedrain
-		//skill block
-		newdrain = newdrain - (releasedrain * (ranged_ability_user.get_skill_level(associated_skill) * FATIGUE_REDUCTION_PER_SKILL))
-		//int block
-		if(ranged_ability_user.STAINT > SPELL_SCALING_THRESHOLD)
-			var/diff = min(ranged_ability_user.STAINT, SPELL_POSITIVE_SCALING_THRESHOLD) - SPELL_SCALING_THRESHOLD
-			newdrain = newdrain - (releasedrain * diff * FATIGUE_REDUCTION_PER_INT)
-		else if(ranged_ability_user.STAINT < 10)
-			var/diffy = SPELL_SCALING_THRESHOLD - ranged_ability_user.STAINT
-			newdrain = newdrain + (releasedrain * (diffy * FATIGUE_REDUCTION_PER_INT))
-		if(!ranged_ability_user.check_armor_skill())
-			newdrain += 80
-		if(newdrain > 0)
-			return newdrain
-		else
-			return 0.1
+		return calculate_fatigue_drain(ranged_ability_user)
 	return releasedrain
 
+/obj/effect/proc_holder/spell/proc/calculate_chargetime(mob/living/user)
+	if(!user || !chargetime)
+		return chargetime
+	var/newtime = chargetime
+	//skill block
+	newtime = newtime - (chargetime * (user.get_skill_level(associated_skill) * CHARGE_REDUCTION_PER_SKILL))
+	//spellbook cast time reduction
+	var/obj/item/book/spellbook/sbook = user.is_holding_item_of_type(/obj/item/book/spellbook)
+	if(sbook && sbook?.open)
+		newtime = newtime - (chargetime * (sbook.get_castred()))
+	//staff cast time reduction
+	var/obj/item/rogueweapon/staff = user.is_holding_item_of_type(/obj/item/rogueweapon/)
+	if(staff && staff.cast_time_reduction)
+		newtime = newtime - (chargetime * (staff.cast_time_reduction))
+	if(newtime > 0)
+		return newtime
+	return 0.1
 
-/obj/effect/proc_holder/spell/proc/cast_check(skipcharge = 0, mob/user = usr) //checks if the spell can be cast based on its settings; skipcharge is used when an additional cast_check is called inside the spell
+/obj/effect/proc_holder/spell/proc/calculate_fatigue_drain(mob/living/user)
+	if(!user || !releasedrain)
+		return releasedrain
+	var/newdrain = releasedrain
+	//skill block
+	newdrain = newdrain - (releasedrain * (user.get_skill_level(associated_skill) * FATIGUE_REDUCTION_PER_SKILL))
+	//int block
+	if(user.STAINT > SPELL_SCALING_THRESHOLD)
+		var/diff = min(user.STAINT, SPELL_POSITIVE_SCALING_THRESHOLD) - SPELL_SCALING_THRESHOLD
+		newdrain = newdrain - (releasedrain * diff * FATIGUE_REDUCTION_PER_INT)
+	else if(user.STAINT < 10)
+		var/diffy = SPELL_SCALING_THRESHOLD - user.STAINT
+		newdrain = newdrain + (releasedrain * (diffy * FATIGUE_REDUCTION_PER_INT))
+	if(!user.check_armor_skill())
+		newdrain += 80
+	if(newdrain > 0)
+		return newdrain
+	return 0.1
+
+/obj/effect/proc_holder/spell/proc/calculate_cooldown(mob/living/user)
+	if(!user || is_cdr_exempt)
+		return initial(recharge_time)
+	var/base = initial(recharge_time)
+	if(user.STAINT > SPELL_SCALING_THRESHOLD)
+		var/diff = min(user.STAINT, SPELL_POSITIVE_SCALING_THRESHOLD) - SPELL_SCALING_THRESHOLD
+		return base - (base * diff * COOLDOWN_REDUCTION_PER_INT)
+	else if(user.STAINT < SPELL_SCALING_THRESHOLD)
+		var/diff2 = SPELL_SCALING_THRESHOLD - user.STAINT
+		return base + (base * (diff2 * COOLDOWN_REDUCTION_PER_INT))
+	return base
+
+/obj/effect/proc_holder/spell/proc/get_spell_statistics(mob/living/user)
+	var/list/stats = list()
+	if(range)
+		if(range == -1) // "touch" spells are -1, which need special consideration
+			stats += span_info("Range: Touch")
+		else
+			stats += span_info("Range: [range] tiles")
+	else if(range == 0) // as do spells that only affect the user
+		stats += span_info("Range: Self")
+	var/base_ct = chargetime
+	if(base_ct > 0)
+		var/dynamic_ct = user ? calculate_chargetime(user) : base_ct
+		if(dynamic_ct != base_ct)
+			stats += span_info("Charge time: [DisplayTimeText(base_ct)] (current: [DisplayTimeText(dynamic_ct)])")
+		else
+			stats += span_info("Charge time: [DisplayTimeText(base_ct)]")
+	else
+		stats += span_info("Charge time: None")
+	var/base_cd = initial(recharge_time)
+	if(base_cd)
+		var/dynamic_cd = user ? calculate_cooldown(user) : base_cd
+		if(dynamic_cd != base_cd)
+			stats += span_info("Cooldown: [DisplayTimeText(base_cd)] (current: [DisplayTimeText(dynamic_cd)])")
+		else
+			stats += span_info("Cooldown: [DisplayTimeText(base_cd)]")
+	var/base_fd = releasedrain
+	if(base_fd > 0)
+		var/dynamic_fd = user ? calculate_fatigue_drain(user) : base_fd
+		if(dynamic_fd != base_fd)
+			stats += span_info("Stamina cost: [base_fd] (current: [dynamic_fd])")
+		else
+			stats += span_info("Stamina cost: [base_fd]")
+	return stats
+
+/obj/effect/proc_holder/spell/proc/cast_check(skipcharge, mob/user = usr) //checks if the spell can be cast based on its settings; skipcharge is used when an additional cast_check is called inside the spell
 	if(player_lock)
 		if(!user.mind || !(src in user.mind.spell_list) && !(src in user.mob_spell_list))
 			to_chat(user, span_warning("I shouldn't have this spell! Something's wrong..."))
 			return FALSE
 	else
 		if(!(src in user.mob_spell_list))
-
 			return FALSE
 
 	var/turf/T = get_turf(user)
@@ -260,10 +319,8 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 		to_chat(user, span_warning("I can't cast this spell here!"))
 		return FALSE
 
-	if(!skipcharge)
-		if(!charge_check(user))
-
-			return FALSE
+	if(!charge_check(user))
+		return FALSE
 
 	if(user.stat && !stat_allowed)
 		to_chat(user, span_warning("Not when I am incapacitated!"))
@@ -281,7 +338,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 		var/antimagic = user.anti_magic_check(TRUE, FALSE, FALSE, 0, TRUE)
 		if(antimagic)
 			if(isatom(antimagic))
-				to_chat(user, span_notice("[antimagic] is interfering with my magic."))
+				to_chat(user, span_info("[antimagic] is interfering with my magic."))
 			else
 				to_chat(user, span_warning("Magic seems to flee from you, you can't gather enough power to cast this spell."))
 			return FALSE
@@ -346,6 +403,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 		switch(charge_type)
 			if("recharge")
 				charge_counter = 0 //doesn't start recharging until the targets selecting ends
+				last_process_time = world.time
 			if("charges")
 				charge_counter-- //returns the charge if the targets selecting fails
 			if("holdervar")
@@ -356,23 +414,28 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	record_featured_stat(FEATURED_STATS_MAGES, user)
 	return TRUE
 
-/obj/effect/proc_holder/spell/proc/charge_check(mob/user, silent = FALSE)
+/obj/effect/proc_holder/spell/proc/charge_check(mob/user)
+	if(skipcharge)
+		return TRUE
 	switch(charge_type)
 		if("recharge")
 			if(charge_counter < recharge_time)
-				if(!silent)
-					to_chat(user, still_recharging_msg)
+				to_chat(user, still_recharging_msg)
 				return FALSE
 		if("charges")
 			if(!charge_counter)
-				if(!silent)
-					to_chat(user, span_warning("[name] has no charges left!"))
+				to_chat(user, span_warning("[name] has no charges left!"))
 				return FALSE
 	return TRUE
 
 /obj/effect/proc_holder/spell/proc/invocation(mob/user = usr)
-	if(!invocations || !invocations.len)
+	if(!invocations)
 		return
+	if(istext(invocations))
+		invocations = list(invocations)
+	if(!islist(invocations) || !invocations.len)
+		return
+
 	var/chosen_invocation = pick(invocations)
 	switch(invocation_type)
 		if("shout")
@@ -401,16 +464,23 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 
 	still_recharging_msg = span_warning("[name] is still recharging!")
 	charge_counter = recharge_time
+	last_process_time = world.time
 
 /obj/effect/proc_holder/spell/Destroy()
 	STOP_PROCESSING(SSfastprocess, src)
+	var/mob/owner = action?.owner
+	if(owner)
+		owner.mob_spell_list -= src
+		owner.mind?.spell_list -= src
 	qdel(action)
 	return ..()
 
 /obj/effect/proc_holder/spell/Click()
-	if(cast_check())
-		choose_targets()
-	return 1
+	if(!cast_check())
+		revert_cast()
+		return FALSE
+	choose_targets()
+	return TRUE
 
 /obj/effect/proc_holder/spell/proc/choose_targets(mob/user = usr) //depends on subtype - /targeted or /aoe_turf
 	return
@@ -419,23 +489,37 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	return TRUE
 
 /obj/effect/proc_holder/spell/proc/start_recharge()
-	if(ranged_ability_user && !is_cdr_exempt)
-		if(ranged_ability_user.STAINT > SPELL_SCALING_THRESHOLD)
-			var/diff = min(ranged_ability_user.STAINT, SPELL_POSITIVE_SCALING_THRESHOLD) - SPELL_SCALING_THRESHOLD
+	var/old_recharge = recharge_time
+	var/mob/living/user = ranged_ability_user || action?.owner
+
+	if(user && !is_cdr_exempt)
+		if(user.STAINT > SPELL_SCALING_THRESHOLD)
+			var/diff = min(user.STAINT, SPELL_POSITIVE_SCALING_THRESHOLD) - SPELL_SCALING_THRESHOLD
 			recharge_time = initial(recharge_time) - (initial(recharge_time) * diff * COOLDOWN_REDUCTION_PER_INT)
-		else if(ranged_ability_user.STAINT < SPELL_SCALING_THRESHOLD)
-			var/diff2 = SPELL_SCALING_THRESHOLD - ranged_ability_user.STAINT
+		else if(user.STAINT < SPELL_SCALING_THRESHOLD)
+			var/diff2 = SPELL_SCALING_THRESHOLD - user.STAINT
 			recharge_time = initial(recharge_time) + (initial(recharge_time) * (diff2 * COOLDOWN_REDUCTION_PER_INT))
+
+	// If the spell was fully charged before recalculation, keep it fully charged
+	if(charge_counter >= old_recharge && old_recharge > 0)
+		charge_counter = recharge_time
 
 	START_PROCESSING(SSfastprocess, src)
 
 /obj/effect/proc_holder/spell/process()
+	var/delta = world.time - last_process_time
+	last_process_time = world.time
 	if(charge_counter <= recharge_time) // Edge case when charge counter is set
-		charge_counter += 2	//processes 5 times per second instead of 10.
+		charge_counter += delta
 		if(charge_counter >= recharge_time)
-			action.UpdateButtonIcon()
 			charge_counter = recharge_time
+			if(action?.button)
+				action.button.update_maptext(0)
+			action?.UpdateButtonIcon()
 			STOP_PROCESSING(SSfastprocess, src)
+			return
+		if(action?.button)
+			action.button.update_maptext(recharge_time - charge_counter)
 
 /obj/effect/proc_holder/spell/proc/perform(list/targets, recharge = TRUE, mob/user = usr) //if recharge is started is important for the trigger spells
 	if(!ignore_los)
@@ -468,9 +552,14 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	before_cast(targets, user = user)
 	if(user && user.ckey)
 		user.log_message(span_danger("cast the spell [name]."), LOG_ATTACK)
-	if(user.mob_timers[MT_INVISIBILITY] > world.time)			
+	if(user.mob_timers[MT_INVISIBILITY] > world.time)
 		user.mob_timers[MT_INVISIBILITY] = world.time
 		user.update_sneak_invis(reset = TRUE)
+	if(isliving(user))
+		var/mob/living/L = user
+		if(L.rogue_sneaking)
+			L.mob_timers[MT_FOUNDSNEAK] = world.time
+			L.update_sneak_invis(reset = TRUE)
 	if(cast(targets, user = user))
 		invocation(user)
 		start_recharge()
@@ -535,9 +624,9 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 		var/mob/living/carbon/human/devotee = user
 		devotee.devotion?.update_devotion(-devotion_cost)
 		to_chat(devotee, "<font color='purple'>I [devotion_cost > 0 ? "lost" : "gained"] [abs(devotion_cost)] devotion.</font>")
-	//Add xp based on the fatigue used -- AZURE EDIT: REMOVED!! THIS SHIT WAS TINY AND SUUUUCKED
-	/* if(xp_gain)
-		adjust_experience(usr, associated_skill, round(get_fatigue_drain() * MAGIC_XP_MULTIPLIER)) */
+
+	if(user.mmb_intent && user.mmb_intent.mob_light)
+		QDEL_NULL(user.mmb_intent.mob_light)
 
 	START_PROCESSING(SSfastprocess, src) // ensure we always end up reprocessing after casting
 
@@ -558,8 +647,11 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 		if("holdervar")
 			adjust_var(user, holder_var_type, -holder_var_amount)
 	START_PROCESSING(SSfastprocess, src)
-	if(action)
+	if(action?.button)
+		action.button.update_maptext(0)
 		action.UpdateButtonIcon()
+	if(user.mmb_intent && user.mmb_intent.mob_light)
+		QDEL_NULL(user.mmb_intent.mob_light)
 
 /obj/effect/proc_holder/spell/proc/adjust_var(mob/living/target = usr, type, amount) //handles the adjustment of the var when the spell is used. has some hardcoded types
 	if (!istype(target))
@@ -703,7 +795,12 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	if(((!user.mind) || !(src in user.mind.spell_list)) && !(src in user.mob_spell_list))
 		return FALSE
 
-	if(!charge_check(user,TRUE))
+	// deny horsespellers
+	if(user.client && user.buckled && isliving(user.buckled))
+		to_chat(user, span_warning("I'm too distracted riding [user.buckled] to cast!"))
+		return FALSE
+
+	if(!charge_check(user))
 		return FALSE
 
 	if(user.stat && !stat_allowed)
@@ -742,6 +839,8 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	return TRUE
 
 /obj/effect/proc_holder/spell/self //Targets only the caster. Good for buffs and heals, but probably not wise for fireballs (although they usually fireball themselves anyway, honke)
+	ignore_los = 1
+	range = 0
 
 /obj/effect/proc_holder/spell/self/choose_targets(mob/user = usr)
 	if(!user)
@@ -762,9 +861,68 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 
 /obj/effect/proc_holder/spell/self/basic_heal/cast(mob/living/carbon/human/user) //Note the lack of "list/targets" here. Instead, use a "user" var depending on mob requirements.
 	//Also, notice the lack of a "for()" statement that looks through the targets. This is, again, because the spell can only have a single target.
-	user.visible_message(span_warning("A wreath of gentle light passes over [user]!"), span_notice("I wreath myself in healing light!"))
+	user.visible_message(span_warning("A wreath of gentle light passes over [user]!"), span_info("I wreath myself in healing light!"))
 	user.adjustBruteLoss(-10)
 	user.adjustFireLoss(-10)
+
+/// Helper for non-projectile spells. Call before applying effects to a target.
+/// Returns TRUE if the target's Guard or parry buffer deflected the spell (skip this target).
+/// Returns FALSE if the spell should proceed normally.
+/// If attacker is provided, they get Exposed when guard deflects (pseudo-melee punishment).
+/// Usage in cast(): if(spell_guard_check(L)) continue
+/obj/effect/proc_holder/spell/proc/spell_guard_check(mob/living/target, no_message = FALSE, mob/living/attacker)
+	if(!isliving(target))
+		return FALSE
+	// Check for active guard
+	var/datum/status_effect/buff/clash/guard = target.has_status_effect(/datum/status_effect/buff/clash)
+	if(guard)
+		if(isarcyne(target))
+			if(!no_message)
+				target.visible_message(span_warning("[target] deflects [name] with a reactive ward!"))
+				to_chat(target, span_notice("My ward deflects the incoming spell!"))
+			playsound(get_turf(target), pick('sound/combat/parry/shield/magicshield (1).ogg', 'sound/combat/parry/shield/magicshield (2).ogg', 'sound/combat/parry/shield/magicshield (3).ogg'), 100)
+		else
+			if(!no_message)
+				target.visible_message(span_warning("[target] deflects [name]!"))
+				to_chat(target, span_notice("My guard deflects the incoming spell!"))
+			var/obj/item/held = target.get_active_held_item()
+			if(held?.parrysound)
+				playsound(get_turf(target), pick(held.parrysound), 100)
+			else
+				playsound(get_turf(target), pick(target.parry_sound), 100)
+		target.apply_status_effect(/datum/status_effect/buff/parry_buffer)
+		target.apply_status_effect(/datum/status_effect/buff/adrenaline_rush)
+		target.remove_status_effect(/datum/status_effect/buff/clash)
+		// Pseudo-melee punishment: expose the attacker if provided
+		if(attacker && ishuman(attacker))
+			// Parry sound at attacker so they hear they got deflected
+			var/obj/item/attacker_weapon = arcyne_get_weapon(attacker)
+			if(attacker_weapon?.parrysound)
+				playsound(get_turf(attacker), pick(attacker_weapon.parrysound), 100)
+			else
+				playsound(get_turf(attacker), pick(attacker.parry_sound), 100)
+			// Weapon durability damage — riposte-level punishment
+			if(attacker_weapon)
+				if(attacker_weapon.max_blade_int)
+					attacker_weapon.remove_bintegrity((attacker_weapon.blade_int * RIPOSTE_SHARPNESS_FACTOR), attacker)
+				else
+					var/integdam = max((attacker_weapon.max_integrity / RIPOSTE_INTEG_DIVISOR), (INTEG_PARRY_DECAY_NOSHARP * 5))
+					attacker_weapon.take_damage(integdam, BRUTE, attacker_weapon.d_type)
+			// Remove first so chain-deflections replay the overhead visual and reset the timer
+			attacker.remove_status_effect(/datum/status_effect/debuff/exposed)
+			attacker.apply_status_effect(/datum/status_effect/debuff/exposed, 5 SECONDS)
+			// Dump all momentum — you swung into a guard, you lose your edge
+			var/datum/status_effect/buff/arcyne_momentum/momentum = attacker.has_status_effect(/datum/status_effect/buff/arcyne_momentum)
+			if(momentum && momentum.stacks > 0)
+				momentum.consume_all_stacks()
+				to_chat(attacker, span_danger("My arcyne strike was deflected — I'm exposed and my momentum is gone!"))
+			else
+				to_chat(attacker, span_danger("My arcyne strike was deflected — I'm exposed!"))
+		return TRUE
+	// Check for parry buffer (from a recent deflection) — silent, no chat spam for multi-hit spells
+	if(target.has_status_effect(/datum/status_effect/buff/parry_buffer))
+		return TRUE
+	return FALSE
 
 #undef TARGET_CLOSEST
 #undef TARGET_RANDOM

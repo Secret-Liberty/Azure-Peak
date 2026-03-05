@@ -149,9 +149,9 @@
 	armor = owner.run_armor_check(zone_precise, acheck_dflag, damage = 0)
 	if(ishuman(owner))
 		var/mob/living/carbon/human/human_owner = owner
-		if(human_owner.checkcritarmor(zone_precise, bclass))
+		if(human_owner.checkcritarmor(zone_precise, bclass) && armor)
 			do_crit = FALSE
-		if(owner.mind && (get_damage() <= (max_damage * CRIT_DISMEMBER_DAMAGE_THRESHOLD))) //No crits unless the damage is maxed out.
+		if((owner.mind || HAS_TRAIT(owner, TRAIT_CRIT_THRESHOLD)) && (get_damage() <= (max_damage * CRIT_DISMEMBER_DAMAGE_THRESHOLD))) //No crits unless the damage is maxed out.
 			do_crit = FALSE // We used to check if they are buckled or lying down but being grounded is a big enough advantage.
 	if(user)
 		if(user.goodluck(2))
@@ -169,19 +169,26 @@
 			if(ishuman(owner))
 				var/mob/living/carbon/human/human_owner = owner
 				human_owner.hud_used?.stressies?.flick_pain(TRUE)
+				var/suppress_attack_blip = FALSE //At 'Always' we're guaranteed to have already emoted due to a successful attack.
+				if(user?.client?.prefs?.attack_blip_frequency == ATTACK_BLIP_PREF_ALWAYS || user?.client?.prefs?.attack_blip_frequency == ATTACK_BLIP_PREF_NEVER)
+					suppress_attack_blip = TRUE 
+				if(!suppress_attack_blip)
+					if(user)
+						user.emote("attack", forced = TRUE)
+				human_owner.emote("paincrit", forced = TRUE)
 
 			if(user)
 				if(user.has_flaw(/datum/charflaw/addiction/thrillseeker))
 					var/datum/component/arousal/CAR = user.GetComponent(/datum/component/arousal)
 					if(CAR)
-						user.sate_addiction()
+						user.sate_addiction(/datum/charflaw/addiction/thrillseeker)
 						user.add_stress(/datum/stressevent/thrill)
 						CAR.ejaculate_special()
 
 				if(owner.has_flaw(/datum/charflaw/addiction/thrillseeker))
 					var/datum/component/arousal/CAR = owner.GetComponent(/datum/component/arousal)
 					if(CAR)
-						owner.sate_addiction()
+						owner.sate_addiction(/datum/charflaw/addiction/thrillseeker)
 						owner.add_stress(/datum/stressevent/thrill)
 						CAR.ejaculate_special()
 
@@ -189,6 +196,20 @@
 	if(ishuman(owner))
 		var/mob/living/carbon/human/human_owner = owner
 		human_owner.hud_used?.stressies?.flick_pain(FALSE)
+
+	if(owner?.has_status_effect(/datum/status_effect/debuff/exposed))
+		playsound(owner, 'sound/combat/exposed_pop.ogg', 100, TRUE)
+		owner.remove_status_effect(/datum/status_effect/debuff/exposed)
+		visible_message(span_danger("[src] suffers a savage hit while exposed!"))
+		if(!do_crit)	//We aren't already screaming from a crit.
+			owner.emote("painmoan", forced = TRUE)
+	else if(owner?.has_status_effect(/datum/status_effect/debuff/vulnerable))
+		playsound(owner, 'sound/combat/vulnerable_pop.ogg', 100, TRUE)
+		owner.remove_status_effect(/datum/status_effect/debuff/vulnerable)
+		visible_message(span_combatprimary("[src] is struck while vulnerable!"))
+		if(!do_crit)	//We aren't already screaming from a crit.
+			owner.emote("pain", forced = TRUE)
+
 	return dynwound
 
 /obj/item/bodypart/proc/manage_dynamic_wound(bclass, dam, armor)
@@ -211,8 +232,9 @@
 		else	//Wrong bclass type for wounds, skip adding this.
 			return
 	var/datum/wound/dynwound = has_wound(woundtype)
+	var/exposed = owner.has_status_effect(/datum/status_effect/debuff/exposed)
 	if(!isnull(dynwound))
-		dynwound.upgrade(dam, armor)
+		dynwound.upgrade(dam, armor, exposed)
 	else
 		if(ispath(woundtype) && woundtype)
 			if(!isnull(woundtype))
@@ -220,7 +242,7 @@
 				dynwound = newwound
 				if(newwound && !isnull(newwound))	//don't even ask - Free
 					owner.visible_message(span_red("A new [newwound.name] appears on [owner]'s [lowertext(bodyzone2readablezone(bodypart_to_zone(newwound.bodypart_owner)))]!"))
-					newwound.upgrade(dam, armor)
+					newwound.upgrade(dam, armor, exposed)
 	return dynwound
 
 /// Behemoth of a proc used to apply a wound after a bodypart is damaged in an attack
@@ -560,13 +582,25 @@
 		embedder = has_embedded_object(embedder)
 	if(!istype(embedder) || !is_object_embedded(embedder))
 		return FALSE
+
 	LAZYREMOVE(embedded_objects, embedder)
 	embedder.is_embedded = FALSE
-	var/drop_location = owner?.drop_location() || drop_location()
-	if(drop_location)
-		embedder.forceMove(drop_location)
+	if(QDELETED(embedder))
+		if(owner)
+			if(!owner.has_embedded_objects())
+				owner.clear_alert("embeddedobject")
+			update_disabled()
+		return TRUE
+
+	var/atom/drop_loc = owner?.drop_location() || drop_location()
+	if(!isatom(drop_loc) || QDELETED(drop_loc))
+		drop_loc = null
+
+	if(drop_loc)
+		embedder.forceMove(drop_loc)
 	else
 		qdel(embedder)
+
 	if(owner)
 		if(!owner.has_embedded_objects())
 			owner.clear_alert("embeddedobject")

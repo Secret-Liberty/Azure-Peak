@@ -177,9 +177,9 @@
 	return TRUE
 
 /datum/job/proc/get_used_title(mob/player)
-	var/pronouns = player.pronouns
+	var/titles = player.titles_pref
 	var/used_name = display_title || title
-	if((pronouns == SHE_HER || pronouns == THEY_THEM_F) && f_title)
+	if((titles == TITLES_F) && f_title)
 		used_name = f_title
 	return used_name
 
@@ -254,7 +254,7 @@
 
 	if(H.islatejoin && announce_latejoin)
 		var/used_title = display_title || title
-		if((H.pronouns == SHE_HER || H.pronouns == THEY_THEM_F) && f_title)
+		if((H.titles_pref == TITLES_F) && f_title)
 			used_title = f_title
 		scom_announce("[H.real_name] the [used_title] arrives to Azure Peak.")
 
@@ -452,6 +452,22 @@
 	if(!J)
 		J = SSjob.GetJob(H.job)
 
+	// --- FOG HIJACK START ---
+	// Basically fog protection on spawn
+	if(SSevent_scheduler.fog_scheduled)
+		H.apply_status_effect(/datum/status_effect/buff/fog_grace)
+
+		// Pity Lantern Logic
+		var/lantern_prob = 10
+		var/mob_rank = H.job
+		if(SSevent_scheduler.fog_active)
+			lantern_prob = (mob_rank in GLOB.antagonist_positions) ? 50 : 15
+		else
+			lantern_prob = (mob_rank in GLOB.antagonist_positions) ? 25 : 8
+		if(prob(lantern_prob))
+			new /obj/item/lantern/fog_repelling(H.loc)
+	// --- FOG HIJACK END ---
+
 //Warden and regular officers add this result to their get_access()
 /datum/job/proc/check_config_for_sec_maint()
 	if(CONFIG_GET(flag/security_has_maint_access))
@@ -474,10 +490,16 @@
 
 // LETHALSTONE EDIT: Helper functions for pronoun-based clothing selection
 /proc/should_wear_masc_clothes(mob/living/carbon/human/H)
-	return (H.pronouns == HE_HIM || H.pronouns == THEY_THEM || H.pronouns == SHE_HER_M || (H.pronouns == IT_ITS && H.gender == MALE))
+	if(!H.mind)
+		return (H.pronouns == HE_HIM || H.pronouns == THEY_THEM || H.pronouns == IT_ITS)
+	else 
+		return (H.clothes_pref == CLOTHES_M)
 
 /proc/should_wear_femme_clothes(mob/living/carbon/human/H)
-	return (H.pronouns == SHE_HER || H.pronouns == THEY_THEM_F || H.pronouns == HE_HIM_F || (H.pronouns == IT_ITS && H.gender == FEMALE))
+	if(!H.mind)
+		return (H.pronouns == SHE_HER)
+	else
+		return (H.clothes_pref == CLOTHES_F)
 // LETHALSTONE EDIT END
 
 /datum/job/proc/get_informed_title(mob/mob)
@@ -515,7 +537,12 @@
 					for(var/stat in adv_ref.adv_stat_ceiling)
 						dat += "["[capitalize(stat)]: <b>\Roman[adv_ref.adv_stat_ceiling[stat]]</b>"] | "
 					dat += "<i><br>Regardless of your statpacks or race choice, you will not be able to exceed these stats on spawn.</i></font>"
-				if(adv_ref.subclass_spellpoints > 0)
+				if(LAZYLEN(adv_ref.subclass_spell_point_pools))
+					dat += "<font color = '#a3a7e0'><b>Spell Pools:</b><br>"
+					for(var/pool_name in adv_ref.subclass_spell_point_pools)
+						dat += "[capitalize(pool_name)]: <b>[adv_ref.subclass_spell_point_pools[pool_name]]</b> points<br>"
+					dat += "</font>"
+				else if(adv_ref.subclass_spellpoints > 0)
 					dat += "<font color = '#a3a7e0'>Starting Spellpoints: <b>[adv_ref.subclass_spellpoints]</b></font>"
 				if(length(adv_ref.subclass_languages))
 					dat += "<details><summary><i>Known Languages</i></summary>"

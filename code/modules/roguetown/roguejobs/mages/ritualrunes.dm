@@ -16,7 +16,7 @@
 	var/invoker_desc = "a basic rune with no function."
 
 	/// This is said by those when the rune is invoked.
-	var/invocation = "Aiy ele-mayo!"
+	var/invocation = "Invoco!"
 	/// The amount of invokers required around the rune to invoke it.
 	var/req_invokers = 1
 
@@ -151,6 +151,14 @@ GLOBAL_LIST(teleport_runes)
 	animate(src, color = oldcolor, time = 5)
 	addtimer(CALLBACK(src, TYPE_PROC_REF(/atom, update_atom_colour)), 0.5 SECONDS)
 
+/// Clears lingering references from invoke() to prevent hard deletes.
+/obj/effect/decal/cleanable/roguerune/proc/invoke_cleanup()
+	selected_atoms = null
+	ritual_result = null
+	if(pickritual)
+		qdel(pickritual)
+		pickritual = null
+
 /obj/effect/decal/cleanable/roguerune/attack_hand(mob/living/user)
 	if(rune_in_use)
 		to_chat(user, span_notice("Someone is already using this rune."))
@@ -222,6 +230,7 @@ GLOBAL_LIST(teleport_runes)
 		if(iswallturf(close_atom))
 			to_chat(usr, span_hierophant_warning("Ritual failed, [src] is blocked by [close_atom]!"))
 			fail_invoke()
+			invoke_cleanup()
 			return
 		if(!ismovable(close_atom))
 			continue
@@ -238,6 +247,7 @@ GLOBAL_LIST(teleport_runes)
 		atoms_in_range += close_atom
 	pickritual = new ritual
 	if(!islist(pickritual.required_atoms))
+		invoke_cleanup()
 		return
 
 	// A copy of our requirements list.
@@ -301,11 +311,14 @@ GLOBAL_LIST(teleport_runes)
 		// Then let them know what they're missing
 		to_chat(usr, span_hierophant_warning("You are missing [english_list(what_are_we_missing)] in order to complete the ritual \"[pickritual.name]\"."))
 		fail_invoke()
+		invoke_cleanup()
 		return FALSE
 
 	playsound(usr, 'sound/magic/teleport_diss.ogg', 75, TRUE)
 
 	ritual_result = pickritual.on_finished_recipe(usr, selected_atoms, loc)
+
+	atoms_in_range.Cut()
 
 	return TRUE
 
@@ -327,7 +340,7 @@ GLOBAL_LIST(teleport_runes)
 	name = "Knowledge rune"
 	desc = "arcane symbols pulse upon the ground..."
 	icon_state = "6"
-	invocation = "Thal’ un’vethar!"
+	invocation = "Scientia Patefiat!"
 	color = "#3A0B61"
 	spellbonus = 15
 	scribe_damage = 10
@@ -344,6 +357,7 @@ GLOBAL_LIST(teleport_runes)
 	buffed = TRUE
 	if(ritual_result)
 		pickritual.cleanup_atoms(selected_atoms)
+	invoke_cleanup()
 
 	for(var/atom/invoker in invokers)
 		if(!isliving(invoker))
@@ -356,65 +370,6 @@ GLOBAL_LIST(teleport_runes)
 			to_chat(living_invoker,  span_italics("[src] saps your strength!"))
 	do_invoke_glow()
 
-
-/obj/effect/decal/cleanable/roguerune/arcyne/empowerment
-	name = "Empowerment Array"
-	desc = "arcane symbols pulse upon the ground..."
-	icon = 'icons/effects/96x96.dmi'
-	icon_state = "empowerment"
-	tier = 2
-	runesize = 1
-	pixel_x = -32 //So the big ol' 96x96 sprite shows up right
-	pixel_y = -32
-	invocation = "Thal’miren vek’laris un’vethar!"
-	layer = SIGIL_LAYER
-	can_be_scribed = TRUE
-
-/obj/effect/decal/cleanable/roguerune/arcyne/empowerment/New()
-	. = ..()
-	rituals += GLOB.t2buffrunerituallist
-
-/obj/effect/decal/cleanable/roguerune/arcyne/empowerment/collect_invokers(mob/living/user)
-	var/list/invoker_list = ..()
-
-	for(var/mob/living/invoker in invoker_list)
-		if(!isliving(invoker))
-			continue
-
-		var/mob/living/living_invoker = invoker
-		var/empower_count
-		for(var/datum/status_effect/effect in living_invoker.status_effects)
-			if(istype(effect, /datum/status_effect/buff/magic))
-				empower_count++
-
-		if(empower_count >= 3)
-			to_chat(living_invoker, span_warning("I'm already imbued by too many arcyne energies, this ritual does nothing for me!"))
-			invoker_list.Remove(living_invoker)
-
-	return invoker_list
-
-/obj/effect/decal/cleanable/roguerune/arcyne/empowerment/invoke(list/invokers, datum/runeritual/buff/runeritual)
-	if(!..())	//VERY important. Calls parent and checks if it fails. parent/invoke has all the checks for ingredients
-		return
-
-	var/buffedstat = runeritual.buff
-	for(var/mob/living/invoker in range(runesize, src))
-		invoker.apply_status_effect(buffedstat)
-	if(ritual_result)
-		pickritual.cleanup_atoms(selected_atoms)
-
-	for(var/atom/invoker in invokers)
-		if(!isliving(invoker))
-			continue
-		var/mob/living/living_invoker = invoker
-
-		if(invocation)
-			living_invoker.say(invocation, language = /datum/language/common, ignore_spam = TRUE, forced = "cult invocation")
-		if(invoke_damage)
-			living_invoker.apply_damage(invoke_damage, BRUTE)
-			to_chat(living_invoker,  span_italics("[src] saps your strength!"))
-
-	do_invoke_glow()
 
 /obj/effect/decal/cleanable/roguerune/arcyne/enchantment
 	name = "Imbuement Array"
@@ -425,7 +380,7 @@ GLOBAL_LIST(teleport_runes)
 	runesize = 1
 	pixel_x = -32 //So the big ol' 96x96 sprite shows up right
 	pixel_y = -32
-	invocation = "Ral’kor vek’varun eyn’torath!"
+	invocation = "Virtutem Infunde!"
 	layer = SIGIL_LAYER
 	can_be_scribed = TRUE
 
@@ -438,6 +393,7 @@ GLOBAL_LIST(teleport_runes)
 		return
 	if(ritual_result)
 		pickritual.cleanup_atoms(selected_atoms)
+	invoke_cleanup()
 
 	for(var/atom/invoker in invokers)
 		if(!isliving(invoker))
@@ -459,7 +415,7 @@ GLOBAL_LIST(teleport_runes)
 	runesize = 2
 	pixel_x = -64 //So the big ol' 96x96 sprite shows up right
 	pixel_y = -64
-	invocation = "Zar’kalthra ul’norak ven’thelis!"
+	invocation = "Magnam Virtutem Infunde!"
 
 /obj/effect/decal/cleanable/roguerune/arcyne/enchantment/greater/New()
 	. = ..()
@@ -470,7 +426,7 @@ GLOBAL_LIST(teleport_runes)
 	desc = "arcane symbols litter the ground- is that a wall of some sort?"
 	icon_state = "wall"
 	tier = 2
-	invocation = "Fren’aleth ar’quor!"
+	invocation = "Murus Surgat!"
 	can_be_scribed = TRUE
 	color = "#184075"
 	var/list/barriers = list()
@@ -564,6 +520,7 @@ GLOBAL_LIST(teleport_runes)
 
 	if(ritual_result)
 		pickritual.cleanup_atoms(selected_atoms)
+	invoke_cleanup()
 
 	for(var/atom/invoker in invokers)
 		if(!isliving(invoker))
@@ -582,7 +539,7 @@ GLOBAL_LIST(teleport_runes)
 	icon = 'icons/effects/160x160.dmi'
 	icon_state = "wall"
 	tier = 3
-	invocation = "Thar’morak dul’vorr keth’alor!"
+	invocation = "Arx Firma Surgat!"
 	runesize = 2
 	pixel_x = -64 //So the big ol' 96x96 sprite shows up right
 	pixel_y = -64
@@ -620,6 +577,7 @@ GLOBAL_LIST(teleport_runes)
 	to_chat(usr, span_hierophant_warning("template.load complete"))
 	if(ritual_result)
 		pickritual.cleanup_atoms(selected_atoms)
+	invoke_cleanup()
 
 	for(var/atom/invoker in invokers)
 		if(!isliving(invoker))
@@ -639,7 +597,7 @@ GLOBAL_LIST(teleport_runes)
 	icon_state = "portal"
 	tier = 2
 	req_invokers = 2
-	invocation = "Xel’tharr un’korel!"
+	invocation = "Plana Convergant!"
 	req_keyword = TRUE
 	runesize = 2
 	pixel_x = -64 //So the big ol' 96x96 sprite shows up right
@@ -698,6 +656,7 @@ GLOBAL_LIST(teleport_runes)
 	var/movesuccess = FALSE
 	if(ritual_result)
 		pickritual.cleanup_atoms(selected_atoms)
+	invoke_cleanup()
 	for(var/atom/movable/A in range(runesize, src))
 		if(istype(A, /obj/effect/dummy/phased_mob))
 			continue
@@ -742,7 +701,7 @@ GLOBAL_LIST(teleport_runes)
 	name = "confinement matrix"
 	desc = "A relatively basic confinement matrix used to hold small things when summoned."
 	icon_state = "summon"
-	invocation = "Rhegal vex'ultraa!"
+	invocation = "Evoca et Constringe!"
 	max_integrity = 0
 	resistance_flags = INDESTRUCTIBLE | FIRE_PROOF | UNACIDABLE | ACID_PROOF
 	tier = 1
@@ -771,21 +730,35 @@ GLOBAL_LIST(teleport_runes)
 
 /obj/effect/decal/cleanable/roguerune/arcyne/summoning/attack_hand(mob/living/user)
 	if(summoning && isarcyne(user))
+		var/mob/living/simple_animal/S = summoned_mob
+		if(!S || !istype(S) || QDELETED(S))
+			to_chat(user, span_warning("The containment has already faded."))
+			summoned_mob = null
+			summoning = FALSE
+			return
+
 		to_chat(user, span_warning("You release the summon from it's containment!"))
-		playsound(usr, 'sound/magic/teleport_diss.ogg', 75, TRUE)
+		playsound(user, 'sound/magic/teleport_diss.ogg', 75, TRUE)
 		do_invoke_glow()
 		clear_obstacles(user)
 		sleep(20)
-		animate(summoned_mob, color = null,time = 5)
-		REMOVE_TRAIT(summoned_mob, TRAIT_PACIFISM, TRAIT_GENERIC)	//can't kill while planar bound.
-		summoned_mob.status_flags -= GODMODE//remove godmode
-		summoned_mob.candodge = TRUE
-		summoned_mob.binded = FALSE
-		summoned_mob.move_resist = MOVE_RESIST_DEFAULT
-		summoned_mob.SetParalyzed(0)
+		if(!S || QDELETED(S))
+			summoned_mob = null
+			summoning = FALSE
+			return
+
+		animate(S, color = null, time = 5)
+		REMOVE_TRAIT(S, TRAIT_PACIFISM, TRAIT_GENERIC) // can't kill while planar bound.
+		S.status_flags -= GODMODE
+		S.candodge = TRUE
+		S.binded = FALSE
+		S.move_resist = MOVE_RESIST_DEFAULT
+		S.SetParalyzed(0)
+
 		summoned_mob = null
 		summoning = FALSE
 		return
+
 	. = ..()
 
 /obj/effect/decal/cleanable/roguerune/arcyne/summoning/invoke(list/invokers, datum/runeritual/runeritual)
@@ -800,6 +773,7 @@ GLOBAL_LIST(teleport_runes)
 		src.summoning = TRUE
 	if(ritual_result)
 		pickritual.cleanup_atoms(selected_atoms)
+	invoke_cleanup()
 
 	for(var/atom/invoker in invokers)
 		if(!isliving(invoker))
@@ -836,7 +810,8 @@ GLOBAL_LIST(teleport_runes)
 
 /obj/effect/decal/cleanable/roguerune/arcyne/summoning/adv	//160x160 rune t2(5x5 tile)
 	name = "warded sealate confinement matrix"
-	desc = "An thoroughly warded confinement matrix improved with the addition of a sealate matrix; used to hold larger, dangerous things when summoned."
+	desc = "A thoroughly warded confinement matrix improved with the addition of a sealate matrix; \
+	used to hold larger, dangerous things when summoned."
 	icon = 'icons/effects/160x160.dmi'
 	icon_state = "warded"
 	runesize = 2
@@ -852,7 +827,8 @@ GLOBAL_LIST(teleport_runes)
 
 /obj/effect/decal/cleanable/roguerune/arcyne/summoning/max	//224x224 rune t3(7x7 tile)
 	name = "noc's eye warded sealate confinement matrix"
-	desc = "An thoroughly warded confinement matrix improved with a Noc's eye sealing measure and the addition of a sealate matrix; used to hold the largest, most dangerous things summonable."
+	desc = "A thoroughly warded confinement matrix improved with a Noc's eye sealing measure \
+	and the addition of a sealate matrix; used to hold the largest, most dangerous things summonable."
 	icon = 'icons/effects/224x224.dmi'
 	icon_state = "huge_runeblued"
 	runesize = 3

@@ -106,6 +106,9 @@
 /obj/effect/proc_holder/spell/invoked/eoracurse/cast(list/targets, mob/living/user)
 	if(isliving(targets[1]))
 		var/mob/living/carbon/target = targets[1]
+		if(spell_guard_check(target, TRUE))
+			target.visible_message(span_warning("[target] shrugs off the haze!"))
+			return TRUE
 		target.apply_status_effect(/datum/status_effect/buff/druqks)
 		target.apply_status_effect(/datum/status_effect/buff/drunk)
 		target.visible_message("<span class='info'>A purple haze shrouds [target]!</span>", "<span class='notice'>I feel much calmer.</span>")
@@ -238,7 +241,8 @@
 // =====================
 /obj/effect/proc_holder/spell/invoked/heartweave
 	name = "Heartweave"
-	desc = "Forge a symbiotic bond between two souls."
+	desc = "Interlinks the caster's vitality with a chosen target, sharing any incoming healing-or-damage with each other. </br>If one interlinked person is healed, the other interlinked person will \
+	be healed as well. </br>Likewise, if one interlinked person is damaged, the other interlinked person will be damaged as well."
 	overlay_state = "bliss"
 	range = 1
 	chargetime = 0.5 SECONDS
@@ -388,6 +392,7 @@
 	else
 		recharge_time = base_recharge_time
 
+	last_process_time = world.time
 	START_PROCESSING(SSfastprocess, src)
 
 /obj/effect/proc_holder/spell/invoked/pomegranate

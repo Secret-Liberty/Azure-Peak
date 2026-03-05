@@ -28,7 +28,6 @@ GLOBAL_LIST_INIT(hedgeknight_aggro, world.file2list("strings/rt/hedgeknightaggro
 	var/is_silent = FALSE /// Determines whether or not we will scream our funny lines at people.
 	var/preset = "matthios"
 	var/forced_preset = "" // If set, force a specific preset instead of randomizing.
-	var/never_goon = FALSE // If TRUE, this DK will not spawn goons on creation.
 
 /mob/living/carbon/human/species/human/northern/deranged_knight/retaliate(mob/living/L)
 	var/newtarg = target
@@ -81,6 +80,7 @@ GLOBAL_LIST_INIT(hedgeknight_aggro, world.file2list("strings/rt/hedgeknightaggro
 	ADD_TRAIT(src, TRAIT_LEECHIMMUNE, INNATE_TRAIT)
 	ADD_TRAIT(src, TRAIT_BREADY, TRAIT_GENERIC)
 	ADD_TRAIT(src, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_CRIT_THRESHOLD, TRAIT_GENERIC)
 	ADD_TRAIT(src, TRAIT_STUCKITEMS, TRAIT_GENERIC)
 	if(forced_preset)
 		preset = forced_preset
@@ -99,7 +99,7 @@ GLOBAL_LIST_INIT(hedgeknight_aggro, world.file2list("strings/rt/hedgeknightaggro
 			ADD_TRAIT(src, TRAIT_HORDE, TRAIT_GENERIC)
 			equipOutfit(new /datum/outfit/job/roguetown/quest_miniboss/graggar)
 		if ("matthios")
-			ADD_TRAIT(src, TRAIT_COMMIE, TRAIT_GENERIC)
+			ADD_TRAIT(src, TRAIT_FREEMAN, TRAIT_GENERIC)
 			equipOutfit(new /datum/outfit/job/roguetown/quest_miniboss/matthios)
 		if ("zizo")
 			ADD_TRAIT(src, TRAIT_CABAL, TRAIT_GENERIC)
@@ -157,21 +157,7 @@ GLOBAL_LIST_INIT(hedgeknight_aggro, world.file2list("strings/rt/hedgeknightaggro
 	update_hair()
 	update_body()
 
-	var/list/possible_turfs = list()
-	for(var/turf/open/T in oview(2, src))
-		possible_turfs += T
-
 	def_intent_change(INTENT_PARRY)
-
-	if(never_goon)
-		return
-
-	for(var/i in 1 to rand(2, 5))
-		var/turf/open/spawn_turf = pick_n_take(possible_turfs)
-		if(!spawn_turf)
-			break
-
-		new /mob/living/carbon/human/species/human/northern/highwayman/dk_goon(spawn_turf)
 
 /mob/living/carbon/human/species/human/northern/deranged_knight/npc_idle()
 	if(m_intent == MOVE_INTENT_SNEAK)
@@ -288,12 +274,12 @@ GLOBAL_LIST_INIT(hedgeknight_aggro, world.file2list("strings/rt/hedgeknightaggro
 
 	armor = /obj/item/clothing/suit/roguetown/armor/plate/full/blacksteel/modern
 	pants = /obj/item/clothing/under/roguetown/platelegs/blacksteel/modern
-	shoes = /obj/item/clothing/shoes/roguetown/boots/blacksteel/modern/plateboots
-	gloves = /obj/item/clothing/gloves/roguetown/blacksteel/modern/plategloves
+	shoes = /obj/item/clothing/shoes/roguetown/boots/armor/blacksteel/modern
+	gloves = /obj/item/clothing/gloves/roguetown/plate/blacksteel/modern
 	wrists = /obj/item/clothing/wrists/roguetown/bracers
-	head = /obj/item/clothing/head/roguetown/helmet/blacksteel/modern/armet
+	head = /obj/item/clothing/head/roguetown/helmet/blacksteel/modern
 	neck = /obj/item/clothing/neck/roguetown/gorget/steel
-	r_hand = /obj/item/rogueweapon/greatsword/grenz/flamberge/blacksteel
+	r_hand = /obj/item/rogueweapon/greatsword
 	mask = /obj/item/clothing/mask/rogue/facemask/steel
 	wrists = /obj/item/clothing/wrists/roguetown/bracers
 
@@ -323,17 +309,13 @@ GLOBAL_LIST_INIT(hedgeknight_aggro, world.file2list("strings/rt/hedgeknightaggro
 	faction = list("dundead")
 
 /mob/living/carbon/human/species/human/northern/deranged_knight/matthios
-	never_goon = TRUE
 	forced_preset = "matthios"
 
 /mob/living/carbon/human/species/human/northern/deranged_knight/zizo
-	never_goon = TRUE
 	forced_preset = "zizo"
 
 /mob/living/carbon/human/species/human/northern/deranged_knight/graggar
-	never_goon = TRUE
 	forced_preset = "graggar"
 
 /mob/living/carbon/human/species/human/northern/deranged_knight/hedgeknight
-	never_goon = TRUE
 	forced_preset = "hedgeknight"

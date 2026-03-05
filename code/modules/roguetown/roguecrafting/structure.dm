@@ -575,10 +575,22 @@
 	result = /obj/machinery/light/rogue/smelter/bronze
 	reqs = list(/obj/item/natural/stone = 6,
 			/obj/item/rogueore/coal = 1,
-			/obj/item/rogueore/iron = 1)
+			/obj/item/rogueore/copper = 1,
+			/obj/item/rogueore/tin = 1)
 	verbage_simple = "build"
 	verbage = "builds"
 	craftsound = null
+	craftdiff = 0
+
+/datum/crafting_recipe/roguetown/structure/anvil/bronze
+	name = "bronze anvil"
+	category = "Misc"
+	result = /obj/machinery/anvil/bronze
+	reqs = list(/obj/item/ingot/bronze = 2, /obj/item/natural/stone = 4)
+	skillcraft = /datum/skill/craft/blacksmithing
+	verbage_simple = "forge"
+	verbage = "forges"
+	craftdiff = 0
 
 /datum/crafting_recipe/roguetown/structure/greatsmelter
 	name = "great furnace"
@@ -1307,9 +1319,18 @@
 	name = "potter's wheel"
 	category = "Misc"
 	result = /obj/structure/fluff/ceramicswheel
-	reqs = list(/obj/item/natural/stone = 2, /obj/item/grown/log/tree/small = 2, /obj/item/roguegear = 1)
+	reqs = list(/obj/item/natural/whetstone = 2, /obj/item/grown/log/tree/small = 2)
 	verbage_simple = "construct"
 	craftdiff = 2
+	verbage = "constructs"
+
+/datum/crafting_recipe/roguetown/structure/ceramicswheelalt
+	name = "potter's wheel, alternate"
+	category = "Misc"
+	result = /obj/structure/fluff/ceramicswheel
+	reqs = list(/obj/item/natural/stone = 2, /obj/item/grown/log/tree/small = 2, /obj/item/roguegear = 1)
+	verbage_simple = "construct"
+	craftdiff = 1
 	verbage = "constructs"
 
 /datum/crafting_recipe/roguetown/structure/bearrug

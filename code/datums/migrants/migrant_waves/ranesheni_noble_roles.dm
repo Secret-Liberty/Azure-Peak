@@ -61,10 +61,12 @@
 		/obj/item/rogueweapon/huntingknife/idagger/navaja = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1, 
 		/obj/item/natural/feather = 1,
-		/obj/item/paper/scroll = 2
+		/obj/item/paper/scroll = 2,
+		/obj/item/storage/belt/rogue/pouch/coins/veryrich = 2,
+		/obj/item/reagent_containers/glass/bottle/alchemical/healthpotnew = 2,
 		)
 	H.cmode_music = 'sound/music/combat_desertrider.ogg'
-	H.grant_language(/datum/language/celestial)
+	H.grant_language(/datum/language/raneshi)
 
 /datum/migrant_role/ranesheni/amirah
 	name = "Amirah"
@@ -118,10 +120,12 @@
 		/obj/item/rogueweapon/huntingknife/idagger/steel/special = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1, 
 		/obj/item/natural/feather = 1,
-		/obj/item/paper/scroll = 2
+		/obj/item/paper/scroll = 2,
+		/obj/item/storage/belt/rogue/pouch/coins/veryrich = 1,
+		/obj/item/reagent_containers/glass/bottle/alchemical/healthpotnew = 1,
 	)
 	H.cmode_music = 'sound/music/combat_desertrider.ogg'
-	H.grant_language(/datum/language/celestial)
+	H.grant_language(/datum/language/raneshi)
 
 /datum/migrant_role/ranesheni/janissary
 	name = "Janissary"
@@ -177,10 +181,12 @@
 	backpack_contents = list(
 		/obj/item/rogueweapon/huntingknife/idagger/navaja = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
-		/obj/item/storage/belt/rogue/pouch/coins/poor = 1
+		/obj/item/storage/belt/rogue/pouch/coins/mid = 1,
+		/obj/item/reagent_containers/glass/bottle/alchemical/healthpotnew = 1,
+		/obj/item/natural/bundle/cloth/bandage/full = 1,
 		)
 	H.cmode_music = 'sound/music/combat_desertrider.ogg'
-	H.grant_language(/datum/language/celestial)
+	H.grant_language(/datum/language/raneshi)
 
 /datum/migrant_role/ranesheni/advisor
 	name = "Advisor"
@@ -230,16 +236,16 @@
 	backl = /obj/item/storage/backpack/rogue/satchel/short
 	beltl = /obj/item/flashlight/flare/torch/lantern
 	backr = /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow
-	beltr = /obj/item/quiver/bolts
+	beltr = /obj/item/quiver/bolt/standard
 	cloak = /obj/item/clothing/cloak/raincloak/red
 	backpack_contents = list(
 		/obj/item/rogueweapon/huntingknife/idagger/navaja = 1,
 		/obj/item/rogueweapon/huntingknife/idagger/steel = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
-		/obj/item/storage/belt/rogue/pouch/coins/poor = 1
+		/obj/item/storage/belt/rogue/pouch/coins/veryrich = 1,
 		)
 	H.cmode_music = 'sound/music/combat_desertrider.ogg'
-	H.grant_language(/datum/language/celestial)
+	H.grant_language(/datum/language/raneshi)
 
 #undef CTAG_RANESHENI_EMIR
 #undef CTAG_RANESHENI_AMIRAH

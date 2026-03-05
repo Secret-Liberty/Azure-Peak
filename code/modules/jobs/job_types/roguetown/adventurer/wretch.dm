@@ -32,20 +32,20 @@
 	job_subclasses = list(
 		/datum/advclass/wretch/licker,
 		/datum/advclass/wretch/deserter,
-		/datum/advclass/wretch/deserter/maa,
+		/datum/advclass/wretch/deserter/generic,
 		/datum/advclass/wretch/berserker,
 		/datum/advclass/wretch/roguemage,
 		/datum/advclass/wretch/necromancer,
 		/datum/advclass/wretch/heretic,
 		/datum/advclass/wretch/heretic/spy,
 		/datum/advclass/wretch/outlaw,
-		/datum/advclass/wretch/outlaw/marauder,
 		/datum/advclass/wretch/poacher,
 		/datum/advclass/wretch/plaguebearer,
 		/datum/advclass/wretch/pyromaniac,
 		/datum/advclass/wretch/vigilante,
-		/datum/advclass/wretch/blackoakwyrm,
-		/datum/advclass/wretch/munitioneer
+		/datum/advclass/wretch/munitioneer,
+		/datum/advclass/wretch/pariah,
+		/datum/advclass/wretch/zizite_spellblade
 	)
 
 /datum/job/roguetown/wretch/after_spawn(mob/living/L, mob/M, latejoin = TRUE)

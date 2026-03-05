@@ -222,7 +222,7 @@
 	tastes = list("meat" = 1, "tomato" = 1, "aubergine" = 1)
 	faretype = FARE_FINE
 	rotprocess = SHELFLIFE_LONG
-	eat_effect = /datum/status_effect/buff/greatsnackbuff
+	eat_effect = /datum/status_effect/buff/snackbuff
 
 /obj/item/reagent_containers/food/snacks/rogue/preserved/eggplantstuffed/attackby(obj/item/I, mob/living/user, params)
 	var/found_table = locate(/obj/structure/table) in (loc)
@@ -248,7 +248,7 @@
 	tastes = list("meat" = 1, "tomato" = 1, "aubergine" = 1, "cheese" = 1)
 	faretype = FARE_LAVISH
 	rotprocess = SHELFLIFE_LONG
-	eat_effect = /datum/status_effect/buff/snackbuff
+	eat_effect = /datum/status_effect/buff/greatsnackbuff
 
 /obj/item/reagent_containers/food/snacks/roastseeds
 	list_reagents = list(/datum/reagent/consumable/nutriment = 1)
@@ -269,4 +269,4 @@
 /obj/item/reagent_containers/food/snacks/roastseeds/pumpkin
 	name = "roasted pumpkin seeds"
 	tastes = list("toasted pumpkin seeds" = 1)
-	mill_result = /obj/item/reagent_containers/powder/pumpkin
+	mill_result = /obj/item/reagent_containers/food/snacks/pumpkinspice

@@ -10,8 +10,8 @@
 					/obj/effect/proc_holder/spell/self/astrata_fireresist       = CLERIC_T1,
 					/obj/effect/proc_holder/spell/invoked/lesser_heal 			= CLERIC_T1,
 					/obj/effect/proc_holder/spell/invoked/blood_heal			= CLERIC_T1,
-					/obj/effect/proc_holder/spell/targeted/touch/summonrogueweapon/astratagrasp         = CLERIC_T0,
 					/obj/effect/proc_holder/spell/invoked/projectile/lightningbolt/sacred_flame_rogue	= CLERIC_T1,
+					/obj/effect/proc_holder/spell/self/astrata_sword			= CLERIC_T1,
 					/obj/effect/proc_holder/spell/invoked/astrataspark          = CLERIC_T2,
 					/obj/effect/proc_holder/spell/invoked/heal/astrata			= CLERIC_T2,
 					/obj/effect/proc_holder/spell/invoked/revive				= CLERIC_T3,
@@ -57,3 +57,7 @@
 	if(GLOB.tod == "day")
 		*conditional_buff = TRUE
 		*situational_bonus = 2
+
+	if(HAS_TRAIT(target, TRAIT_NOBLE)) //We heal her favorites more.
+		*conditional_buff = TRUE
+		*situational_bonus = 2.5

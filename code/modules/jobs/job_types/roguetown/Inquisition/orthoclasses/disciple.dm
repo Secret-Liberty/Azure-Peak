@@ -87,7 +87,7 @@
 				ADD_TRAIT(H, TRAIT_NALEDI, TRAIT_GENERIC)
 				REMOVE_TRAIT(H, TRAIT_CRITICAL_RESISTANCE, TRAIT_GENERIC)
 				H.adjust_skillrank_up_to(/datum/skill/magic/arcane, 3, TRUE)
-				H.grant_language(/datum/language/celestial) //They're from Naledi, they should speak Sama'glos
+				H.grant_language(/datum/language/celestial)
 				H.mind.adjust_spellpoints(6)
 				H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/fetch) //Pre-set spell list. Same as before. 
 				H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/forcewall) //Weak, destroyable forcewall.
@@ -110,3 +110,5 @@
 
 	var/datum/devotion/C = new /datum/devotion(H, H.patron)
 	C.grant_miracles(H, cleric_tier = CLERIC_T2, passive_gain = CLERIC_REGEN_WEAK, devotion_limit = CLERIC_REQ_1)	//Capped to T2 miracles.
+
+	change_origin(H, /datum/virtue/origin/otava, "Holy order")

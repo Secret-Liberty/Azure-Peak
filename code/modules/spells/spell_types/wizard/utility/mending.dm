@@ -14,6 +14,7 @@
 	spell_tier = 1 // Utility. For repair
 	glow_color = GLOW_COLOR_ARCANE
 	glow_intensity = GLOW_INTENSITY_LOW
+	ignore_los = TRUE // temp. cus it breaks if it doesnt have this maybe
 
 	miracle = FALSE
 
@@ -69,6 +70,9 @@
 				I.repair_coverage()
 				to_chat(user, span_info("[I]'s shorn layers mend together, completely."))
 
+	deactivate(user)
+
+	return TRUE
 
 /obj/effect/proc_holder/spell/invoked/mending/lesser
 	name = "Lesser Mending"

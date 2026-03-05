@@ -19,12 +19,10 @@
 	var/handaction
 	var/bleed_suppressing = 0.25 //multiplier for how much we suppress bleeding, can accumulate so two grabs means 50% less bleeding; each grab being 25% basically.
 	var/chokehold = FALSE
+	experimental_inhand = FALSE
 
 /atom/movable //reference to all obj/item/grabbing
-	var/list/grabbedby = list()
-
-/turf
-	var/list/grabbedby = list()
+	var/list/grabbedby
 
 /obj/item/grabbing/Initialize()
 	. = ..()
@@ -84,10 +82,10 @@
 	STOP_PROCESSING(SSfastprocess, src)
 	if(isobj(grabbed))
 		var/obj/I = grabbed
-		I.grabbedby -= src
+		LAZYREMOVE(I.grabbedby, src)
 	if(ismob(grabbed))
 		var/mob/M = grabbed
-		M.grabbedby -= src
+		LAZYREMOVE(M.grabbedby, src)
 		if(iscarbon(M) && sublimb_grabbed)
 			var/mob/living/carbon/carbonmob = M
 			var/obj/item/bodypart/part = carbonmob.get_bodypart(sublimb_grabbed)
@@ -96,12 +94,9 @@
 			// In this case, grabbed will be the mob, and sublimb_grabbed will be the weapon, rather than a bodypart
 			// This means we should skip any further processing for the bodypart
 			if(part)
-				part.grabbedby -= src
+				LAZYREMOVE(part.grabbedby, src)
 				part = null
 				sublimb_grabbed = null
-	if(isturf(grabbed))
-		var/turf/T = grabbed
-		T.grabbedby -= src
 	if(grabbee)
 		if(grabbee.r_grab == src)
 			grabbee.r_grab = null

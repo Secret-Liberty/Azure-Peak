@@ -52,6 +52,8 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 
 	var/spell_points
 	var/used_spell_points
+	var/list/spell_point_pools
+	var/list/spell_points_used_by_pool
 	var/movemovemovetext = "Move!!"
 	var/takeaimtext = "Take aim!!"
 	var/holdtext = "Hold!!"
@@ -139,6 +141,11 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 
 /datum/mind/Destroy()
 	SSticker.minds -= src
+	soulOwner = null
+	if(current)
+		current.mind = null
+		current = null
+	enslaved_to = null
 	QDEL_NULL(sleep_adv)
 	if(islist(antag_datums))
 		QDEL_LIST(antag_datums)
@@ -358,7 +365,16 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 	spell_points += points
 	if(!has_spell(/obj/effect/proc_holder/spell/targeted/touch/prestidigitation))
 		AddSpell(new /obj/effect/proc_holder/spell/targeted/touch/prestidigitation)
-	check_learnspell() //check if we need to add or remove the learning spell
+	check_learnspell()
+
+/datum/mind/proc/set_spell_point_pools(list/pools)
+	spell_point_pools = pools.Copy()
+	spell_points_used_by_pool = list()
+	for(var/pool_name in pools)
+		spell_points_used_by_pool[pool_name] = 0
+	if(!has_spell(/obj/effect/proc_holder/spell/targeted/touch/prestidigitation))
+		AddSpell(new /obj/effect/proc_holder/spell/targeted/touch/prestidigitation)
+	check_learnspell()
 
 /datum/mind/proc/set_death_time()
 	last_death = world.time
@@ -751,19 +767,42 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 /datum/mind/proc/AddSpell(obj/effect/proc_holder/spell/S, mob/living/user)
 	if(!S)
 		return
+	for(var/obj/effect/proc_holder/spell/present_spell in spell_list)
+		if(present_spell.name == S.name && present_spell.type == S.type)
+			return
 	spell_list += S
 	S.action.Grant(current)
 	if(user)
 		S.on_gain(user)
+	if(length(spell_list) == 1 && current)
+		addtimer(CALLBACK(src, PROC_REF(show_spell_tip)), 3 SECONDS)
+
+/datum/mind/proc/show_spell_tip()
+	if(current)
+		to_chat(current, span_nicegreen("Tip: You can Ctrl-Click your hotkey bar to unlock it, then drag to rearrange your spells. Re-arranging them change which hotkeys they are bound to in order from left to right (Alt 1 to Alt 9 default). You can shift click your spells to learn more about them."))
 
 /datum/mind/proc/check_learnspell()
-	if(!has_spell(/obj/effect/proc_holder/spell/self/learnspell)) //are we missing the learning spell?
-		if((spell_points - used_spell_points) > 0) //do we have points?
-			AddSpell(new /obj/effect/proc_holder/spell/self/learnspell(null)) //put it in
+	// Pool-based system always takes priority over flat spellpoints to prevent unexpected spell point sources from bypassing pool restrictions
+	if(LAZYLEN(spell_point_pools))
+		var/has_remaining = FALSE
+		for(var/pool_name in spell_point_pools)
+			var/used = spell_points_used_by_pool?[pool_name] || 0
+			if(used < spell_point_pools[pool_name])
+				has_remaining = TRUE
+				break
+		if(has_remaining && !has_spell(/obj/effect/proc_holder/spell/self/learnspell))
+			AddSpell(new /obj/effect/proc_holder/spell/self/learnspell(null))
+		else if(!has_remaining)
+			RemoveSpell(/obj/effect/proc_holder/spell/self/learnspell)
+		return
+
+	if(!has_spell(/obj/effect/proc_holder/spell/self/learnspell))
+		if((spell_points - used_spell_points) > 0)
+			AddSpell(new /obj/effect/proc_holder/spell/self/learnspell(null))
 			return
 
-	if((spell_points - used_spell_points) <= 0) //are we out of points?
-		RemoveSpell(/obj/effect/proc_holder/spell/self/learnspell) //bye bye spell
+	if((spell_points - used_spell_points) <= 0)
+		RemoveSpell(/obj/effect/proc_holder/spell/self/learnspell)
 		return
 	return
 
@@ -894,6 +933,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 	if(!mind.name)
 		mind.name = real_name
 	mind.current = src
+	AddComponent(/datum/component/area_ambience)
 
 /mob/living/carbon/mind_initialize()
 	..()
@@ -952,7 +992,24 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 						user.mind.special_items -= item
 						var/obj/item/I = new path2item(user.loc)
 						user.put_in_hands(I)
-						if (istype(I, /obj/item/clothing)) // commit any pref dyes to our item if it is clothing and we have them available
-							var/dye = user.client?.prefs.resolve_loadout_to_color(path2item)
-							if (dye)
-								I.add_atom_colour(dye, FIXED_COLOUR_PRIORITY)
+						// Apply loadout-specific properties only if this is a loadout item
+						var/list/metadata = user.client?.prefs?.gear_list?[item]
+						if(islist(metadata))
+							// Free loadout items cannot be sold, smelted, or salvaged (triumph items are exempt)
+							var/datum/loadout_item/LI = GLOB.loadout_items_by_name[item]
+							if(!LI?.triumph_cost)
+								I.sellprice = 0
+								I.smeltresult = null
+								I.salvage_result = null
+							// Apply metadata (color, custom name, custom desc)
+							if(metadata["color"])
+								I.add_atom_colour(metadata["color"], FIXED_COLOUR_PRIORITY)
+							if(metadata["detail_color"] && I.detail_tag)
+								I.detail_color = metadata["detail_color"]
+							if(metadata["altdetail_color"] && I.altdetail_tag)
+								I.altdetail_color = metadata["altdetail_color"]
+							if(metadata["custom_name"])
+								I.name = metadata["custom_name"]
+							if(metadata["custom_desc"])
+								I.desc = metadata["custom_desc"]
+							I.update_icon()

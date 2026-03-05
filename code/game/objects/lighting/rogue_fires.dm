@@ -22,6 +22,10 @@
 	fueluse = 0
 	no_refuel = TRUE
 
+/obj/machinery/light/rogue/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("If extinguished, this can be rekindled by left-clicking it with a torch, lamptern, flint, or any other source of ignition. In a pinch, the sparks that're born from sharpening bladed weapons and hitting stones together can suffice.")
+
 /obj/machinery/light/rogue/firebowl/CanPass(atom/movable/mover, turf/target)
 	if(istype(mover) && (mover.pass_flags & PASSTABLE))
 		return 1
@@ -203,7 +207,8 @@
 	bulb_colour = "#7b60f3"
 	icon_state = "wallcandleb1"
 	base_state = "wallcandleb"
-	desc = "Tiny bluish flames flicker gently like the stars themselves."
+	desc = "Tiny bluish flames flicker gently like the stars themselves. Mana-infused wax \
+	is rather expensive, but makes quite an impression!"
 
 /obj/machinery/light/rogue/candle/blue/r
 	pixel_y = 0
@@ -414,6 +419,7 @@
 	layer = TABLE_LAYER
 	climb_offset = 14
 	on = FALSE
+	roundstart_forbid = TRUE
 	cookonme = TRUE
 	soundloop = /datum/looping_sound/fireloop
 	var/obj/item/attachment = null
@@ -789,6 +795,11 @@
 	soundloop = /datum/looping_sound/fireloop
 	var/healing_range = 1
 	var/static/list/acceptable_beds = list(/obj/structure/bed, /obj/structure/flora/roguetree/stump, /obj/item/bedsheet)
+
+/obj/machinery/light/rogue/campfire/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Resting by a campfire gradually restores energy and stamina, while also healing wounds and dislocations. Sleeping next to a campfire further enhances the boons of a good nite's rest.")
+	. += span_info("If the fire is gone, then it may have simply ran out of fuel as well. Left-click it with something flammable, such as a book or stick, before rekindling to keep yourself warm.")
 
 /obj/machinery/light/rogue/campfire/process()
 	..()

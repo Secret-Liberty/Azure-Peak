@@ -9,7 +9,7 @@
 	smooth = SMOOTH_MORE|SMOOTH_BORDER
 	flags_1 = CHECK_RICOCHET_1
 	canSmoothWith = null
-	baseturfs = list(/turf/open/floor/rogue/naturalstone)
+	baseturfs = /turf/open/floor/rogue/naturalstone
 	opacity = 1
 	density = TRUE
 //	layer = EDGED_TURF_LAYER
@@ -110,7 +110,9 @@
 		var/explo_mineral_amount = mineralAmt
 		var/obj/item/natural/rock/explo_rock = rockType
 		ScrapeAway()
-		GLOB.mined_resource_loc |= get_turf(src)
+		var/turf/T = get_turf(src)
+		if(T)
+			GLOB.mined_resource_loc |= T
 		queue_smooth_neighbors(src)
 		new /obj/item/natural/stone(src)
 		if(prob(30))
@@ -196,7 +198,7 @@
 		var/path = pickweight(mineralSpawnChanceList)
 		var/turf/T = ChangeTurf(path,null,CHANGETURF_IGNORE_AIR)
 
-		if(T && ismineralturf(T))
+		if(ismineralturf(T))
 			var/turf/closed/mineral/M = T
 			M.mineralAmt = rand(1, 5)
 			M.environment_type = src.environment_type
@@ -217,11 +219,12 @@
 	canSmoothWith = list(/turf/closed/mineral/random/rogue, /turf/closed/mineral/rogue)
 	turf_type = /turf/open/floor/rogue/naturalstone
 	above_floor = /turf/open/floor/rogue/naturalstone
-	baseturfs = list(/turf/open/floor/rogue/naturalstone)
+	baseturfs = /turf/open/floor/rogue/naturalstone
 	mineralSpawnChanceList = list(
 		/turf/closed/mineral/rogue/salt = 5,
 		/turf/closed/mineral/rogue/iron = 15,
 		/turf/closed/mineral/rogue/copper = 10,
+		/turf/closed/mineral/rogue/tin = 7,
 		/turf/closed/mineral/rogue/coal = 25)
 	mineralChance = 23
 
@@ -252,7 +255,7 @@
 		/turf/closed/mineral/rogue/silver = 5,
 		/turf/closed/mineral/rogue/iron = 33,
 		/turf/closed/mineral/rogue/copper = 20,
-		/turf/closed/mineral/rogue/tin = 12,
+		/turf/closed/mineral/rogue/tin = 14,
 		/turf/closed/mineral/rogue/coal = 19,
 		/turf/closed/mineral/rogue/gem = 3)
 

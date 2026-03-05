@@ -36,6 +36,12 @@
 	desc = "padded leather armor made by Otavan tailors, its quality is remarkable."
 	icon_state = "fencerpants"
 
+/obj/item/clothing/under/roguetown/heavy_leather_pants/otavan/shepherd
+	name = "shepherd's pants"
+	desc = "A pair of white pants decorated with red stripes and traditional patterning."
+	icon_state = "shepherdpants"
+	color = "#FFFFFF"
+
 /obj/item/clothing/under/roguetown/heavy_leather_pants/otavan/generic
 	name = "fencing breeches"
 	desc = "A pair of loose breeches with leather reinforcements on the waist and legs. Worn with a cup."
@@ -120,6 +126,11 @@
 	desc = "Form-fitting legwear. Almost too form-fitting."
 	icon_state = "shadowpants"
 	allowed_race = NON_DWARVEN_RACE_TYPES
+
+/obj/item/clothing/under/roguetown/heavy_leather_pants/shadowpants/drowraider
+	name = "custom-fit silk tights"
+	desc = "Form-fitting legwear. Almost too form-fitting. Custom-fit for its (now deceased) wearer."
+	allowed_race = list(/datum/species/elf/dark/raider)
 
 /obj/item/clothing/under/roguetown/heavy_leather_pants/bronzeskirt
 	name = "bronze chain skirt"

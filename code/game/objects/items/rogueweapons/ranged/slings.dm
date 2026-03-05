@@ -2,7 +2,7 @@
 
 /datum/intent/swing/sling
 	chargetime = 1 //used for edge cases only, /datum/intent/shoot/sling/get_chargetime handles the actual number
-	chargedrain = 2
+	chargedrain = 1.5
 	charging_slowdown = 3
 
 /datum/intent/swing/sling/can_charge(atom/clicked_object)
@@ -23,6 +23,9 @@
 		newtime = (newtime - (mastermob.get_skill_level(/datum/skill/combat/slings) * 1.5)) //each point of skill is -0.15 seconds, maximum -0.9 seconds
 		newtime = (newtime - (mastermob.STAPER / 2)) //each point of perception is -0.05 seconds, maximum -1.0 second
 		newtime = (newtime - (mastermob.STASTR / 5)) //each point of strength is -0.02 seconds, maximum -0.4 seconds
+		var/obj/item/gun/ballistic/gun = masteritem
+		if(istype(gun) && gun.chambered)
+			newtime *= gun.chambered.charge_time_mult
 		if(newtime > 0.5)
 			return newtime //final time to 'charge' the sling. for example, 10 STR, 14 PER, and expert skill equals 5 or 0.5 seconds
 		else
@@ -32,7 +35,7 @@
 
 /datum/intent/arc/sling
 	chargetime = 1
-	chargedrain = 2
+	chargedrain = 1.5
 	charging_slowdown = 3
 
 /datum/intent/arc/sling/can_charge(atom/clicked_object)
@@ -53,6 +56,9 @@
 		newtime = (newtime - (mastermob.get_skill_level(/datum/skill/combat/slings) * 1.5)) //each point of skill is -0.15 seconds, maximum -0.9 seconds
 		newtime = (newtime - (mastermob.STAPER / 2)) //each point of perception is -0.05 seconds, maximum -1.0 second
 		newtime = (newtime - (mastermob.STASTR / 5)) //each point of strength is -0.02 seconds, maximum -0.4 seconds
+		var/obj/item/gun/ballistic/gun = masteritem
+		if(istype(gun) && gun.chambered)
+			newtime *= gun.chambered.charge_time_mult
 		if(newtime > 0.5)
 			return newtime //final time to 'charge' the sling. for example, 10 STR, 14 PER, and expert skill equals 0.7 seconds
 		else
@@ -77,7 +83,7 @@
 		)
 	mag_type = /obj/item/ammo_box/magazine/internal/shot/sling
 	fire_sound = 'sound/combat/Ranged/sling-shot-01.ogg'
-	slot_flags = ITEM_SLOT_HIP | ITEM_SLOT_BELT
+	slot_flags = ITEM_SLOT_HIP | ITEM_SLOT_BELT | ITEM_SLOT_WRISTS
 	w_class = WEIGHT_CLASS_SMALL
 	randomspread = 0
 	spread = 0

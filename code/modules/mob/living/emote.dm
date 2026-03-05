@@ -34,12 +34,11 @@
 
 	//If God can hear your prayer (long enough, no bad words, etc.)
 	if(patron.hear_prayer(follower, prayer))
-		if(follower.has_flaw(/datum/charflaw/addiction/godfearing))
-			// Stops prayers if you don't meet your patron's requirements to pray.
-			if(!patron?.can_pray(follower))
-				return
-			else
-				follower.sate_addiction()
+		// Stops prayers if you don't meet your patron's requirements to pray.
+		if(!patron?.can_pray(follower))
+			return
+		else
+			follower.sate_addiction(/datum/charflaw/addiction/godfearing)
 
 	/* admin stuff - tells you the followers name, key, and what patron they follow */
 	var/follower_ident = "[follower.key]/([follower.real_name]) (follower of [patron])"
@@ -70,6 +69,7 @@
 		user.add_stress(/datum/stressevent/meditation)
 		to_chat(user, span_green("My meditations were rewarding."))
 
+
 /datum/emote/living/bow
 	key = "bow"
 	key_third_person = "bows"
@@ -77,13 +77,11 @@
 	message_param = "bows to %t."
 	restraint_check = TRUE
 	emote_type = EMOTE_VISIBLE
+	targetrange = 4
 
-/datum/emote/living/bow/run_emote(mob/user, params, type_override, intentional)
+/datum/emote/living/bow/adjacentaction(mob/user, mob/target)
 	. = ..()
-	if(. && params && isliving(user))
-		var/mob/living/L = user
-		var/list/split_params = splittext(params, " ")
-		var/mob/target = get_target(L, split_params)
+	if(isliving(user))
 		if(target && ishuman(target))
 			var/mob/living/carbon/human/H = target
 			if(HAS_TRAIT(H, TRAIT_NOBLE))
@@ -93,7 +91,7 @@
 	set name = "Bow"
 	set category = "Emotes"
 
-	emote("bow", intentional = TRUE)
+	emote("bow", intentional = TRUE, targetted = TRUE)
 
 /datum/emote/living/burp
 	key = "burp"
@@ -390,6 +388,16 @@
 	key = "groan"
 	key_third_person = "groans"
 	message = "groans."
+	message_muffled = "makes a muffled groan."
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = FALSE
+
+// Attack blip played randomly.
+/datum/emote/living/attack
+	key = "attack"
+	key_third_person = "attacks"
+	message = ""
+	nomsg = TRUE
 	message_muffled = "makes a muffled groan."
 	emote_type = EMOTE_AUDIBLE
 	show_runechat = FALSE
@@ -795,12 +803,11 @@
 	if(.)
 		for(var/mob/living/carbon/human/L in viewers(7,user))
 			if(L == user)
-				if(L.has_flaw(/datum/charflaw/addiction/masochist))
-					L.sate_addiction()
+				L.sate_addiction(/datum/charflaw/addiction/masochist)
 				continue
 			if(L.has_flaw(/datum/charflaw/addiction/sadist))
 				if(get_dist(L, user) <= 2 && L != user)
-					L.sate_addiction()
+					L.sate_addiction(/datum/charflaw/addiction/sadist)
 
 /datum/emote/living/scream/strain
 	key = "strain"
@@ -821,11 +828,10 @@
 	if(.)
 		for(var/mob/living/carbon/human/L in viewers(7,user))
 			if(L == user)
-				if(L.has_flaw(/datum/charflaw/addiction/masochist))
-					L.sate_addiction()
-				continue // i hope this shit works.
+				L.sate_addiction(/datum/charflaw/addiction/masochist)
+				continue
 			if(get_dist(L, user) <= 2 && L != user)
-				L.sate_addiction()
+				L.sate_addiction(/datum/charflaw/addiction/sadist)
 
 /datum/emote/living/scream/firescream
 	key = "firescream"
@@ -839,11 +845,10 @@
 	if(.)
 		for(var/mob/living/carbon/human/L in viewers(7,user))
 			if(L == user)
-				if(L.has_flaw(/datum/charflaw/addiction/masochist))
-					L.sate_addiction()
-				continue // i hope this shit works.
+				L.sate_addiction(/datum/charflaw/addiction/masochist)
+				continue
 			if(get_dist(L, user) <= 2 && L != user)
-				L.sate_addiction()
+				L.sate_addiction(/datum/charflaw/addiction/sadist)
 
 /datum/emote/living/aggro
 	key = "aggro"
@@ -889,6 +894,17 @@
 	nomsg = TRUE
 	only_forced_audio = TRUE
 	show_runechat = FALSE
+
+/datum/emote/living/paincrit/run_emote(mob/user, params, type_override, intentional)
+	. = ..()
+	if(.)
+		for(var/mob/living/carbon/human/L in viewers(4,user))//Theoretically less lag, also you need to hear someone whimper so why not have to be close to them
+			if(L == user)
+				if(L.has_flaw(/datum/charflaw/addiction/masochist))
+					L.sate_addiction(/datum/charflaw/addiction/masochist)
+				continue
+			if(L.has_flaw(/datum/charflaw/addiction/sadist))
+				L.sate_addiction(/datum/charflaw/addiction/sadist)
 
 /datum/emote/living/embed
 	key = "embed"
@@ -1104,6 +1120,14 @@
 	emote_type = EMOTE_AUDIBLE
 	show_runechat = TRUE
 
+/datum/emote/living/pleased
+	key = "pleased"
+	key_third_person = "pleased"
+	message = "makes a pleased sound."
+	message_muffled = "makes a muffled sneeze."
+	emote_type = EMOTE_AUDIBLE
+	show_runechat = FALSE
+
 /datum/emote/living/shh
 	key = "shh"
 	key_third_person = "shhs"
@@ -1139,6 +1163,11 @@
 	stat_allowed = UNCONSCIOUS
 	snd_range = -4
 	show_runechat = FALSE
+
+/mob/living/carbon/human/verb/emote_snore()
+	set name = "Snore"
+	set category = "Noises"
+	emote("snore", intentional = TRUE)
 
 /datum/emote/living/stare
 	key = "stare"

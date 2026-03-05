@@ -1,6 +1,7 @@
 // -------------- RAISINS -----------------
 /obj/item/reagent_containers/food/snacks/rogue/raisins
 	name = "raisins"
+	desc = "Jackberries that've been pruned of their juiciness, and turned into flavorful nuggets. Like the humble hardtack, so too will these raisins outlast its creators."
 	icon = 'icons/roguetown/items/produce.dmi'
 	icon_state = "raisins5"
 	bitesize = 5
@@ -31,3 +32,18 @@
 			M.reagents.remove_reagent(/datum/reagent/consumable/nutriment, M.reagents.total_volume)
 			M.reagents.trans_to(src, M.reagents.total_volume)
 		qdel(M)
+
+// -------------- Trail-mix -----------------
+/obj/item/reagent_containers/food/snacks/rogue/trailmix
+	name = "trail-mix"
+	desc = "A collection of dried and long lasting snacks tucked into a neat package to be indulged in as needed. Favorite of rangers due to it's simplicity and availability."
+	icon = 'modular/Neu_food/icons/cookware/ration.dmi'
+	icon_state = "ration_large"//Prob give it'S own subtype later
+	eat_effect = null
+	fried_type = null
+	bitesize = 7
+	slice_batch = FALSE
+	faretype = FARE_POOR
+	list_reagents = list(/datum/reagent/consumable/nutriment = SNACK_NUTRITIOUS * 3)
+	tastes = list("raisin" = 1, "pumpkin" = 1, "dry paper" = 1)
+	rotprocess = null
