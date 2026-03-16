@@ -61,10 +61,13 @@
 #define CLICK_CD_EXHAUSTED 60
 #define CLICK_CD_TRACKING 30
 #define CLICK_CD_SLEUTH 10
-#define CLICK_CD_HEAVY 16
-#define CLICK_CD_CHARGED 14
-#define CLICK_CD_MELEE 12
-#define CLICK_CD_FAST 8
+#define CLICK_CD_GLACIAL 20	// Tier: Glacial
+#define CLICK_CD_MASSIVE 18	// Tier: Extremely Sluggish
+#define CLICK_CD_HEAVY 16		// Tier: Very Sluggish
+#define CLICK_CD_CHARGED 14	// Tier: Sluggish
+#define CLICK_CD_MELEE 12		// Tier: Normal (baseline)
+#define CLICK_CD_QUICK 10		// Tier: Quick
+#define CLICK_CD_FAST 8		// Tier: Very Quick
 #define CLICK_CD_INTENTCAP 6
 #define CLICK_CD_RANGE 4
 #define CLICK_CD_RAPID 2
@@ -319,7 +322,8 @@ GLOBAL_LIST_INIT(shove_disarming_types, typecacheof(list(
 #define SHARPNESS_TIER1_FLOOR		0.45//%-age threshold when damfactors and STR factors become 0.
 #define SHARPNESS_TIER2_THRESHOLD	0.2 //%-age threshold when damage *really* falls off. Base damage value included.
 
-#define UNARMED_DAMAGE_DEFAULT		12
+#define UNARMED_DAMAGE_DEFAULT		17
+#define UNARMED_DAMAGE_CIVILBARB	5
 
 /// Damage multiplier of silver weapons against mobs with TRAIT_SIMPLE_WOUNDS
 #define SILVER_SIMPLEMOB_DAM_MULT 3

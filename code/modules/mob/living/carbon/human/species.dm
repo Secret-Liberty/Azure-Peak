@@ -1261,6 +1261,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			return FALSE
 */
 		var/selzone = melee_accuracy_check(user.zone_selected, user, target, /datum/skill/combat/unarmed, user.used_intent)
+		var/selzone_real = user.zone_selected
 
 		var/obj/item/bodypart/affecting = target.get_bodypart(check_zone(selzone))
 
@@ -1293,8 +1294,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			if(affecting.body_zone == BODY_ZONE_HEAD)
 				SEND_SIGNAL(user, COMSIG_HEAD_PUNCHED, target)
 		log_combat(user, target, "punched")
-		if(ishuman(user) && user.mind)
-			var/text = "[bodyzone2readablezone(selzone)]..."
+		if(ishuman(user))
+			var/text = "[bodyzone2readablezone(selzone_real)]..."
 			user.filtered_balloon_alert(TRAIT_COMBAT_AWARE, text, show_self = FALSE)
 
 		if(!nodmg)
@@ -1415,6 +1416,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 
 			if((!target_table && !target_collateral_mob) || directional_blocked)
 				target.Knockdown(SHOVE_KNOCKDOWN_SOLID)
+				target.drop_all_held_items()
 				target.visible_message(
 					span_danger("[user.name] shoves [target.name], knocking them down!"),
 					span_danger("You're knocked down from a shove by [user.name]!"),
@@ -1427,6 +1429,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 
 			else if(target_table)
 				target.Knockdown(SHOVE_KNOCKDOWN_TABLE)
+				target.drop_all_held_items()
 				target.visible_message(
 					span_danger("[user.name] shoves [target.name] onto \the [target_table]!"),
 					span_danger("I'm shoved onto \the [target_table] by [user.name]!"),
@@ -1440,6 +1443,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 
 			else if(target_collateral_mob)
 				target.Knockdown(SHOVE_KNOCKDOWN_HUMAN)
+				target.drop_all_held_items()
 				target_collateral_mob.Knockdown(SHOVE_KNOCKDOWN_COLLATERAL)
 				target.visible_message(
 					span_danger("[user.name] shoves [target.name] into [target_collateral_mob.name]!"),
@@ -1563,9 +1567,9 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			target.next_attack_msg.Cut()
 			log_combat(user, target, "kicked")
 
-			if(ishuman(user) && user.mind)
-				var/text = "[bodyzone2readablezone(selzone)]..."
-				user.filtered_balloon_alert(TRAIT_COMBAT_AWARE, text)
+			if(ishuman(user))
+				var/text = "[bodyzone2readablezone(user.zone_selected)]..."
+				user.filtered_balloon_alert(TRAIT_COMBAT_AWARE, text, show_self = FALSE)
 
 			user.do_attack_animation_simple(target, ATTACK_EFFECT_KICK, TRUE)
 			if(!nodmg)
@@ -1606,6 +1610,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 		else
 			if(HAS_TRAIT(user, TRAIT_STRONGKICK))
 				target.Knockdown(SHOVE_KNOCKDOWN_HUMAN)
+				target.drop_all_held_items()
 				var/throwtarget = get_edge_target_turf(user, get_dir(user, get_step_away(target, user)))
 				if(target.pulling && target.grab_state < GRAB_AGGRESSIVE)
 					target.throw_at(throwtarget, 2, 2)
@@ -1621,6 +1626,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 
 			else if((stander && target.stamina >= target.max_stamina) || target.IsOffBalanced()) //if you are kicked while fatigued, you are knocked down no matter what
 				target.Knockdown(target.IsOffBalanced() ? SHOVE_KNOCKDOWN_SOLID : 100)
+				target.drop_all_held_items()
 				target.visible_message(span_danger("[user.name] kicks [target.name], knocking them down!"),
 				span_danger(
 					"I'm knocked down from a kick by [user.name]!"),
@@ -1646,12 +1652,14 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 							break
 			if((!target_table && !target_collateral_mob) || directional_blocked)
 				target.Knockdown(SHOVE_KNOCKDOWN_SOLID)
+				target.drop_all_held_items()
 				target.visible_message(span_danger("[user.name] kicks [target.name], knocking them down!"),
 								span_danger("I'm knocked down from a kick by [user.name]!"), span_hear("I hear aggressive shuffling followed by a loud thud!"), COMBAT_MESSAGE_RANGE, user)
 				to_chat(user, span_danger("I kick [target.name], knocking them down!"))
 				log_combat(user, target, "kicked", "knocking them down")
 			else if(target_table)
 				target.Knockdown(SHOVE_KNOCKDOWN_TABLE)
+				target.drop_all_held_items()
 				target.visible_message(span_danger("[user.name] kicked [target.name] onto \the [target_table]!"),
 								span_danger("I'm kicked onto \the [target_table] by [user.name]!"), span_hear("I hear aggressive shuffling followed by a loud thud!"), COMBAT_MESSAGE_RANGE, user)
 				to_chat(user, span_danger("I kick [target.name] onto \the [target_table]!"))
@@ -1659,6 +1667,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 				log_combat(user, target, "kicked", "onto [target_table] (table)")
 			else if(target_collateral_mob)
 				target.Knockdown(SHOVE_KNOCKDOWN_HUMAN)
+				target.drop_all_held_items()
 				target_collateral_mob.Knockdown(SHOVE_KNOCKDOWN_COLLATERAL)
 				target.visible_message(span_danger("[user.name] kicks [target.name] into [target_collateral_mob.name]!"),
 					span_danger("I'm kicked into [target_collateral_mob.name] by [user.name]!"), span_hear("I hear aggressive shuffling followed by a loud thud!"), COMBAT_MESSAGE_RANGE, user)
@@ -1739,6 +1748,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 		return 0
 
 	var/hit_area
+	var/selzone_real = user.zone_selected
 
 	selzone = melee_accuracy_check(user.zone_selected, user, H, I.associated_skill, user.used_intent, I)
 	affecting = H.get_bodypart(check_zone(selzone))
@@ -1808,8 +1818,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	if(higher_intfactor > 1)	//Make sure to keep your weapon and intent intfactors consistent to avoid problems here!
 		used_intfactor = higher_intfactor
 
-	if(ishuman(user) && user.mind && user.used_intent.blade_class != BCLASS_PEEL && user != H)
-		var/text = "[bodyzone2readablezone(selzone)]..."
+	if(ishuman(user) && user.used_intent.blade_class != BCLASS_PEEL && user != H)
+		var/text = "[bodyzone2readablezone(selzone_real)]..."
 		if(HAS_TRAIT(user, TRAIT_DECEIVING_MEEKNESS))
 			if(prob(10))
 				text = "<i>I can't tell...</i>"

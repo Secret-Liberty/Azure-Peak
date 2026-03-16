@@ -7,8 +7,8 @@
 	subclass_languages = list(/datum/language/kazengunese)
 	class_select_category = CLASS_CAT_KAZENGUN
 	category_tags = list(CTAG_MERCENARY)
-	traits_applied = list(TRAIT_CRITICAL_RESISTANCE, TRAIT_HARDDISMEMBER, TRAIT_NOPAINSTUN, TRAIT_HONORBOUND)
-	cmode_music = 'sound/music/combat_kazengite.ogg'
+	traits_applied = list(TRAIT_BLOOD_RESISTANCE, TRAIT_IGNOREDAMAGESLOWDOWN, TRAIT_HONORBOUND)
+	cmode_music = 'sound/music/combat_Kazengun_Runaway_Chariot.ogg'
 	subclass_stats = list(
 		STATKEY_CON = 3,
 		STATKEY_WIL = 3,

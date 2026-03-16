@@ -11,6 +11,10 @@
 	resistance_flags = ACID_PROOF
 	var/is_infinite = FALSE
 
+/obj/item/reagent_containers/glass/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Right click on someone to offer your glass to them. If someone else offers a glass to you in response, they'll clink together in celebration!")
+
 /obj/item/reagent_containers/glass/examine(mob/user)
 	. = ..()
 	if(user.mind && ishuman(user))
@@ -23,14 +27,10 @@
 	is_infinite = FALSE
 
 /obj/item/reagent_containers/glass/proc/set_infinite(mob/user, delay)
-	if(is_infinite)
-		to_chat(user, span_info("It's already blessed to never run out!"))
-		return FALSE
-	else
-		is_infinite = TRUE
-		var/timer = (delay ? delay : 60 SECONDS)
-		addtimer(CALLBACK(src, PROC_REF(reset_infinite)), timer)
-		return TRUE
+	is_infinite = TRUE
+	var/timer = (delay ? delay : 60 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(reset_infinite)), timer)
+	return TRUE
 
 /datum/intent/fill
 	name = "fill"
