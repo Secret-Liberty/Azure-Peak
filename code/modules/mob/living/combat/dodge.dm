@@ -128,6 +128,7 @@
 		else
 			theirskill = UH.get_skill_level(/datum/skill/combat/unarmed)
 	var/prob2defend = U.defprob
+	var/ignore_DE_bonus = FALSE
 	var/is_in_cone = L.can_see_cone(user)
 	if(!is_in_cone && H)
 		is_in_cone = H?.get_tempo_bonus(TEMPO_TAG_NOLOS_DODGE)
@@ -171,18 +172,27 @@
 					if(U.STASPD > L.STASPD) //unarmed is inherently swift
 						prob2defend = prob2defend - ((U.STASPD - L.STASPD) * 10)
 
-		var/ignore_DE_bonus = FALSE
 
 		if(HAS_TRAIT(L, TRAIT_GUIDANCE))
-			prob2defend += 20
-			drained -= 5
+			prob2defend += FULL_GUIDANCE_CHANCE
+		else if(HAS_TRAIT(L, TRAIT_LESSER_GUIDANCE))
+			prob2defend += LESSER_GUIDANCE_CHANCE
 
 		if(HAS_TRAIT(U, TRAIT_GUIDANCE))
-			prob2defend -= 20
+			prob2defend -= FULL_GUIDANCE_CHANCE
 			ignore_DE_bonus = TRUE
+		else if(HAS_TRAIT(U, TRAIT_LESSER_GUIDANCE))
+			prob2defend -= LESSER_GUIDANCE_CHANCE
 
 		if(HAS_TRAIT(L, TRAIT_REVERSE_GUIDANCE))
-			prob2defend -= 20
+			prob2defend -= FULL_GUIDANCE_CHANCE
+		else if(HAS_TRAIT(L, TRAIT_LESSER_REVERSE_GUIDANCE))
+			prob2defend -= LESSER_GUIDANCE_CHANCE
+
+		if(HAS_TRAIT(U, TRAIT_REVERSE_GUIDANCE))
+			prob2defend += FULL_GUIDANCE_CHANCE
+		else if(HAS_TRAIT(U, TRAIT_LESSER_REVERSE_GUIDANCE))
+			prob2defend += LESSER_GUIDANCE_CHANCE
 		
 		if(HAS_TRAIT(user, TRAIT_CURSE_RAVOX))
 			prob2defend -= 40
@@ -329,13 +339,17 @@
 			playsound(user, 'sound/misc/weapon_clip.ogg', 100)
 	dodgecd = FALSE
 	var/ignore_penalty = FALSE
-	if(L.fixedeye && L.goodluck(5))
+	if((L.fixedeye && L.goodluck(5)))
 		ignore_penalty = TRUE
-	if(!ignore_penalty)
+	if(!ignore_penalty && !ignore_DE_bonus && has_trait)
 		var/max_mod = 0
 		max_mod = ourskill - theirskill
-		L.changeNext_def(clamp(dodgetime + 1, 0, CLICK_CD_DODGE))
-		L.changeMaxDodge(-1 + ((max_mod < 0) ? max_mod : 0))
+
+		var/tempo_result = L.get_tempo_bonus(TEMPO_TAG_DODGE_LOSS)
+		//TEMPO_DODGE_LOSS_NONE results in this not being accessed at all, so no loss. We're in a 1v4 in that context, so, like, yeah.
+		if(tempo_result == TEMPO_DODGE_LOSS_NORMAL || (tempo_result == TEMPO_DODGE_LOSS_LESS && prob(33)))
+			L.changeNext_def(clamp(dodgetime + 1, 0, CLICK_CD_DODGE))
+			L.changeMaxDodge(-1 + ((max_mod < 0) ? max_mod : 0))
 //		if(H)
 //			if(H.IsOffBalanced())
 //				H.Knockdown(1)
