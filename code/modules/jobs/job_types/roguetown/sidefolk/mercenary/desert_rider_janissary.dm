@@ -12,8 +12,7 @@
 	subclass_stats = list(
 		STATKEY_STR = 2,
 		STATKEY_WIL = 2,
-		STATKEY_SPD = 2,
-		STATKEY_PER = -1
+		STATKEY_SPD = 2
 	)
 	subclass_skills = list(
 		/datum/skill/combat/maces = SKILL_LEVEL_JOURNEYMAN,
@@ -30,7 +29,6 @@
 		/datum/skill/misc/sneaking = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/misc/reading = SKILL_LEVEL_NOVICE,
 	)
-
 
 /datum/outfit/job/roguetown/mercenary/desert_rider/pre_equip(mob/living/carbon/human/H)
 	..()
@@ -67,10 +65,8 @@
 				H.adjust_skillrank_up_to(/datum/skill/combat/polearms, 4, TRUE)
 				r_hand = /obj/item/rogueweapon/spear
 				backl = /obj/item/rogueweapon/shield/tower/raneshen
-
 	shoes = /obj/item/clothing/shoes/roguetown/shalal
 	belt = /obj/item/storage/belt/rogue/leather/shalal
 	beltl = /obj/item/rogueweapon/sword/long/marlin
 	beltr = /obj/item/rogueweapon/scabbard/sword
-
 	H.merctype = 4
