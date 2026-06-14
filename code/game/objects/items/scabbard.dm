@@ -170,7 +170,6 @@
 
 	force = 3
 	max_integrity = 500
-	sellprice = 2
 
 	invalid_blades = list(
 		/obj/item/rogueweapon/huntingknife/idagger/stake,
@@ -378,7 +377,6 @@
 	sewrepair = FALSE
 	wdefense = 2
 	max_integrity = 50
-	sellprice = 50
 	resistance_flags = null
 
 /obj/item/rogueweapon/scabbard/sheath/royal
@@ -390,7 +388,6 @@
 	can_parry = TRUE
 	sewrepair = FALSE
 	wdefense = 4
-	sellprice = 100
 	resistance_flags = null
 
 ///////////////////////
@@ -414,7 +411,6 @@
 
 	force = 7
 	max_integrity = 750
-	sellprice = 3
 
 /obj/item/rogueweapon/scabbard/sword/MiddleClick(mob/user)
 	if(hol_comp.sheathed)
@@ -525,7 +521,6 @@
 	sewrepair = FALSE
 	wdefense = 4
 	max_integrity = 75
-	sellprice = 50
 	resistance_flags = null
 
 /obj/item/rogueweapon/scabbard/sword/royal
@@ -538,7 +533,6 @@
 	sewrepair = FALSE
 	wdefense = 6
 	max_integrity = 150
-	sellprice = 100
 	resistance_flags = null
 
 //
@@ -552,9 +546,10 @@
 	force = 20
 	valid_blade = /obj/item/rogueweapon/sword/sabre/mulyeog
 	associated_skill = /datum/skill/combat/swords
-	possible_item_intents = list(SHIELD_BASH, SHIELD_BLOCK)
+	possible_item_intents = list(SHIELD_BASH, SHIELD_SMASH)
 	can_parry = TRUE
 	sewrepair = FALSE
+	anvilrepair = /datum/skill/craft/carpentry
 	wdefense = 8
 	special = /datum/special_intent/limbguard
 
@@ -586,7 +581,8 @@
 	icon_state = "kazscab_gold"
 	item_state = "kazscab_gold"
 	valid_blade = /obj/item/rogueweapon/sword/sabre/mulyeog/rumacaptain
-	sellprice = 10
+	max_integrity = 220
+	sellprice = 50
 
 /obj/item/rogueweapon/scabbard/sword/kazengun/kodachi
 	name = "plain lacquer scabbard"
@@ -594,7 +590,7 @@
 	icon_state = "kazscabyuruku"
 	item_state = "kazscabyuruku"
 	valid_blade = /obj/item/rogueweapon/sword/short/kazengun
-	wdefense = 4
+	wdefense = 7
 	special = null
 
 /obj/item/rogueweapon/scabbard/sheath/kazengun
@@ -607,9 +603,10 @@
 	possible_item_intents = list(SHIELD_BASH, SHIELD_BLOCK)
 	can_parry = TRUE
 	sewrepair = FALSE
-	wdefense = 3
+	anvilrepair = /datum/skill/craft/carpentry
+	wdefense = 4
+	max_integrity = 220
 
-	max_integrity = 0
 
 /obj/item/rogueweapon/scabbard/sheath/courtphysician
 	name = "fancy cane"
@@ -683,7 +680,7 @@
 	item_state = "staffsheath"
 	valid_blade = /obj/item/rogueweapon/sword/rapier/hand
 	implement_tier = IMPLEMENT_TIER_GREATER
-	implement_multiplier = IMPLEMENT_MULT_GREATER
+	implement_refund = IMPLEMENT_REFUND_GREATER
 	sellprice = 100
 
 /obj/item/rogueweapon/scabbard/sheath/courtphysician/hand/ComponentInitialize()
@@ -720,7 +717,6 @@
 	sheathe_time = 2 SECONDS
 
 	max_integrity = 0
-	sellprice = 15
 
 /obj/item/rogueweapon/scabbard/gwstrap/ComponentInitialize()
 	AddComponent(/datum/component/holster/gwstrap, FALSE, FALSE, FALSE, sheathe_time)
