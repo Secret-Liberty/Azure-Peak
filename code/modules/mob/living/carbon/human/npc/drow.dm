@@ -93,33 +93,7 @@ GLOBAL_LIST_INIT(drowraider_aggro, world.file2list("strings/rt/drowaggrolines.tx
 						/datum/sprite_accessory/hair/head/sabitsuki_ponytail))
 
 	var/datum/bodypart_feature/hair/head/new_hair = new()
-	//Random voices, this can probably be more random-ish but it'll do for now
-	var/voice_choice = rand(1, 12)
-	switch(voice_choice)
-		if(1)
-			src.voice_color = "0bb1e4"
-		if(2)
-			src.voice_color = "d30c0c"
-		if(3)
-			src.voice_color = "4d4afc"
-		if(4)
-			src.voice_color = "da40c0"
-		if(5)
-			src.voice_color = "51e251"
-		if(6)
-			src.voice_color = "a059cf"
-		if(7)
-			src.voice_color = "8700c5"
-		if(8)
-			src.voice_color = "cfc886"
-		if(9)
-			src.voice_color = "ff9100"
-		if(10)
-			src.voice_color = "a0a0a0"
-		if(11)
-			src.voice_color = "797979"
-		if(12)
-			src.voice_color = "ff5e00"
+	random_voice_NPC()
 	//Next up, we add hair
 	if(gender == FEMALE)
 		new_hair.set_accessory_type(hairf, null, src)
@@ -201,7 +175,6 @@ GLOBAL_LIST_INIT(drowraider_aggro, world.file2list("strings/rt/drowaggrolines.tx
 		if(2)
 			neck = /obj/item/clothing/neck/roguetown/gorget
 			head = /obj/item/clothing/head/roguetown/helmet/kettle/iron //So they have head armor
-	// Stopgap: archer roll removed because the ranged NPC AI is unreliable.
 	if(prob(45)) // whip
 		r_hand = /obj/item/rogueweapon/whip
 	else if(prob(50)) // dual falx
@@ -231,17 +204,17 @@ GLOBAL_LIST_INIT(drowraider_aggro, world.file2list("strings/rt/drowaggrolines.tx
 		var/voicepack_choice = rand(1, 4)
 		switch(voicepack_choice)
 			if(1)
-				H.dna.species.soundpack_m = new /datum/voicepack/male/warrior()
-				H.dna.species.soundpack_f = new /datum/voicepack/female/warrior()
+				H.dna.species.soundpack_m = GLOB.voice_packs[/datum/voicepack/male/warrior]
+				H.dna.species.soundpack_f = GLOB.voice_packs[/datum/voicepack/female/warrior]
 			if(2)
-				H.dna.species.soundpack_m = new /datum/voicepack/male/stern()
-				H.dna.species.soundpack_f = new /datum/voicepack/female/haughty()
+				H.dna.species.soundpack_m = GLOB.voice_packs[/datum/voicepack/male/stern]
+				H.dna.species.soundpack_f = GLOB.voice_packs[/datum/voicepack/female/haughty]
 			if(3)
-				H.dna.species.soundpack_m = new /datum/voicepack/male/foppish()
-				H.dna.species.soundpack_f = new /datum/voicepack/female/dainty()
+				H.dna.species.soundpack_m = GLOB.voice_packs[/datum/voicepack/male/foppish]
+				H.dna.species.soundpack_f = GLOB.voice_packs[/datum/voicepack/female/dainty]
 			if(4)
-				H.dna.species.soundpack_m = new /datum/voicepack/male/wizard() //Aura
-				H.dna.species.soundpack_f = new /datum/voicepack/female/haughty()
+				H.dna.species.soundpack_m = GLOB.voice_packs[/datum/voicepack/male/wizard] //Aura
+				H.dna.species.soundpack_f = GLOB.voice_packs[/datum/voicepack/female/haughty]
 
 /mob/living/carbon/human/species/elf/dark/drowraider/archer
 	ai_controller = /datum/ai_controller/human_npc/archer
