@@ -331,6 +331,7 @@
 	name = "sending stone"
 	desc = "One of a pair of sending stones."
 	var/obj/item/natural/stone/sending/paired_with
+	obj_flags = UNIQUE_RENAME
 
 /obj/item/natural/stone/sending/attack_self(mob/user)
 	var/input_text = input(user, "Enter your message:", "Message")
@@ -360,7 +361,7 @@
 	allow_self_unequip = FALSE	//Can not remove these without help
 	equip_delay_self = 60
 	equip_delay_other = 60
-	strip_delay = 300
+	strip_delay = STRIP_DELAY_LOCKED
 	salvage_result = null
 
 /obj/item/clothing/gloves/roguetown/nomagic/Initialize(mapload)

@@ -7,7 +7,7 @@
 //	where you would want the updater procs below to run
 
 //	This also works with decimals.
-#define SAVEFILE_VERSION_MAX	35
+#define SAVEFILE_VERSION_MAX	36
 
 /*
 SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Carn
@@ -118,6 +118,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 					old_hex = "#[old_hex]"
 				meta["color"] = old_hex
 			gear_list[LI.name] = meta
+	if(current_version < 36) // Strip the old per-item favorite/hated food & drink data now that preferences are category flags
+		S.dir.Remove("culinary_preferences")
 
 /datum/preferences/proc/load_path(ckey,filename="preferences.sav")
 	if(!ckey)
@@ -428,13 +430,10 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		WRITE_FILE(S["charflaws"], cleaned_types)
 
 /datum/preferences/proc/_load_culinary_preferences(S)
-	var/list/loaded_culinary_preferences
-	S["culinary_preferences"] >> loaded_culinary_preferences
-	if(loaded_culinary_preferences)
-		culinary_preferences = loaded_culinary_preferences
-		validate_culinary_preferences()
-	else
-		reset_culinary_preferences()
+	S["favorite_cuisine"] >> favorite_cuisine
+	S["favorite_dish"] >> favorite_dish
+	S["favorite_drink"] >> favorite_drink
+	sanitize_culinary_preferences()
 
 /datum/preferences/proc/_load_statpack(S)
 	var/statpack_type
@@ -488,7 +487,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 	if(length(virtue_choices))
 		virtue.picked_choices = virtue_choices.Copy()
-	
+
 	if(length(virtuetwo_choices))
 		virtuetwo.picked_choices = virtuetwo_choices.Copy()
 
@@ -582,6 +581,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["familiar_names"]					>> familiar_prefs.familiar_names
 	S["familiar_pronouns"]				>> familiar_prefs.familiar_pronouns
 	S["familiar_species"]				>> familiar_prefs.familiar_species
+	S["familiar_voice_colors"]			>> familiar_prefs.familiar_voice_colors
 	S["familiar_flavortext"]			>> familiar_prefs.familiar_flavortext
 	S["familiar_flavortext_display"]	>> familiar_prefs.familiar_flavortext_display
 	S["familiar_headshot_link"]			>> familiar_prefs.familiar_headshot_link
@@ -663,6 +663,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["joblessrole"] >> joblessrole
 	//Load prefs
 	S["job_preferences"] >> job_preferences
+	S["job_subprefs"] >> job_subprefs
 
 	//Quirks
 	S["all_quirks"] >> all_quirks
@@ -875,7 +876,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["highlight_color"]		, highlight_color)
 	WRITE_FILE(S["taur_type"]			, taur_type)
 	WRITE_FILE(S["taur_color"]			, taur_color)
-	WRITE_FILE(S["culinary_preferences"], culinary_preferences)
+	WRITE_FILE(S["favorite_cuisine"]	, favorite_cuisine)
+	WRITE_FILE(S["favorite_dish"]		, favorite_dish)
+	WRITE_FILE(S["favorite_drink"]		, favorite_drink)
 	WRITE_FILE(S["topjob"]				, topjob)
 
 	//Custom names
@@ -890,6 +893,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["joblessrole"]		, joblessrole)
 	//Write prefs
 	WRITE_FILE(S["job_preferences"] , job_preferences)
+	WRITE_FILE(S["job_subprefs"] , job_subprefs)
 
 	//Quirks
 	WRITE_FILE(S["all_quirks"]			, all_quirks)
@@ -969,6 +973,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["familiar_names"] , familiar_prefs.familiar_names)
 	WRITE_FILE(S["familiar_pronouns"] , familiar_prefs.familiar_pronouns)
 	WRITE_FILE(S["familiar_species"] , familiar_prefs.familiar_species)
+	WRITE_FILE(S["familiar_voice_colors"] , familiar_prefs.familiar_voice_colors)
 	WRITE_FILE(S["familiar_flavortext"] , familiar_prefs.familiar_flavortext)
 	WRITE_FILE(S["familiar_flavortext_display"] , familiar_prefs.familiar_flavortext_display)
 	WRITE_FILE(S["familiar_headshot_link"] , familiar_prefs.familiar_headshot_link)

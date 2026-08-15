@@ -34,6 +34,11 @@
 	path = /obj/item/clothing/cloak/half
 	sort_category = "Cloaks"
 
+/datum/loadout_item/scoutcloak
+	name = "Scout Cloak"
+	path = /obj/item/clothing/cloak/scout
+	sort_category = "Cloaks"
+
 /datum/loadout_item/ridercloak
 	name = "Rider Cloak"
 	path = /obj/item/clothing/cloak/half/rider
@@ -197,4 +202,18 @@
 /datum/loadout_item/wicker
 	name = "Wicker Cloak"
 	path = /obj/item/clothing/cloak/wickercloak
+	sort_category = "Cloaks"
+
+/datum/loadout_item/sash
+	name = "sash"
+	path = /obj/item/clothing/cloak/sash
+
+/datum/loadout_item/ranger_cloak
+	name = "Ranger Cloak, Forest Green"
+	path = /obj/item/clothing/cloak/rangercloak
+	sort_category = "Cloaks"
+
+/datum/loadout_item/ranger_cloak_gray
+	name = "Ranger Cloak, Neutral Gray"
+	path = /obj/item/clothing/cloak/rangercloak/gray
 	sort_category = "Cloaks"
